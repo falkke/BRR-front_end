@@ -78,7 +78,9 @@
 			</div>
 			
 			<div class="form-group">
-				<button class="pull-right btn btn-default" type="submit" name="submit">Submit</button>
+				<div class="col-lg-3 d-inline-block"></div>
+				<input class="col-lg-3 pull-right btn btn-default" type="button" value="Cancel" onclick="location.href='index.php?page=race-list'" />
+				<button class="col-lg-3	pull-right btn btn-default" type="submit" name="submit">Submit</button>
 			</div>
 		</form>
 	</div>
