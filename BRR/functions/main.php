@@ -184,7 +184,23 @@
 	{
 		global $db;
 
-        $req = $db->query("SELECT * FROM runner WHERE FirstName LIKE '%{$keyword}%'");
+        $req = $db->query("SELECT * FROM runner WHERE CONCAT(FirstName, ' ', LastName) LIKE '%{$keyword}%'");
+
+		$results = array();
+		
+        while($rows = $req->fetchObject()) 
+		{
+            $results[] = $rows;
+        }
+
+        return $results;
+	}
+	
+	function search_race($keyword) 
+	{
+		global $db;
+
+        $req = $db->query("SELECT * FROM race WHERE Name LIKE '%{$keyword}%'");
 
 		$results = array();
 		

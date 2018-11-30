@@ -29,16 +29,27 @@
 		
         header('Location:index.php?page=home');
 	}*/
+	$search = "";
+	
+	if(isset($_POST['submit'])) {
+		$search = htmlspecialchars(trim($_POST['search']));
+	}
 ?>
 
 <main role="main" class="container">
 	<div class="starter-template">
 		<h2 class="page-title">Race List</h2>
-		<form class="form-inline my-2">
+		<form method="post" class="form-inline my-2">
 			<div class="input-group">
-				<input class="form-control" type="text" style="text-align:right" placeholder="Search" aria-label="Search">    
+				<input class="form-control" type="text" style="text-align:right" placeholder="Search" name="search" id="search" aria-label="Search" <?php
+					if(isset($_POST['submit'])) {
+						?>
+							value="<?= $_POST['search']?>"
+						<?php
+					}
+				?>>    
 				<span class="input-group-btn">
-					<button class="btn  btn-default" type="submit">Search</button>
+					<button class="btn  btn-default" type="submit" id="submit" name="submit">Search</button>
 				</span>
 			</div>
 		</form>
@@ -61,7 +72,7 @@
 			</thead>
 			<tbody>
 			<?php
-				foreach(get_races() as $race) {		
+				foreach(search_race($search) as $race) {		
 					?>		
 					<tr class='clickable-row' data-href="index.php?page=race&race=<?=$race->ID ?>">
 						<td><?=$race->Name ?></td>
@@ -84,4 +95,4 @@
 			</tbody>
 		</table>
 	</div>
-</main>
+</main>	
