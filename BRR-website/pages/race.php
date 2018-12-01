@@ -58,7 +58,10 @@
 						<a href="#">Damer</a>
 					</li>
 					<ul class="sub-menu collapse" id="products">
-						<li class="active"><a href="index.php?page=race&id=<?= $id ?>&gender=f&type=100">100 miles</a></li>
+						<!--
+							<li class="active"><a href="index.php?page=race&id=<?= $id ?>&gender=f&type=100">100 miles</a></li>
+						-->
+						<li><a href="index.php?page=race&race=<?= $id ?>&gender=f&type=100">100 miles</a></li>
 						<li><a href="index.php?page=race&race=<?= $id ?>&gender=f&type=50">50 miles</a></li>
 						<li><a href="index.php?page=race&race=<?= $id ?>&gender=f&type=20">20 miles</a></li>
 					</ul>
