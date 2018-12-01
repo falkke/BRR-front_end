@@ -54,26 +54,25 @@
 			<div class="brand">Category</div>
 			<div class="menu-list">
 				<ul id="menu-content" class="menu-content collapse out">
-					<li data-toggle="collapse" data-target="#products" class="collapsed">
-						<a href="#">Damer</a>
-					</li>
-					<ul class="sub-menu collapse" id="products">
-						<!--
-							<li class="active"><a href="index.php?page=race&id=<?= $id ?>&gender=f&type=100">100 miles</a></li>
-						-->
-						<li><a href="index.php?page=race&race=<?= $id ?>&gender=f&type=100">100 miles</a></li>
-						<li><a href="index.php?page=race&race=<?= $id ?>&gender=f&type=50">50 miles</a></li>
-						<li><a href="index.php?page=race&race=<?= $id ?>&gender=f&type=20">20 miles</a></li>
-					</ul>
-
-					<li data-toggle="collapse" data-target="#service" class="collapsed">
-						<a href="#">Herrar</a>
-					</li>  
-					<ul class="sub-menu collapse" id="service">
-						<li><a href="index.php?page=race&race=<?= $id ?>&gender=m&type=100">100 miles</a></li>
-						<li><a href="index.php?page=race&race=<?= $id ?>&gender=m&type=50">50 miles</a></li>
-						<li><a href="index.php?page=race&race=<?= $id ?>&gender=m&type=20">20 miles</a></li>
-					</ul>
+				<?php
+					foreach(get_race_class_genders($id) as $class_gender) {
+						?>							
+							<li data-toggle="collapse" data-target="#<?=$class_gender ?>" class="collapsed">
+								<a href="#"><?=$class_gender ?></a>
+							</li>
+							<ul class="sub-menu collapse" id="<?=$class_gender ?>">
+								<?php
+									foreach(get_race_class_gender_distances($id, $class_gender) as $class_gender_distance) {
+								?>	
+									<li><a href="index.php?page=race&race=<?= $id ?>&gender=<?=$class_gender ?>&type=<?=$class_gender_distance ?>"><?=$class_gender_distance ?> miles</a></li>				
+								<?php
+									}
+								?>	
+							</ul>
+					
+						<?php
+					}
+				?>
 				</ul>
 			</div>
 		</div>

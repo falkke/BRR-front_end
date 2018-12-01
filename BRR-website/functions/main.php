@@ -1,4 +1,6 @@
 <?php
+	/* INITIALISATION */
+	
     session_start();
 
     $dbhost = 's679.loopia.se';
@@ -12,7 +14,10 @@
     catch(PDOexception $e) {
         die("Error while trying to connect to the database...");
     }
-
+	
+	
+	/* ADMINISTRATION */
+	
     function is_logged() {
         if(isset($_SESSION['brr'])) {
             $logged = 1;
@@ -45,32 +50,8 @@
 		}
     }
 	
-	function add_race($name, $date) {
-        global $db;
-        $r = array(
-                'name' => $name,
-                'length' => 521,
-                'date' => $date,
-				'class' => 'man-20'
-        );
-		
-        $sql = 'INSERT INTO race(Name, Length, Date, Class) VALUES(:name, :length, :date, :class)';
-        $req = $db->prepare($sql);
-        $req->execute($r);
-    }		
 	
-	function edit_race($id, $name, $date) {
-        global $db;
-        $r = array(
-                'id' => $id,
-                'name' => $name,
-                'date' => $date
-        );
-		
-        $sql = 'UPDATE race SET Name = :name, Date = :date WHERE ID = :id';
-        $req = $db->prepare($sql);
-        $req->execute($r);
-    }
+	/* RACE */
 	
 	function get_races() {
         global $db;
@@ -95,6 +76,31 @@
         return $results;
     }
 	
+	function add_race($name, $date) {
+        global $db;
+        $r = array(
+                'name' => $name,
+                'date' => $date,
+        );
+		
+        $sql = 'INSERT INTO race(Name, Date) VALUES(:name, :date)';
+        $req = $db->prepare($sql);
+        $req->execute($r);
+    }		
+	
+	function edit_race($id, $name, $date) {
+        global $db;
+        $r = array(
+                'id' => $id,
+                'name' => $name,
+                'date' => $date
+        );
+		
+        $sql = 'UPDATE race SET Name = :name, Date = :date WHERE ID = :id';
+        $req = $db->prepare($sql);
+        $req->execute($r);
+    }
+	
 	function race_exists($id) {
         global $db;
 
@@ -110,6 +116,25 @@
 		
         return($exist);
     }
+	
+	function search_race($keyword) 
+	{
+		global $db;
+
+        $req = $db->query("SELECT * FROM race WHERE Name LIKE '%{$keyword}%'");
+
+		$results = array();
+		
+        while($rows = $req->fetchObject()) 
+		{
+            $results[] = $rows;
+        }
+
+        return $results;
+	}
+	
+	
+	/* RUNNER */
 	
 	function get_runners() {
         global $db;
@@ -171,7 +196,7 @@
             'id' => $id
         );
 
-        $sql = "SELECT * FROM runner WHERE ID = :id ";
+        $sql = "SELECT * FROM runner WHERE ID = :id";
         $req = $db->prepare($sql);
         $req->execute($e);
 
@@ -196,20 +221,125 @@
         return $results;
 	}
 	
-	function search_race($keyword) 
+	
+	/* RACE RUNNER*/
+	
+	function get_last_race_runner($id) 
 	{
 		global $db;
+		
+        $e = array(
+            'id' => $id
+        );
 
-        $req = $db->query("SELECT * FROM race WHERE Name LIKE '%{$keyword}%'");
+        $sql = "SELECT * FROM race_runner WHERE Runner = :id";
+        $req = $db->prepare($sql);
+        $req->execute($e);
 
+		$result = $req->fetchObject();
+		
+        return $result;
+	}
+	
+	function get_race_runner_class($id_runner, $id_race) 
+	{
+		global $db;
+		
+        $e = array(
+            'id_runner' => $id_runner,
+            'id_race' => $id_race
+        );
+
+        $sql = "SELECT * FROM race_runner WHERE Runner = :id_runner AND Race = :id_race";
+        $req = $db->prepare($sql);
+        $req->execute($e);
+		
+		$class = $req->fetch()['Class'];
+		
+		$e = array(
+            'class' => $class
+        );
+
+        $sql = "SELECT * FROM class WHERE ID = :class";
+        $req = $db->prepare($sql);
+        $req->execute($e);
+
+		$result = $req->fetchObject();
+		
+        return $result;
+	}	
+	
+	function get_race_runner_team($id_runner, $id_race) 
+	{
+		global $db;
+		
+        $e = array(
+            'id_runner' => $id_runner,
+            'id_race' => $id_race
+        );
+
+        $sql = "SELECT * FROM race_runner WHERE Runner = :id_runner AND Race = :id_race";
+        $req = $db->prepare($sql);
+        $req->execute($e);
+		
+		$team = $req->fetch()['Club'];
+		
+		$e = array(
+            'team' => $team
+        );
+
+        $sql = "SELECT * FROM club WHERE ID = :team";
+        $req = $db->prepare($sql);
+        $req->execute($e);
+
+		$result = $req->fetchObject();
+		
+        return $result;
+	}
+	
+	function get_race_class_genders($id_race) 
+	{
+		global $db;
+		
+        $e = array(
+            'id_race' => $id_race
+        );
+
+        $sql = "SELECT DISTINCT Gender FROM class WHERE ID IN (SELECT DISTINCT Class FROM race_runner WHERE Race = :id_race)";
+        $req = $db->prepare($sql);
+        $req->execute($e);
+		
 		$results = array();
 		
-        while($rows = $req->fetchObject()) 
+        while($rows = $req->fetch()['Gender']) 
 		{
             $results[] = $rows;
         }
+		
+		return $results;
+	}	
+	
+	function get_race_class_gender_distances($id_race, $class_gender) 
+	{
+		global $db;
+		
+        $e = array(
+            'id_race' => $id_race,
+            'class_gender' => $class_gender
+        );
 
-        return $results;
+        $sql = "SELECT DISTINCT Distance FROM class WHERE Gender = :class_gender AND ID IN (SELECT DISTINCT Class FROM race_runner WHERE Race = :id_race)";
+        $req = $db->prepare($sql);
+        $req->execute($e);
+		
+		$results = array();
+		
+        while($rows = $req->fetch()['Distance']) 
+		{
+            $results[] = $rows;
+        }
+		
+		return $results;
 	}
 ?>
 

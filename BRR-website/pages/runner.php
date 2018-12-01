@@ -12,6 +12,19 @@
 		}
 	}
 	
+	else {
+		header("Location:index.php?page=home");
+	}
+	
+	$race = "";
+	
+	if(get_last_race_runner($id)) {
+		$race_runner = get_last_race_runner($id);
+		$race = get_race($race_runner->Race);
+		$class = get_race_runner_class($id, $race_runner->Race);
+		$club = get_race_runner_team($id, $race_runner->Race);
+	}
+	
 	
 	/*$race = get_race($_GET['race']);
 	
@@ -52,29 +65,22 @@
 				<ul>
 					<li><?= $runner->Gender ?></li>
 					<li><?= $runner->DateOfBirth ?></li>
-				<?php
-					if(is_logged() == 1)
-					{
-				?>
-						<!--
-						<li><?= $runner->SNN ?></li>
-						-->
-				<?php
-					}
-				?>
 				</ul>
 			</div>
-			<!--
-			<div class="brand">BBR Year</div>
+			
+			<?php 
+				if($race != "") {
+			?>
+			<div class="brand"><?=$race->Name ?></div>
 			<div class="runner-race-info">
 				<ul>
-					<li>Place</li>
-					<li>Bib</li>
-					<li>Team</li>
-					<li><?= $type ?></li>
+					<li><?= $race_runner->Place ?></li>
+					<li><?= $race_runner->Bib ?></li>
+					<li><?= $club->Name ?></li>
+					<!--<li><?= $type ?></li>-->
 				</ul>
 			</div>
-			-->
+			
 			<div class="brand">History</div>
 			
 			<div class="menu-list">
@@ -90,14 +96,21 @@
 					</ul>
 				</ul>
 			</div>
+			<?php 
+				}
+			?>
 		</div>
 	</div>
-	<!--
+	
 	<div class="section-template">
-		<h2 class="page-title followed-title"><?= $race->Name ?></h2>
-		<h3 class="page-subtitle"><?= "Results " . $gender . " - " . $type ?></h3>
-
-		<table class="table table-bordered table-striped table-condensed">           
+		<?php 
+			if($race != "") 
+			{
+		?>
+			<h2 class="page-title followed-title"><?= $race->Name ?></h2>
+			<h3 class="page-subtitle"><?= "Results " . $class->Gender . " - " . $class->Distance ?></h3>
+			
+			<table class="table table-bordered table-striped table-condensed">           
 			<thead>
 				<tr>
 					<th>Distance</th>
@@ -117,45 +130,37 @@
 					?>
 				</tr>
 			</thead>
-			<tbody>
-				<tr>
-					<td>Finish</td>
-					<td>1</td>
-					<td>20:25:52</td>
-					<td></td>
-					<td>Sun 06:25:52</td>						
-					<?php
-						if(is_logged() == 1)
-						{
-					?>
-						<td>
-							<a class="bg-primary text-white table-button" href="index.php?page=edit-runner">...</a>
-							<a class="bg-danger text-white table-button" href="index.php?page=home&race=<?= $race->ID ?>&bib=bib&remove=1">X</a>
-						</td>
-					<?php
-						}
-					?>
-				</tr>
-				<tr>
-					<td>5.9km 3.7m</td>
-					<td>5</td>
-					<td>42:09</td>
-					<td>+0:06:05</td>
-					<td>Sat 10:42:09</td>
-					<?php
-						if(is_logged() == 1)
-						{
-					?>
-						<td>
-							<a class="bg-primary text-white table-button" href="index.php?page=edit-runner">...</a>
-							<a class="bg-danger text-white table-button" href="index.php?page=home&race=<?= $race->ID ?>&bib=bib&remove=1">X</a>
-						</td>
-					<?php
-						}
-					?>
-				</tr>
-			</tbody>
-		</table>
+				<!--<tbody>
+					<tr>
+						<td>Finish</td>
+						<td>1</td>
+						<td>20:25:52</td>
+						<td></td>
+						<td>Sun 06:25:52</td>						
+						<?php
+							if(is_logged() == 1)
+							{
+						?>
+							<td>
+								<a class="bg-primary text-white table-button" href="index.php?page=edit-runner">...</a>
+								<a class="bg-danger text-white table-button" href="index.php?page=home&race=<?= $race->ID ?>&bib=bib&remove=1">X</a>
+							</td>
+						<?php
+							}
+						?>
+					</tr>
+				</tbody>-->
+			</table>
+		<?php 
+			}
+			
+			else
+			{
+		?>
+			<h2 class="page-title"><?= $runner->FirstName." ".$runner->LastName ?></h2>
+			<p class="lead">This runner has not run in a race yet.</p>
+		<?php 
+			}
+		?>
 	</div>
-	-->
 </main>
