@@ -65,7 +65,7 @@
 							if(is_logged() == 1)
 							{
 						?>
-							<td>
+							<td class='no-change'>
 								<a class="bg-primary text-white table-button" href="index.php?page=manage-runner&runner=<?=$runner->ID ?>">...</a>
 								<a class="bg-danger text-white table-button" href="index.php?page=home&runner=<?=$runner->ID ?>&remove=1">X</a>
 							</td>

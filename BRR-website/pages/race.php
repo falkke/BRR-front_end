@@ -135,7 +135,7 @@
 						if(is_logged() == 1)
 						{
 					?>
-						<td>
+						<td class='no-change'>
 							<a class="bg-primary text-white table-button" href="index.php?page=manage-runner&race=<?= $id ?>&runner=bib">...</a>
 							<a class="bg-danger text-white table-button" href="index.php?page=home&race=<?= $id ?>&bib=bib&remove=1">X</a>
 						</td>
@@ -156,7 +156,7 @@
 						if(is_logged() == 1)
 						{
 					?>
-						<td>
+						<td class='no-change'>
 							<a class="bg-primary text-white table-button" href="index.php?page=manage-runner&race=<?= $id ?>&runner=bib">...</a>
 							<a class="bg-danger text-white table-button" href="index.php?page=home&race=<?= $id ?>&bib=bib&remove=1">X</a>
 						</td>

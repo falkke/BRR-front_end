@@ -1,6 +1,11 @@
 jQuery(document).ready(function($) 
 {
-	$(".clickable-row").click(function() 
+	$(".no-change").click(function(event)
+	{
+		event.stopPropagation();
+	});
+	
+	$(".clickable-row").click(function()
 	{
 		window.location = $(this).data("href");
 	});
