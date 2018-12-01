@@ -81,7 +81,7 @@
 							if(is_logged() == 1)
 							{
 						?>
-							<td class='no-change'>
+							<td class="no-change">
 								<a class="bg-primary text-white table-button" href="index.php?page=manage-race&race=<?=$race->ID ?>">...</a>
 								<a class="bg-danger text-white table-button" onclick="DeleteRaceAlert(<?= $race->ID ?>);" href="#">X</a>
 							</td>

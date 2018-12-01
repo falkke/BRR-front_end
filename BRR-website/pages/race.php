@@ -1,7 +1,7 @@
 <?php
 	$id = "";
 	$gender = "";
-	$type = "";
+	$distance = "";
 
 	if(isset($_GET['race']) && !empty($_GET['race'])) 
 	{
@@ -18,32 +18,24 @@
 	
 	if(isset($_GET['gender']) && !empty($_GET['gender'])) 
 	{
-		if($_GET['gender'] == "f") 
-		{
-			$gender = "Damer";
-		}
-		
-		else 
-		{
-			$gender = "Herrar";
-		}
+		$gender = $_GET['gender'];
 	}
 	
-	if(isset($_GET['type']) && !empty($_GET['type'])) 
+	if(isset($_GET['distance']) && !empty($_GET['distance'])) 
 	{
-		if($_GET['type'] == "100") 
+		if($_GET['distance'] == "100") 
 		{
-			$type = "100 miles";
+			$distance = "100 miles";
 		}
 		
-		else if($_GET['type'] == "50") 
+		else if($_GET['distance'] == "50") 
 		{
-			$type = "50 miles";
+			$distance = "50 miles";
 		}
 		
 		else
 		{
-			$type = "20 miles";
+			$distance = "20 miles";
 		}
 	}
 ?>
@@ -64,7 +56,7 @@
 								<?php
 									foreach(get_race_class_gender_distances($id, $class_gender) as $class_gender_distance) {
 								?>	
-									<li><a href="index.php?page=race&race=<?= $id ?>&gender=<?=$class_gender ?>&type=<?=$class_gender_distance ?>"><?=$class_gender_distance ?> miles</a></li>				
+									<li><a href="index.php?page=race&race=<?= $id ?>&gender=<?=$class_gender ?>&distance=<?=$class_gender_distance ?>"><?=$class_gender_distance ?> miles</a></li>				
 								<?php
 									}
 								?>	
@@ -82,11 +74,11 @@
 	<?php 
 		if	((isset($_GET['race']) && !empty($_GET['race'])) && 
 			(isset($_GET['gender']) && !empty($_GET['gender'])) &&
-			(isset($_GET['type']) && !empty($_GET['type'])))
+			(isset($_GET['distance']) && !empty($_GET['distance'])))
 		{
 	?>	
 		<h2 class="page-title followed-title"><?= $race->Name ?></h2>
-		<h3 class="page-subtitle"><?= "Results " . $gender . " - " . $type ?></h3>
+		<h3 class="page-subtitle"><?= "Results " . $gender . " - " . $distance ?></h3>
 		
 		<form class="form-inline my-2">
 			<div class="input-group">
@@ -113,7 +105,7 @@
 						{
 					?>
 						<th>
-							<a class="bg-success text-white table-button" href="index.php?page=manage-runner&race=<?= $id ?>">+</a>
+							<a class="bg-success text-white table-button" href="index.php?page=manage-runner-race&race=<?=$id?>">+</a>
 						</th>
 					<?php
 						}
@@ -121,48 +113,42 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr class='clickable-row' data-href="index.php?page=runner&ssn=ssn&race=<?= $id ?>&gender=<?= $_GET['gender'] ?>&type=<?= $_GET['type'] ?>">
-					<td>1</td>
-					<td>2</td>
-					<td>Bobby Bob</td>
-					<td>Bobby Team</td>
-					<td>23:52:48</td>
-					<td></td>
-					<td>Sat 16:52:48</td>
-					<td>Finish</td>							
-					<?php
-						if(is_logged() == 1)
+				<?php
+					foreach(get_race_runners($race->ID) as $race_runner) 
+					{	
+					$class = get_race_runner_class($race_runner->Runner, $race_runner->Race) ;		
+					
+						if(($class->Gender == $_GET['gender']) && ($class->Distance == $_GET['distance'])) 
 						{
-					?>
-						<td class='no-change'>
-							<a class="bg-primary text-white table-button" href="index.php?page=manage-runner&race=<?= $id ?>&runner=bib">...</a>
-							<a class="bg-danger text-white table-button" href="index.php?page=home&race=<?= $id ?>&bib=bib&remove=1">X</a>
-						</td>
-					<?php
+							$runner = get_runner($race_runner->Runner);			
+							$team = get_race_runner_team($race_runner->Runner, $race_runner->Race);
+						
+							?>	
+								<tr class='clickable-row' data-href="index.php?page=runner&runner=<?=$race_runner->Runner?>&race=<?=$race_runner->Race?>">
+									<td><?=$race_runner->Place?></td>
+									<td><?=$race_runner->Bib?></td>
+									<td><?=$runner->FirstName." ".$runner->LastName?></td>
+									<td><?=$team->Name?></td>
+									<td><?=$race_runner->TotalTime?></td>
+									<td></td>
+									<td></td>
+									<td><?=$race_runner->Status?></td>				
+									<?php
+										if(is_logged() == 1)
+										{
+									?>
+										<td class="no-change">
+											<a class="bg-primary text-white table-button" href="index.php?page=manage-runner-race">...</a>
+											<a class="bg-danger text-white table-button" href="index.php?page=home&runner=<?=$race_runner->Runner?>&race=<?=$race_runner->Race?>&remove=1">X</a>
+										</td>
+									<?php
+										}
+									?>
+								</tr>						
+							<?php
 						}
-					?>
-				</tr>
-				<tr class='clickable-row' data-href="index.php?page=runner&ssn=ssn&race=<?= $id ?>&gender=<?= $_GET['gender'] ?>&type=<?= $_GET['type'] ?>">
-					<td>2</td>
-					<td>1</td>
-					<td>Bob Bobby</td>
-					<td>Bob Team</td>
-					<td>23:58:59</td>
-					<td>+0:06:11</td>
-					<td>Sat 16:52:48</td>
-					<td>Finish</td>
-					<?php
-						if(is_logged() == 1)
-						{
-					?>
-						<td class='no-change'>
-							<a class="bg-primary text-white table-button" href="index.php?page=manage-runner&race=<?= $id ?>&runner=bib">...</a>
-							<a class="bg-danger text-white table-button" href="index.php?page=home&race=<?= $id ?>&bib=bib&remove=1">X</a>
-						</td>
-					<?php
-						}
-					?>
-				</tr>
+					}
+				?>
 			</tbody>
 		</table>
 	

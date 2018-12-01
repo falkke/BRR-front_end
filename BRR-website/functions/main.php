@@ -224,6 +224,47 @@
 	
 	/* RACE RUNNER*/
 	
+	function get_race_runner($id_runner, $id_race) 
+	{
+		global $db;
+		
+        $e = array(
+            'id_runner' => $id_runner,
+            'id_race' => $id_race
+        );
+
+        $sql = "SELECT * FROM race_runner WHERE Runner = :id_runner AND Race = :id_race";
+        $req = $db->prepare($sql);
+        $req->execute($e);
+
+		$result = $req->fetchObject();
+		
+        return $result;
+	}
+	
+	function get_race_runners($id_race) 
+	{
+		global $db;
+		
+        $e = array(
+            'id_race' => $id_race
+        );
+
+        $sql = "SELECT * FROM race_runner WHERE Race = :id_race";
+        $req = $db->prepare($sql);
+        $req->execute($e);
+		
+		$results = array();
+		
+        while($rows = $req->fetchObject()) 
+		{
+            $results[] = $rows;
+        }
+		
+		return $results;
+	}
+	
+	
 	function get_last_race_runner($id) 
 	{
 		global $db;
@@ -239,6 +280,28 @@
 		$result = $req->fetchObject();
 		
         return $result;
+	}
+	
+	function get_races_runner($id) 
+	{
+		global $db;
+		
+        $e = array(
+            'id' => $id
+        );
+
+        $sql = "SELECT * FROM race_runner WHERE Runner = :id";
+        $req = $db->prepare($sql);
+        $req->execute($e);
+
+		$results = array();
+		
+        while($rows = $req->fetchObject()) 
+		{
+            $results[] = $rows;
+        }
+		
+		return $results;
 	}
 	
 	function get_race_runner_class($id_runner, $id_race) 
@@ -340,6 +403,46 @@
         }
 		
 		return $results;
+	}
+	
+	function get_timestamps($id_runner, $id_race) 
+	{
+		global $db;
+		
+        $e = array(
+            'id_runner' => $id_runner,
+            'id_race' => $id_race
+        );
+
+        $sql = "SELECT * FROM timestamp WHERE Runner = :id_runner AND Race = :id_race ORDER BY Timestamp DESC";
+        $req = $db->prepare($sql);
+        $req->execute($e);
+		
+		$results = array();
+		
+        while($rows = $req->fetchObject()) 
+		{
+            $results[] = $rows;
+        }
+		
+		return $results;
+	}
+	
+	function get_station($id_station) 
+	{
+		global $db;
+		
+        $e = array(
+            'id_station' => $id_station
+        );
+
+        $sql = "SELECT * FROM station WHERE ID = :id_station";
+        $req = $db->prepare($sql);
+        $req->execute($e);
+		
+		$result = $req->fetchObject();
+
+		return $result;
 	}
 ?>
 
