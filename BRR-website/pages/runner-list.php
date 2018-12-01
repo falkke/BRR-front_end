@@ -56,8 +56,8 @@
 			<tbody>
 			<?php
 				foreach(search_runner($search) as $runner) {		
-					?>		
-					<tr class='clickable-row' data-href="index.php?page=runner&runner=<?=$runner->ID ?> ?>">
+					?>	
+					<tr class='clickable-row' data-href="index.php?page=runner&runner=<?=$runner->ID ?>">
 						<td><?=$runner->FirstName ?> <?=$runner->LastName ?></td>
 						<td><?=$runner->DateOfBirth ?></td>
 						<td><?=$runner->Gender ?></td>

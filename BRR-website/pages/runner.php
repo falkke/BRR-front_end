@@ -1,14 +1,19 @@
 <?php
-	if	(!((isset($_GET['race']) && !empty($_GET['race'])) && 
-		(isset($_GET['gender']) && !empty($_GET['gender'])) &&
-		(isset($_GET['type']) && !empty($_GET['type'])) &&
-		(isset($_GET['ssn']) && !empty($_GET['ssn']))))
+	if(isset($_GET['runner']) && !empty($_GET['runner'])) 
 	{
-        header('Location:index.php?page=home');
+		$id = $_GET['runner'];
+		
+		if(runner_exists($id)) {
+			$runner = get_runner($id);
+		}
+		
+		else {
+			header("Location:index.php?page=home");
+		}
 	}
 	
-	$race = get_race($_GET['race']);
-	$ssn = $_GET['ssn'];
+	
+	/*$race = get_race($_GET['race']);
 	
 	if($_GET['gender'] == "f") 
 	{
@@ -33,7 +38,7 @@
 	else
 	{
 		$type = "20 miles";
-	}
+	}*/
 ?>
 
 <main role="main" class="container no-gutters">
@@ -42,21 +47,24 @@
 	?>	
 	<div class="row">
 		<div class="nav-side-menu">
-			<div class="brand">Bob Bobby</div>
+			<div class="brand"><?= $runner->FirstName ?> <?= $runner->LastName ?></div>
 			<div class="runner-info">
 				<ul>
-					<li><?= $gender ?></li>
-					<li>23/11/1996</li>
+					<li><?= $runner->Gender ?></li>
+					<li><?= $runner->DateOfBirth ?></li>
 				<?php
 					if(is_logged() == 1)
 					{
 				?>
-						<li><?= $ssn ?></li>
+						<!--
+						<li><?= $runner->SNN ?></li>
+						-->
 				<?php
 					}
 				?>
 				</ul>
 			</div>
+			<!--
 			<div class="brand">BBR Year</div>
 			<div class="runner-race-info">
 				<ul>
@@ -66,7 +74,7 @@
 					<li><?= $type ?></li>
 				</ul>
 			</div>
-			
+			-->
 			<div class="brand">History</div>
 			
 			<div class="menu-list">
@@ -75,14 +83,16 @@
 						<a href="#">Other Races</a>
 					</li>
 					<ul class="sub-menu collapse" id="products">
+					<!--
 						<li class="active"><a href="index.php?page=runner&ssn=ssn&race=<?= $race->ID ?>&gender=f&type=100">2018 - Gender - Type</a></li>
 						<li><a href="index.php?page=runner&ssn=ssn&race=<?= $race->ID ?>&gender=f&type=50">2017 - Gender - Type</a></li>
+					-->
 					</ul>
 				</ul>
 			</div>
 		</div>
 	</div>
-		
+	<!--
 	<div class="section-template">
 		<h2 class="page-title followed-title"><?= $race->Name ?></h2>
 		<h3 class="page-subtitle"><?= "Results " . $gender . " - " . $type ?></h3>
@@ -147,4 +157,5 @@
 			</tbody>
 		</table>
 	</div>
+	-->
 </main>
