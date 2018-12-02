@@ -38,6 +38,11 @@
 			$distance = "20 miles";
 		}
 	}
+	$search = "";
+	
+	if(isset($_POST['submit'])) {
+		$search = htmlspecialchars(trim($_POST['search']));
+	}
 ?>
 
 <main role="main" class="container no-gutters">
@@ -79,12 +84,27 @@
 	?>	
 		<h2 class="page-title followed-title"><?= $race->Name ?></h2>
 		<h3 class="page-subtitle"><?= "Results " . $gender . " - " . $distance ?></h3>
-		
+		<!--
 		<form class="form-inline my-2">
 			<div class="input-group">
 				<input class="form-control" type="text" style="text-align:right" placeholder="Search" aria-label="Search">    
 				<span class="input-group-btn">
 					<button class="btn  btn-default" type="submit">Search</button>
+				</span>
+			</div>
+		</form>
+		-->
+		<form method="post" class="form-inline my-2">
+			<div class="input-group">
+				<input class="form-control" type="text" style="text-align:right" placeholder="Search" name="search" id="search" aria-label="Search" <?php
+					if(isset($_POST['submit'])) {
+						?>
+							value="<?= $_POST['search']?>"
+						<?php
+					}
+				?>>    
+				<span class="input-group-btn">
+					<button class="btn  btn-default" type="submit" id="submit" name="submit">Search</button>
 				</span>
 			</div>
 		</form>
@@ -114,7 +134,7 @@
 			</thead>
 			<tbody>
 				<?php
-					foreach(get_race_runners($race->ID) as $race_runner) 
+					foreach(get_race_runners($race->ID, $search) as $race_runner)
 					{	
 					$class = get_race_runner_class($race_runner->Runner, $race_runner->Race) ;		
 					

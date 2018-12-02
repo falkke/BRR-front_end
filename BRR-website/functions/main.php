@@ -242,7 +242,7 @@
         return $result;
 	}
 	
-	function get_race_runners($id_race) 
+	function get_race_runners($id_race, $keyword) 
 	{
 		global $db;
 		
@@ -250,7 +250,7 @@
             'id_race' => $id_race
         );
 
-        $sql = "SELECT * FROM race_runner WHERE Race = :id_race";
+		$sql = "SELECT rr.* FROM race_runner AS rr, club AS c, runner AS r WHERE rr.Race = :id_race AND c.ID = rr.Club AND r.ID = rr.Runner AND CONCAT(r.FirstName, ' ', r.LastName, ' ', c.Name, ' ', rr.Bib) LIKE '%{$keyword}%' ORDER BY rr.Place ASC";
         $req = $db->prepare($sql);
         $req->execute($e);
 		
