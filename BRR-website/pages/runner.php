@@ -136,23 +136,11 @@
 					$lap = -1;
 					foreach(get_timestamps($runner_id, $race->ID) as $timestamp) {		
 						$station = get_station($timestamp->Station);						
-
-						if($station->Code == 1)
-						{
-							$lap++;
-						}
-						
+						$lap = get_number_laps($runner_id, $race->ID, $timestamp->Timestamp, $timestamp->Station);
+				
 						?>	
 							<tr>
-								<td><?php
-								if($station->Code != 0) {
-									echo ($lap * 10) + $station->LengthFromStart;
-								}
-								
-								else {
-									echo 0;
-								}
-								?></td>
+								<td><?=($lap * 10) + $station->LengthFromStart?></td>
 								<td><?=$timestamp->Place?></td>
 								<td></td>
 								<td></td>

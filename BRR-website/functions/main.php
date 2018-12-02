@@ -444,5 +444,26 @@
 
 		return $result;
 	}
+		
+	function get_number_laps($id_runner, $id_race, $timestamp, $station)
+	{
+		global $db;
+		
+        $e = array(
+            'id_runner' => $id_runner,
+            'id_race' => $id_race,
+            'timestamp' => $timestamp,
+            'station' => $station
+        );
+
+        $sql = "SELECT COUNT(Timestamp) AS Count FROM timestamp WHERE Runner = :id_runner AND Race = :id_race AND Station = :station AND Timestamp < :timestamp";
+        $req = $db->prepare($sql);
+        $req->execute($e);
+		
+		$result = $req->fetch()['Count'];
+
+		return $result;
+	}
+						
 ?>
 
