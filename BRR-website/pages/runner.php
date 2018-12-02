@@ -108,7 +108,7 @@
 			if($race != "") 
 			{
 		?>
-			<h2 class="page-title followed-title"><?= $race->Name ?></h2>
+			<a class="link-title" href="index.php?page=race&race=<?=$race->ID?>&gender=<?=$class->Gender?>&distance=<?=$class->Distance?>"><h2 class="page-title followed-title"><?= $race->Name ?></h2></a>
 			<h3 class="page-subtitle"><?= "Results " . $class->Gender . " - " . $class->Distance ?> miles</h3>
 			
 			<table class="table table-bordered table-striped table-condensed">           
