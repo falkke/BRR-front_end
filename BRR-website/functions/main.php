@@ -522,6 +522,8 @@
 
 		return $result;		
 	}
+
+
 	
 	function get_elapsed_time_at_timestamp($runner_id, $race_id, $lap, $station_id)
 	{
@@ -540,6 +542,106 @@
 		$result = $req->fetch()['TimeBehind'];;
 
 		return $result;		
-	}					
+	}	
+
+	/* TEAM */	
+
+	
+	function search_team($keyword) 
+	{
+		global $db;
+
+        $req = $db->query("SELECT * FROM club WHERE Name LIKE '%{$keyword}%'");
+
+		$results = array();
+		
+        while($rows = $req->fetchObject()) 
+		{
+            $results[] = $rows;
+        }
+
+        return $results;
+	}
+	
+	function search_team_member($keyword, $race_id, $team_id) 
+	{		
+		global $db;
+		
+        $e = array(
+            'race_id' => $race_id,
+            'team_id' => $team_id
+        );
+
+		$sql = "SELECT * FROM runner WHERE CONCAT(FirstName, ' ', LastName) LIKE '%{$keyword}%' AND ID IN (SELECT Runner FROM race_runner WHERE Race = :race_id AND Club = :team_id)";
+        $req = $db->prepare($sql);
+        $req->execute($e);
+
+		$results = array();
+		
+        while($rows = $req->fetchObject()) 
+		{
+            $results[] = $rows;
+        }
+
+        return $results;
+	}
+	
+	function get_team_races($team_id) {
+        global $db;
+		
+		$e = array(
+            'team_id' => $team_id
+        );
+		
+		$sql = "SELECT * FROM race WHERE ID IN (SELECT Race FROM race_runner WHERE Club = :team_id)";
+        $req = $db->prepare($sql);
+        $req->execute($e);
+
+		$results = array();
+		
+        while($rows = $req->fetchObject()) {
+            $results[] = $rows;
+        }
+
+        return $results;
+    }
+	
+	
+	function get_team($team_id) {
+        global $db;
+		
+		$e = array(
+            'team_id' => $team_id
+        );
+		
+		$sql = "SELECT * FROM club WHERE ID = :team_id";
+        $req = $db->prepare($sql);
+        $req->execute($e);
+
+		$results = array();
+		
+        while($rows = $req->fetchObject()) {
+            $results[] = $rows;
+        }
+
+        return $results;
+    }
+	
+			
+	function team_exists($team_id) {
+        global $db;
+		
+        $u = array(
+                'team_id' => $team_id
+        );
+
+        $sql = 'SELECT * FROM club WHERE ID = :team_id';
+        $req = $db->prepare($sql);
+        $req->execute($u);
+
+        $exist = $req->rowCount($sql);
+		
+        return($exist);
+    }
 ?>
 

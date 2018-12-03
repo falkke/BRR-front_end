@@ -77,6 +77,18 @@
 					?>">
 						<a class="nav-link" href="index.php?page=runner-list">Runners</a>
 					</li>
+										
+					<li class="nav-item 
+					<?php
+						if($page == "team-list")
+						{
+					?>
+						active
+					<?php
+						}
+					?>">
+						<a class="nav-link" href="index.php?page=team-list">Teams</a>
+					</li>
 				</ul>
 				
 				
