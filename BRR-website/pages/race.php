@@ -154,7 +154,7 @@
 									<td><?=$race_runner->TotalTime?></td>
 									<td>
 										<?php
-											if($behind == 0)
+											if($behind == "00:00:00")
 											{
 												echo "-";
 											}
