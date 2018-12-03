@@ -20,7 +20,7 @@
 	
 	if(isset($_GET['race']) && !empty($_GET['race'])) 
 	{
-		if(race_exists($_GET['race'])) 
+		if(does_race_exist($_GET['race'])) 
 		{
 			$race = get_race($_GET['race']);
 			$race_runner = get_race_runner($runner_id, $race->ID);

@@ -1,34 +1,28 @@
 <?php
-	/*if(is_logged() == 0) {
-        header('Location:index.php?page=home');
-    }
-	
-	if(isset($_GET['race']) && !empty($_GET['race'])) {
-		$id = $_GET['race'];
+	if(	(isset($_GET['race']) && !empty($_GET['race']))
+	&&	(isset($_GET['remove']) && !empty($_GET['remove']))){
+		$race_id = $_GET['race'];
+		$remove = $_GET['remove'];
 		
-		if(race_exists($id)) {
-			$race = get_race($id);
+		$delete_race_error = "";
+		
+		if($remove == 1) {
+			if(!does_race_exist($race_id)) {
+				$delete_race_error = "This race does not exist.";
+			}
+			
+			else if(!is_race_empty($race_id)) {
+				$delete_race_error = "This race can not be deleted because it has some data.";
+			}
+			
+			else {
+				delete_race($race_id);
+			}
 		}
 		
-		else {
-			header("Location:index.php?page=home");
-		}
+        header('Location:index.php?page=race-list');
 	}
 	
-	if(isset($_POST['submit'])) {
-		$name = htmlspecialchars(trim($_POST['name']));
-		$date = $_POST['date'];
-		
-		if(isset($_GET['race'])) {
-			edit_race($id, $name, $date);
-		}
-		
-		else {
-			add_race($name, $date);
-		}
-		
-        header('Location:index.php?page=home');
-	}*/
 	$search = "";
 	
 	if(isset($_POST['submit'])) {

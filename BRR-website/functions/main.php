@@ -1,4 +1,5 @@
 <?php
+
 	/* INITIALISATION */
 	
     session_start();
@@ -11,33 +12,33 @@
     try {
         $db = new PDO('mysql:host='.$dbhost.';dbname='.$dbname, $dbuser, $dbpassword, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
 	}
+	
     catch(PDOexception $e) {
         die("Error while trying to connect to the database...");
     }
 	
 	
-	/* ADMINISTRATION */
+	/* LOGIN FUNCTIONS */
 	
     function is_logged() {
         if(isset($_SESSION['brr'])) {
-            $logged = 1;
+            return 1;
         }
         else {
-            $logged = 0;
+            return 0;
         }
-
-        return $logged;
     }
 	
 	function user_exist($username, $password) {
         global $db;
-        $u = array(
+		
+        $r = array(
                 'username' => $username
         );
 
-        $sql = 'SELECT * FROM administrator WHERE Username = :username';
+        $sql = "SELECT * FROM administrator WHERE Username = :username";
         $req = $db->prepare($sql);
-        $req->execute($u);
+        $req->execute($r);
 		
 		$hash = $req->fetch()['Password'];
 
@@ -51,12 +52,13 @@
     }
 	
 	
-	/* RACE */
+	/* RACE FUNCTIONS */
 	
 	function get_races() {
         global $db;
 		
         $req = $db->query("SELECT * FROM race ORDER BY id ASC");
+		
         $results = array();
 
         while($rows = $req->fetchObject()) {
@@ -66,49 +68,108 @@
         return $results;
     }
 	
-	function get_race($id) {
+	function get_race($race_id) {
         global $db;
 		
-        $req = $db->query("SELECT * FROM race WHERE ID = '{$id}'");
+        $r = array(
+                'race_id' => $race_id
+        );
+				
+        $sql = "SELECT * FROM race WHERE ID = :race_id";
+        $req = $db->prepare($sql);
+        $req->execute($r);
 		
         $results = $req->fetchObject();
 		
         return $results;
     }
 	
-	function add_race($name, $date) {
+	function add_race($race_name, $race_date) {
         global $db;
         $r = array(
-                'name' => $name,
-                'date' => $date,
+                'race_name' => $race_name,
+                'race_date' => $race_date,
         );
 		
-        $sql = 'INSERT INTO race(Name, Date) VALUES(:name, :date)';
+        $sql = "INSERT INTO race(Name, Date) VALUES(:race_name, :race_date)";
         $req = $db->prepare($sql);
         $req->execute($r);
     }		
 	
-	function edit_race($id, $name, $date) {
+	function edit_race($race_id, $race_name, $race_date) {
         global $db;
+		
         $r = array(
-                'id' => $id,
-                'name' => $name,
-                'date' => $date
+                'race_id' => $race_id,
+                'race_name' => $race_name,
+                'race_date' => $race_date
         );
 		
-        $sql = 'UPDATE race SET Name = :name, Date = :date WHERE ID = :id';
+        $sql = "UPDATE race SET Name = :race_name, Date = :date WHERE ID = :race_id";
         $req = $db->prepare($sql);
         $req->execute($r);
     }
+		
+	function delete_race($race_id) {
+        global $db;
+		
+        $r = array(
+                'race_id' => $race_id
+        );
+		
+        $sql = "DELETE FROM race WHERE ID = :race_id";
+        $req = $db->prepare($sql);
+        $req->execute($r);
+    }
+		
+	function is_race_empty($race_id) {
+        global $db;
+		
+        $r = array(
+                'race_id' => $race_id
+        );
+		
+        $sql = "SELECT * FROM runner_race WHERE Race = :race_id";
+        $req = $db->prepare($sql);
+        $req->execute($r);
+		
+		$empty_runner_race = $req->rowCount($sql);
+		
+        $sql = "SELECT * FROM timestamp WHERE Race = :race_id";
+        $req = $db->prepare($sql);
+        $req->execute($r);
+		
+		$empty_timestamp = $req->rowCount($sql);
+		
+        $sql = "SELECT * FROM runner_units WHERE Race = :race_id";
+        $req = $db->prepare($sql);
+        $req->execute($r);
+		
+		$empty_runner_unit = $req->rowCount($sql);
+		
+        $sql = "SELECT * FROM race_station WHERE Race = :race_id";
+        $req = $db->prepare($sql);
+        $req->execute($r);
+		
+		$empty_race_station = $req->rowCount($sql);
+		
+		if(($empty_runner_race + $empty_timestamp + $empty_runner_unit + $empty_race_station) == 0) {
+			return 1;
+		}
+		
+		else {
+			return 0;
+		}
+    }
 	
-	function race_exists($id) {
+	function does_race_exist($race_id) {
         global $db;
 
         $e = array(
-            'id' => $id
+            'race_id' => $race_id
         );
 
-        $sql = "SELECT * FROM race WHERE ID = :id ";
+        $sql = "SELECT * FROM race WHERE ID = :race_id";
         $req = $db->prepare($sql);
         $req->execute($e);
 
@@ -134,7 +195,7 @@
 	}
 	
 	
-	/* RUNNER */
+	/* RUNNER FUNCTIONS */
 	
 	function get_runners() {
         global $db;

@@ -7,7 +7,7 @@
 	{
 		$id = $_GET['race'];
 		
-		if(race_exists($id)) {
+		if(does_race_exist($id)) {
 			$race = get_race($id);
 		}
 		

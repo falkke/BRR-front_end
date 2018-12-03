@@ -1,16 +1,4 @@
 <?php
-	/*if(isset($_GET['race']) && !empty($_GET['race'])) {
-		$id = $_GET['race'];
-		
-		if(race_exists($id)) {
-			$race = get_race($id);
-		}
-		
-		else {
-			header("Location:index.php?page=home");
-		}
-	}
-	*/
 	$search = "";
 	
 	if(isset($_POST['submit'])) {

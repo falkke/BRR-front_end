@@ -1,34 +1,4 @@
 <?php
-	/*if(is_logged() == 0) {
-        header('Location:index.php?page=home');
-    }
-	
-	if(isset($_GET['race']) && !empty($_GET['race'])) {
-		$id = $_GET['race'];
-		
-		if(race_exists($id)) {
-			$race = get_race($id);
-		}
-		
-		else {
-			header("Location:index.php?page=home");
-		}
-	}
-	
-	if(isset($_POST['submit'])) {
-		$name = htmlspecialchars(trim($_POST['name']));
-		$date = $_POST['date'];
-		
-		if(isset($_GET['race'])) {
-			edit_race($id, $name, $date);
-		}
-		
-		else {
-			add_race($name, $date);
-		}
-		
-        header('Location:index.php?page=home');
-	}*/
 	$search = "";
 	
 	if(isset($_GET['team']) && !empty($_GET['team'])) {

@@ -11,10 +11,10 @@ jQuery(document).ready(function($)
 	});
 });
 
-function DeleteRaceAlert(id) 
+function DeleteRaceAlert(race_id) 
 {
 	if(confirm("Are you sure ?")) 
 	{
-		window.location.href = "index.php?page=home&race=" + id + "&remove=1";
+		window.location.href = "index.php?page=race-list&race=" + race_id + "&remove=1";
 	}
 }
