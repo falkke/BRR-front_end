@@ -504,17 +504,17 @@
 		return $result;		
 	}
 	
-	function get_time_behind_at_timestamp($race_runner)
+	function get_time_behind_at_timestamp($runner_id, $race_id, $lap, $station_id)
 	{
 		global $db;
 		
         $e = array(
-            'id_runner' => $race_runner->Runner,
-            'id_class' => $race_runner->Class,
-            'id_race' => $race_runner->Race
+            'nb_lap' => $lap + 1,
+            'id_station' => $station_id,
+            'id_runner' => $runner_id,
+            'id_race' => $race_id
         );
-
-        $sql = "SELECT TIMEDIFF(r1.TotalTime, r2.TotalTime) AS TimeBehind FROM race_runner AS r1, race_runner AS r2 WHERE r1.Runner = :id_runner AND r1.Race = :id_race AND r1.Class = :id_class AND r2.Place = 1 AND r2.Race = :id_race AND r2.Class = :id_class";
+		$sql = "SELECT TIMEDIFF(t1.timestamp, t2.timestamp) AS TimeBehind FROM timestamp AS t1, timestamp AS t2 WHERE t1.Runner = :id_runner AND t1.Race = :id_race AND t1.lap = :nb_lap AND t1.station = :id_station AND t2.Place = 1 AND t2.Race = :id_race AND t2.lap = :nb_lap AND t2.station = :id_station";
         $req = $db->prepare($sql);
         $req->execute($e);
 		
@@ -522,7 +522,27 @@
 
 		return $result;		
 	}
+
+
+	
+	function get_elapsed_time_at_timestamp($runner_id, $race_id, $lap, $station_id)
+	{
+		global $db;
 		
+        $e = array(
+            'nb_lap' => $lap + 1,
+            'id_station' => $station_id,
+            'id_runner' => $runner_id,
+            'id_race' => $race_id
+        );
+		$sql = "SELECT TIMEDIFF(t1.timestamp, t2.timestamp) AS TimeBehind FROM timestamp AS t1, timestamp AS t2 WHERE t1.Runner = :id_runner AND t1.Race = :id_race AND t1.lap = :nb_lap AND t1.station = :id_station AND t2.Runner = :id_runner AND t2.Race = :id_race AND t2.station = 0";
+        $req = $db->prepare($sql);
+        $req->execute($e);
+		
+		$result = $req->fetch()['TimeBehind'];;
+
+		return $result;		
+	}	
 
 	/* TEAM */	
 
