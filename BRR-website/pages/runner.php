@@ -136,7 +136,8 @@
 					foreach(get_timestamps($runner_id, $race->ID) as $timestamp) {		
 						$station = get_station($timestamp->Station);						
 						$lap = get_number_laps($runner_id, $race->ID, $timestamp->Timestamp, $timestamp->Station);
-						$behind = get_time_behind_at_timestamp($race_runner);
+						$behind = get_time_behind_at_timestamp($runner_id, $race->ID, $lap, $station->ID);
+						$elapsed = get_elapsed_time_at_timestamp($runner_id, $race->ID, $lap, $station->ID)
 						?>	
 							<tr>
 								<td><?=($lap * 10) + $station->LengthFromStart?></td>
@@ -152,10 +153,14 @@
 											}
 										?>
 								</td>
-								<td></td>
+								<td>
+										<?php 
+											echo $elapsed; 
+										?>
+								</td>
 								<td>
 										<?php
-											if($behind == 0)
+											if($behind == "00:00:00")
 											{
 												echo "-";
 											}
