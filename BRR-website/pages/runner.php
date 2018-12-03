@@ -133,7 +133,6 @@
 			</thead>
 			<tbody>
 				<?php
-					$lap = -1;
 					foreach(get_timestamps($runner_id, $race->ID) as $timestamp) {		
 						$station = get_station($timestamp->Station);						
 						$lap = get_number_laps($runner_id, $race->ID, $timestamp->Timestamp, $timestamp->Station);
