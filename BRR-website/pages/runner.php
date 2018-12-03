@@ -137,13 +137,35 @@
 					foreach(get_timestamps($runner_id, $race->ID) as $timestamp) {		
 						$station = get_station($timestamp->Station);						
 						$lap = get_number_laps($runner_id, $race->ID, $timestamp->Timestamp, $timestamp->Station);
-				
+						$behind = get_time_behind_at_timestamp($race_runner);
 						?>	
 							<tr>
 								<td><?=($lap * 10) + $station->LengthFromStart?></td>
-								<td><?=$timestamp->Place?></td>
+								<td>
+										<?php
+											if($timestamp->Station == 0)
+											{
+												echo "-";
+											}
+											else
+											{
+												echo $timestamp->Place;
+											}
+										?>
+								</td>
 								<td></td>
-								<td></td>
+								<td>
+										<?php
+											if($behind == 0)
+											{
+												echo "-";
+											}
+											else
+											{
+												echo "+" . $behind;
+											}
+										?>
+								</td>
 								<td><?=$timestamp->Timestamp?></td>						
 								<?php
 									if(is_logged() == 1)

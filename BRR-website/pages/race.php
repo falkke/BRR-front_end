@@ -140,7 +140,9 @@
 					
 						if(($class->Gender == $_GET['gender']) && ($class->Distance == $_GET['distance'])) 
 						{
-							$runner = get_runner($race_runner->Runner);			
+							$runner = get_runner($race_runner->Runner);
+							$timestamp = get_last_timestamp($race_runner->Runner, $race_runner->Race);
+							$behind = get_time_behind($race_runner);
 							$team = get_race_runner_team($race_runner->Runner, $race_runner->Race);
 						
 							?>	
@@ -150,8 +152,30 @@
 									<td><?=$runner->FirstName." ".$runner->LastName?></td>
 									<td><?=$team->Name?></td>
 									<td><?=$race_runner->TotalTime?></td>
-									<td></td>
-									<td></td>
+									<td>
+										<?php
+											if($behind == 0)
+											{
+												echo "-";
+											}
+											else
+											{
+												echo "+" . $behind;
+											}
+										?>
+									</td>
+									<td>
+										<?php
+											if($timestamp != null)
+											{
+												echo $timestamp->Timestamp;
+											}
+											else
+											{
+												echo "-";
+											}
+										?>
+									</td>
 									<td><?=$race_runner->Status?></td>				
 									<?php
 										if(is_logged() == 1)

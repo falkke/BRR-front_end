@@ -428,6 +428,26 @@
 		return $results;
 	}
 	
+	function get_last_timestamp($id_runner, $id_race)
+	{
+		global $db;
+		
+        $e = array(
+            'id_runner' => $id_runner,
+            'id_race' => $id_race
+        );
+
+        $sql = "SELECT * FROM timestamp WHERE Timestamp = (SELECT MAX(Timestamp) FROM timestamp WHERE Runner = :id_runner AND Race = :id_race)";
+        $req = $db->prepare($sql);
+        $req->execute($e);
+		
+		$results = array();
+		
+		$result = $req->fetchObject();
+
+		return $result;
+	}
+	
 	function get_station($id_station) 
 	{
 		global $db;
@@ -463,6 +483,44 @@
 		$result = $req->fetch()['Count'];
 
 		return $result;
+	}
+	
+	function get_time_behind($race_runner)
+	{
+		global $db;
+		
+        $e = array(
+            'id_runner' => $race_runner->Runner,
+            'id_class' => $race_runner->Class,
+            'id_race' => $race_runner->Race
+        );
+
+        $sql = "SELECT TIMEDIFF(r1.TotalTime, r2.TotalTime) AS TimeBehind FROM race_runner AS r1, race_runner AS r2 WHERE r1.Runner = :id_runner AND r1.Race = :id_race AND r1.Class = :id_class AND r2.Place = 1 AND r2.Race = :id_race AND r2.Class = :id_class";
+        $req = $db->prepare($sql);
+        $req->execute($e);
+		
+		$result = $req->fetch()['TimeBehind'];;
+
+		return $result;		
+	}
+	
+	function get_time_behind_at_timestamp($race_runner)
+	{
+		global $db;
+		
+        $e = array(
+            'id_runner' => $race_runner->Runner,
+            'id_class' => $race_runner->Class,
+            'id_race' => $race_runner->Race
+        );
+
+        $sql = "SELECT TIMEDIFF(r1.TotalTime, r2.TotalTime) AS TimeBehind FROM race_runner AS r1, race_runner AS r2 WHERE r1.Runner = :id_runner AND r1.Race = :id_race AND r1.Class = :id_class AND r2.Place = 1 AND r2.Race = :id_race AND r2.Class = :id_class";
+        $req = $db->prepare($sql);
+        $req->execute($e);
+		
+		$result = $req->fetch()['TimeBehind'];;
+
+		return $result;		
 	}
 						
 ?>
