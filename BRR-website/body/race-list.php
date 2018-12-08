@@ -23,9 +23,14 @@
 	}
 	
 	$search = "";
+	$sort = "";
 	
 	if(isset($_POST['submit'])) {
 		$search = htmlspecialchars(trim($_POST['search']));
+	}
+	
+	if(isset($_GET['sort_word']) && isset($_GET['sort_by'])) {
+		$sort = "ORDER BY ".$_GET['sort_word']." ".$_GET['sort_by'];
 	}
 ?>
 
@@ -80,12 +85,90 @@
 				if(is_logged() == 1)
 				{
 			?>
-				<th>ID</th>
+				<th>
+					<a class="sort" href="index.php?page=<?=$_GET['page']?>
+					<?php
+					if(isset($_GET['list']))
+					{
+					?>
+						&list=<?=$_GET['list']?>
+					<?php
+					}
+					?>
+					&sort_word=ID
+					<?php
+					if(isset($_GET['sort_word']) && $_GET['sort_word'] == "ID" &&
+						isset($_GET['sort_by']) && $_GET['sort_by'] == "ASC")
+					{
+					?>
+						&sort_by=DESC
+					<?php
+					}
+					else
+					{
+					?>
+						&sort_by=ASC
+					<?php
+					}
+					?>">ID</a>
+				</th>
 			<?php
 				}
 			?>
-			<th>Name</th>
-			<th>Date</th>
+			<th>
+				<a class="sort" href="index.php?page=<?=$_GET['page']?>
+				<?php
+				if(isset($_GET['list']))
+				{
+				?>
+					&list=<?=$_GET['list']?>
+				<?php
+				}
+				?>
+				&sort_word=Name
+				<?php
+				if(isset($_GET['sort_word']) && $_GET['sort_word'] == "Name" &&
+					isset($_GET['sort_by']) && $_GET['sort_by'] == "ASC")
+				{
+				?>
+					&sort_by=DESC
+				<?php
+				}
+				else
+				{
+				?>
+					&sort_by=ASC
+				<?php
+				}
+				?>">Name</a>
+			</th>
+			<th>
+				<a class="sort" href="index.php?page=<?=$_GET['page']?>
+				<?php
+				if(isset($_GET['list']))
+				{
+				?>
+					&list=<?=$_GET['list']?>
+				<?php
+				}
+				?>
+				&sort_word=Date
+				<?php
+				if(isset($_GET['sort_word']) && $_GET['sort_word'] == "Date" &&
+					isset($_GET['sort_by']) && $_GET['sort_by'] == "ASC")
+				{
+				?>
+					&sort_by=DESC
+				<?php
+				}
+				else
+				{
+				?>
+					&sort_by=ASC
+				<?php
+				}
+				?>">Date</a>
+			</th>
 			<?php
 				if(is_logged() == 1)
 				{
@@ -100,7 +183,7 @@
 	</thead>
 	<tbody>
 		<?php
-			foreach(search_race($search) as $race) {		
+			foreach(search_race($search, $sort) as $race) {		
 				?>		
 				<tr class='clickable-row' data-href="index.php?page=race&race=<?=$race->ID ?>">
 					<?php

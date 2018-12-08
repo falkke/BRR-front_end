@@ -23,13 +23,18 @@
 	}*/
 
 	$search = "";
+	$sort = "";
 	
 	if(isset($_POST['submit'])) {
 		$search = htmlspecialchars(trim($_POST['search']));
 	}
+	
+	if(isset($_GET['sort_word']) && isset($_GET['sort_by'])) {
+		$sort = "ORDER BY ".$_GET['sort_word']." ".$_GET['sort_by'];
+	}
 ?>
 
-<h2 class="page-title">Team List</h2>
+<h2 class="page-title">SI-Unit List</h2>
 		
 <?php
 	/*if(isset($delete_team_error)) {
@@ -74,8 +79,60 @@
 <table class="table table-bordered table-striped table-condensed">           
 	<thead>
 		<tr>
-			<th>ID</th>
-			<th>Status</th>
+			<th>
+				<a class="sort" href="index.php?page=<?=$_GET['page']?>
+				<?php
+				if(isset($_GET['list']))
+				{
+				?>
+					&list=<?=$_GET['list']?>
+				<?php
+				}
+				?>
+				&sort_word=ID
+				<?php
+				if(isset($_GET['sort_word']) && $_GET['sort_word'] == "ID" &&
+					isset($_GET['sort_by']) && $_GET['sort_by'] == "ASC")
+				{
+				?>
+					&sort_by=DESC
+				<?php
+				}
+				else
+				{
+				?>
+					&sort_by=ASC
+				<?php
+				}
+				?>">ID</a>
+			</th>
+			<th>
+				<a class="sort" href="index.php?page=<?=$_GET['page']?>
+				<?php
+				if(isset($_GET['list']))
+				{
+				?>
+					&list=<?=$_GET['list']?>
+				<?php
+				}
+				?>
+				&sort_word=Status
+				<?php
+				if(isset($_GET['sort_word']) && $_GET['sort_word'] == "Status" &&
+					isset($_GET['sort_by']) && $_GET['sort_by'] == "ASC")
+				{
+				?>
+					&sort_by=DESC
+				<?php
+				}
+				else
+				{
+				?>
+					&sort_by=ASC
+				<?php
+				}
+				?>">Status</a>
+			</th>
 			<th>
 				<a class="bg-success text-white table-button" href="index.php?page=manage-si-unit">+</a>
 			</th>
@@ -83,7 +140,7 @@
 	</thead>
 	<tbody>
 	<?php
-		foreach(search_si_unit($search) as $si_unit) {		
+		foreach(search_si_unit($search, $sort) as $si_unit) {		
 			?>		
 				<tr>
 					<td><?=$si_unit->ID?></td>

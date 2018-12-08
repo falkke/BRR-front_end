@@ -22,10 +22,16 @@
 		}
 	}*/
 
+
 	$search = "";
+	$sort = "";
 	
 	if(isset($_POST['submit'])) {
 		$search = htmlspecialchars(trim($_POST['search']));
+	}
+	
+	if(isset($_GET['sort_word']) && isset($_GET['sort_by'])) {
+		$sort = "ORDER BY ".$_GET['sort_word']." ".$_GET['sort_by'];
 	}
 ?>
 
@@ -74,10 +80,114 @@
 <table class="table table-bordered table-striped table-condensed">           
 	<thead>
 		<tr>
-			<th>ID</th>
-			<th>Name</th>
-			<th>Code</th>
-			<th>Length From Start</th>
+			<th>
+				<a class="sort" href="index.php?page=<?=$_GET['page']?>
+				<?php
+				if(isset($_GET['list']))
+				{
+				?>
+					&list=<?=$_GET['list']?>
+				<?php
+				}
+				?>
+				&sort_word=ID
+				<?php
+				if(isset($_GET['sort_word']) && $_GET['sort_word'] == "ID" &&
+					isset($_GET['sort_by']) && $_GET['sort_by'] == "ASC")
+				{
+				?>
+					&sort_by=DESC
+				<?php
+				}
+				else
+				{
+				?>
+					&sort_by=ASC
+				<?php
+				}
+				?>">ID</a>
+			</th>
+			<th>
+				<a class="sort" href="index.php?page=<?=$_GET['page']?>
+				<?php
+				if(isset($_GET['list']))
+				{
+				?>
+					&list=<?=$_GET['list']?>
+				<?php
+				}
+				?>
+				&sort_word=Name
+				<?php
+				if(isset($_GET['sort_word']) && $_GET['sort_word'] == "Name" &&
+					isset($_GET['sort_by']) && $_GET['sort_by'] == "ASC")
+				{
+				?>
+					&sort_by=DESC
+				<?php
+				}
+				else
+				{
+				?>
+					&sort_by=ASC
+				<?php
+				}
+				?>">Name</a>
+			</th>
+			<th>
+				<a class="sort" href="index.php?page=<?=$_GET['page']?>
+				<?php
+				if(isset($_GET['list']))
+				{
+				?>
+					&list=<?=$_GET['list']?>
+				<?php
+				}
+				?>
+				&sort_word=Code
+				<?php
+				if(isset($_GET['sort_word']) && $_GET['sort_word'] == "Code" &&
+					isset($_GET['sort_by']) && $_GET['sort_by'] == "ASC")
+				{
+				?>
+					&sort_by=DESC
+				<?php
+				}
+				else
+				{
+				?>
+					&sort_by=ASC
+				<?php
+				}
+				?>">Code</a>
+			</th>
+			<th>
+				<a class="sort" href="index.php?page=<?=$_GET['page']?>
+				<?php
+				if(isset($_GET['list']))
+				{
+				?>
+					&list=<?=$_GET['list']?>
+				<?php
+				}
+				?>
+				&sort_word=LengthFromStart
+				<?php
+				if(isset($_GET['sort_word']) && $_GET['sort_word'] == "LengthFromStart" &&
+					isset($_GET['sort_by']) && $_GET['sort_by'] == "ASC")
+				{
+				?>
+					&sort_by=DESC
+				<?php
+				}
+				else
+				{
+				?>
+					&sort_by=ASC
+				<?php
+				}
+				?>">Length From Start</a>
+			</th>
 			<th>
 				<a class="bg-success text-white table-button" href="index.php?page=manage-station">+</a>
 			</th>
@@ -85,7 +195,7 @@
 	</thead>
 	<tbody>
 	<?php
-		foreach(search_station($search) as $station) {		
+		foreach(search_station($search, $sort) as $station) {		
 			?>		
 				<tr>
 					<td><?=$station->ID?></td>

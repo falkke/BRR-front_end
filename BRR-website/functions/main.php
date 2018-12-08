@@ -178,11 +178,11 @@
         return($exist);
     }
 	
-	function search_race($keyword) 
+	function search_race($keyword, $sort) 
 	{
 		global $db;
 
-        $req = $db->query("SELECT * FROM race WHERE Name LIKE '%{$keyword}%'");
+        $req = $db->query("SELECT * FROM race WHERE Name LIKE '%{$keyword}%' {$sort}");
 
 		$results = array();
 		
@@ -668,11 +668,11 @@
 	
 	/* TEAM FUNCTIONS */	
 
-	function search_team($keyword) 
+	function search_team($keyword, $sort) 
 	{
 		global $db;
 
-        $req = $db->query("SELECT * FROM club WHERE Name LIKE '%{$keyword}%'");
+        $req = $db->query("SELECT * FROM club WHERE Name LIKE '%{$keyword}%' {$sort}");
 
 		$results = array();
 		
@@ -825,11 +825,11 @@
 	
 	/* STATION FUNCTIONS */
 	
-	function search_station($keyword) 
+	function search_station($keyword, $sort) 
 	{
 		global $db;
 
-        $req = $db->query("SELECT * FROM station WHERE Name LIKE '%{$keyword}%'");
+        $req = $db->query("SELECT * FROM station WHERE Name LIKE '%{$keyword}%' {$sort}");
 
 		$results = array();
 		
@@ -844,11 +844,11 @@
 	
 	/* CATEGORY FUNCTIONS */
 	
-	function search_category($keyword) 
+	function search_category($keyword, $sort) 
 	{
 		global $db;
 
-        $req = $db->query("SELECT * FROM class WHERE Gender LIKE '%{$keyword}%'");
+        $req = $db->query("SELECT * FROM class WHERE Gender LIKE '%{$keyword}%' {$sort}");
 
 		$results = array();
 		
@@ -863,11 +863,11 @@
 	
 	/* SI-UNIT FUNCTIONS */
 	
-	function search_si_unit($keyword) 
+	function search_si_unit($keyword, $sort) 
 	{
 		global $db;
 
-        $req = $db->query("SELECT * FROM si_unit WHERE Status LIKE '%{$keyword}%'");
+        $req = $db->query("SELECT * FROM si_unit WHERE Status LIKE '%{$keyword}%' {$sort}");
 
 		$results = array();
 		

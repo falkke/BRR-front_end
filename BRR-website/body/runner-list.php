@@ -23,18 +23,15 @@
 	}
 
 	$search = "";
-	$sort = "ORDER BY ID ASC";
-	$test = "1";
+	$sort = "";
 	
 	if(isset($_POST['submit'])) {
 		$search = htmlspecialchars(trim($_POST['search']));
 	}
 	
-	if(isset($_GET['sort_word']) && isset($_GET['sort_by'])) { 
-		$sort = "ORDER BY ID DESC";
+	if(isset($_GET['sort_word']) && isset($_GET['sort_by'])) {
 		$sort = "ORDER BY ".$_GET['sort_word']." ".$_GET['sort_by'];
 	}
-
 ?>
 
 <h2 class="page-title">Runner List</h2>

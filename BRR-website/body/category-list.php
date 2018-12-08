@@ -22,10 +22,16 @@
 		}
 	}*/
 
+
 	$search = "";
+	$sort = "";
 	
 	if(isset($_POST['submit'])) {
 		$search = htmlspecialchars(trim($_POST['search']));
+	}
+	
+	if(isset($_GET['sort_word']) && isset($_GET['sort_by'])) {
+		$sort = "ORDER BY ".$_GET['sort_word']." ".$_GET['sort_by'];
 	}
 ?>
 
@@ -74,9 +80,87 @@
 <table class="table table-bordered table-striped table-condensed">           
 	<thead>
 		<tr>
-			<th>ID</th>
-			<th>Gender</th>
-			<th>Distance</th>
+			<th>
+				<a class="sort" href="index.php?page=<?=$_GET['page']?>
+				<?php
+				if(isset($_GET['list']))
+				{
+				?>
+					&list=<?=$_GET['list']?>
+				<?php
+				}
+				?>
+				&sort_word=ID
+				<?php
+				if(isset($_GET['sort_word']) && $_GET['sort_word'] == "ID" &&
+					isset($_GET['sort_by']) && $_GET['sort_by'] == "ASC")
+				{
+				?>
+					&sort_by=DESC
+				<?php
+				}
+				else
+				{
+				?>
+					&sort_by=ASC
+				<?php
+				}
+				?>">ID</a>
+			</th>
+			<th>
+				<a class="sort" href="index.php?page=<?=$_GET['page']?>
+				<?php
+				if(isset($_GET['list']))
+				{
+				?>
+					&list=<?=$_GET['list']?>
+				<?php
+				}
+				?>
+				&sort_word=Gender
+				<?php
+				if(isset($_GET['sort_word']) && $_GET['sort_word'] == "Gender" &&
+					isset($_GET['sort_by']) && $_GET['sort_by'] == "ASC")
+				{
+				?>
+					&sort_by=DESC
+				<?php
+				}
+				else
+				{
+				?>
+					&sort_by=ASC
+				<?php
+				}
+				?>">Gender</a>
+			</th>
+			<th>
+				<a class="sort" href="index.php?page=<?=$_GET['page']?>
+				<?php
+				if(isset($_GET['list']))
+				{
+				?>
+					&list=<?=$_GET['list']?>
+				<?php
+				}
+				?>
+				&sort_word=Distance
+				<?php
+				if(isset($_GET['sort_word']) && $_GET['sort_word'] == "Distance" &&
+					isset($_GET['sort_by']) && $_GET['sort_by'] == "ASC")
+				{
+				?>
+					&sort_by=DESC
+				<?php
+				}
+				else
+				{
+				?>
+					&sort_by=ASC
+				<?php
+				}
+				?>">Distance</a>
+			</th>
 			<?php
 				if(is_logged() == 1)
 				{
@@ -91,7 +175,7 @@
 	</thead>
 	<tbody>
 	<?php
-		foreach(search_category($search) as $category) {		
+		foreach(search_category($search, $sort) as $category) {		
 			?>		
 				<tr>
 					<td><?=$category->ID?></td>
