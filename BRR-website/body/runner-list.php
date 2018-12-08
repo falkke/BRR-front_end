@@ -24,6 +24,7 @@
 
 	$search = "";
 	$sort = "ORDER BY ID ASC";
+	$test = "1";
 	
 	if(isset($_POST['submit'])) {
 		$search = htmlspecialchars(trim($_POST['search']));
@@ -73,7 +74,7 @@
 						value="<?= $_POST['search']?>"
 					<?php
 				}
-			?>>    
+			?>>
 		<span class="input-group-btn">
 			<button class="btn  btn-default" type="submit" id="submit" name="submit">Search</button>
 		</span>
@@ -87,69 +88,117 @@
 				if(is_logged() == 1)
 				{
 			?>
+					<th>
+						<a class="sort" href="index.php?page=<?=$_GET['page']?>
+						<?php
+						if(isset($_GET['list']))
+						{
+						?>
+							&list=<?=$_GET['list']?>
+						<?php
+						}
+						?>
+						&sort_word=ID
+						<?php
+						if(isset($_GET['sort_word']) && $_GET['sort_word'] == "ID" &&
+							isset($_GET['sort_by']) && $_GET['sort_by'] == "ASC")
+						{
+						?>
+							&sort_by=DESC
+						<?php
+						}
+						else
+						{
+						?>
+							&sort_by=ASC
+						<?php
+						}
+						?>">ID</a>
+					</th>
 			<?php
-				if(isset($_GET['sort_word']) && isset($_GET['sort_by'])
-					&& $_GET['sort_word'] == "ID" && $_GET['sort_by'] == "ASC")
-				{
+				}
 			?>
-					<th><a class="sort" href="index.php?page=runners&sort_word=ID&sort_by=DESC">ID</a></th>
-			<?php
+			<th>
+				<a class="sort" href="index.php?page=<?=$_GET['page']?>
+				<?php
+				if(isset($_GET['list']))
+				{
+				?>
+					&list=<?=$_GET['list']?>
+				<?php
+				}
+				?>
+				&sort_word=LastName
+				<?php
+				if(isset($_GET['sort_word']) && $_GET['sort_word'] == "LastName" &&
+					isset($_GET['sort_by']) && $_GET['sort_by'] == "ASC")
+				{
+				?>
+					&sort_by=DESC
+				<?php
 				}
 				else
 				{
-			?>
-					<th><a class="sort" href="index.php?page=runners&sort_word=ID&sort_by=ASC">ID</a></th>
-			<?php
+				?>
+					&sort_by=ASC
+				<?php
 				}
-			?>
-			<?php
-				}
-			?>
-			<?php
-				if(isset($_GET['sort_word']) && isset($_GET['sort_by'])
-					&& $_GET['sort_word'] == "LastName" && $_GET['sort_by'] == "ASC")
+				?>">Name</a>
+			</th>
+			<th>
+				<a class="sort" href="index.php?page=<?=$_GET['page']?>
+				<?php
+				if(isset($_GET['list']))
 				{
-			?>
-					<th><a class="sort" href="index.php?page=runners&sort_word=LastName&sort_by=DESC">Name</a></th>
-			<?php
+				?>
+					&list=<?=$_GET['list']?>
+				<?php
+				}
+				?>
+				&sort_word=DateOfBirth
+				<?php
+				if(isset($_GET['sort_word']) && $_GET['sort_word'] == "DateOfBirth" &&
+					isset($_GET['sort_by']) && $_GET['sort_by'] == "ASC")
+				{
+				?>
+					&sort_by=DESC
+				<?php
 				}
 				else
 				{
-			?>
-					<th><a class="sort" href="index.php?page=runners&sort_word=LastName&sort_by=ASC">Name</a></th>
-			<?php
+				?>
+					&sort_by=ASC
+				<?php
 				}
-			?>
-			<?php
-				if(isset($_GET['sort_word']) && isset($_GET['sort_by'])
-					&& $_GET['sort_word'] == "DateOfBirth" && $_GET['sort_by'] == "ASC")
+				?>">Date Of Birth</a>
+			</th>
+			<th>
+				<a class="sort" href="index.php?page=<?=$_GET['page']?>
+				<?php
+				if(isset($_GET['list']))
 				{
-			?>
-					<th><a class="sort" href="index.php?page=runners&sort_word=DateOfBirth&sort_by=DESC">Date Of Birth</a></th>
-			<?php
+				?>
+					&list=<?=$_GET['list']?>
+				<?php
+				}
+				?>
+				&sort_word=Gender
+				<?php
+				if(isset($_GET['sort_word']) && $_GET['sort_word'] == "Gender" &&
+					isset($_GET['sort_by']) && $_GET['sort_by'] == "ASC")
+				{
+				?>
+					&sort_by=DESC
+				<?php
 				}
 				else
 				{
-			?>
-					<th><a class="sort" href="index.php?page=runners&sort_word=DateOfBirth&sort_by=ASC">Date Of Birth</a></th>
-			<?php
+				?>
+					&sort_by=ASC
+				<?php
 				}
-			?>
-			<?php
-				if(isset($_GET['sort_word']) && isset($_GET['sort_by'])
-					&& $_GET['sort_word'] == "Gender" && $_GET['sort_by'] == "ASC")
-				{
-			?>
-					<th><a class="sort" href="index.php?page=runners&sort_word=Gender&sort_by=DESC">Gender</a></th>
-			<?php
-				}
-				else
-				{
-			?>
-					<th><a class="sort" href="index.php?page=runners&sort_word=Gender&sort_by=ASC">Gender</a></th>
-			<?php
-				}
-			?>
+				?>">Gender</a>
+			</th>
 			<?php
 				if(is_logged() == 1)
 				{
