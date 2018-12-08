@@ -9,6 +9,17 @@ html, body {
 	height: 100%;
 }
 
+.sort {
+    display: block;
+	color: black;
+	cursor: pointer;
+}
+
+.sort:hover {
+	text-decoration: none;
+	color: grey;
+}
+
 .link-title {
 	color: black;
 	cursor: pointer;

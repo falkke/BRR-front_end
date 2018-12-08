@@ -4,7 +4,7 @@
 	if(isset($_GET['team']) && !empty($_GET['team'])) {
 		$team_id = $_GET['team'];
 		
-		if(team_exists($team_id)) {
+		if(does_team_exist($team_id)) {
 			$team = get_team($team_id);
 		}
 		

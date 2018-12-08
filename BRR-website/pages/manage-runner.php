@@ -6,7 +6,7 @@
 	if(isset($_GET['runner']) && !empty($_GET['runner'])) {
 		$id = $_GET['runner'];
 		
-		if(runner_exists($id)) {
+		if(does_runner_exist($id)) {
 			$runner = get_runner($id);
 		}
 		
@@ -16,7 +16,6 @@
 	}
 	
 	if(isset($_POST['submit'])) {
-		//$ssn = htmlspecialchars(trim($_POST['ssn']));
 		$first_name = htmlspecialchars(trim($_POST['first_name']));
 		$last_name = htmlspecialchars(trim($_POST['last_name']));
 		$birth_date = $_POST['birth_date'];
@@ -24,13 +23,13 @@
 		
 		if(isset($_GET['runner'])) {
 			edit_runner($id, $first_name, $last_name, $birth_date, $gender);
+			header('Location:index.php?page=runners&runner-modified=1');
 		}
 		
 		else {
 			add_runner($first_name, $last_name, $birth_date, $gender);
+			header('Location:index.php?page=runners&runner-added=1');
 		}
-		
-        header('Location:index.php?page=runner-list');
 	}
 ?>
 
@@ -55,18 +54,6 @@
 		</h2>
 		
 		<form method="post" class="form-horizontal form-add-edit">
-			<!--
-			<div class="form-group">
-				<label for="ssn" class="col-lg-3 d-inline-block control-label h-100">Social Security Number : </label>
-				<input id="ssn" type="text" class="col-lg-9 d-inline-block form-control h-100">
-			</div>
-		
-			<div class="form-group">
-				<label for="bib" class="col-lg-3 d-inline-block control-label h-100">Bib : </label>
-				<input id="bib" type="text" class="col-lg-9 d-inline-block form-control h-100">
-			</div>
-			-->
-			
 			<div class="form-group">
 				<label for="first_name" class="col-lg-3 d-inline-block  control-label">First Name : </label>
 				<input id="first_name" name="first_name" type="text" class="col-lg-9 d-inline-block form-control h-100" required autofocus <?php
@@ -133,22 +120,6 @@
 					>Woman</option>
 				</select>
 			</div>	
-			
-			<!--
-			<div class="form-group">
-				<label for="race-type" class="col-lg-3 d-inline-block control-label">Race Type : </label>
-				<select id="race-type" class="col-lg-9 d-inline-block form-control h-100">
-					<option>100 miles</option>
-					<option>50 miles</option>
-					<option>20 miles</option>
-				</select>
-			</div>
-			
-			<div class="form-group">
-				<label for="team" class="col-lg-3 d-inline-block  control-label">Team : </label>
-				<input id="team" type="text" class="col-lg-9 d-inline-block  form-control h-100">
-			</div>
-			-->
 			
 			<div class="form-group">
 				<div class="col-lg-3 d-inline-block"></div>

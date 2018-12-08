@@ -79,9 +79,9 @@
         $req = $db->prepare($sql);
         $req->execute($r);
 		
-        $results = $req->fetchObject();
+        $result = $req->fetchObject();
 		
-        return $results;
+        return $result;
     }
 	
 	function add_race($race_name, $race_date) {
@@ -105,7 +105,7 @@
                 'race_date' => $race_date
         );
 		
-        $sql = "UPDATE race SET Name = :race_name, Date = :date WHERE ID = :race_id";
+        $sql = "UPDATE race SET Name = :race_name, Date = :race_date WHERE ID = :race_id";
         $req = $db->prepare($sql);
         $req->execute($r);
     }
@@ -129,11 +129,11 @@
                 'race_id' => $race_id
         );
 		
-        $sql = "SELECT * FROM runner_race WHERE Race = :race_id";
+        $sql = "SELECT * FROM race_runner WHERE Race = :race_id";
         $req = $db->prepare($sql);
         $req->execute($r);
 		
-		$empty_runner_race = $req->rowCount($sql);
+		$empty_race_runner = $req->rowCount($sql);
 		
         $sql = "SELECT * FROM timestamp WHERE Race = :race_id";
         $req = $db->prepare($sql);
@@ -153,7 +153,7 @@
 		
 		$empty_race_station = $req->rowCount($sql);
 		
-		if(($empty_runner_race + $empty_timestamp + $empty_runner_unit + $empty_race_station) == 0) {
+		if(($empty_race_runner + $empty_timestamp + $empty_runner_unit + $empty_race_station) == 0) {
 			return 1;
 		}
 		
@@ -210,54 +210,108 @@
         return $results;
     }
 	
-	function get_runner($id) {
+	function get_runner($runner_id) {
         global $db;
 		
-        $req = $db->query("SELECT * FROM runner WHERE ID = '{$id}'");
-		
-        $results = $req->fetchObject();
-		
-        return $results;
-    }
-	
-	function add_runner($first_name, $last_name, $birth_date, $gender) {
-        global $db;
-        $r = array(
-                'first_name' => $first_name,
-                'last_name' => $last_name,
-                'birth_date' => $birth_date,
-				'gender' => $gender
+		$e = array(
+            'runner_id' => $runner_id
         );
 		
-        $sql = 'INSERT INTO runner(FirstName, LastName, DateOfBirth, Gender) VALUES(:first_name, :last_name, :birth_date, :gender)';
+		$sql = "SELECT * FROM runner WHERE ID = :runner_id";
+        $req = $db->prepare($sql);
+        $req->execute($e);
+		
+        $result = $req->fetchObject();
+		
+        return $result;
+    }
+	
+	function add_runner($runner_first_name, $runner_last_name, $runner_birth_date, $runner_gender) {
+        global $db;
+		
+        $e = array(
+                'runner_first_name' => $runner_first_name,
+                'runner_last_name' => $runner_last_name,
+                'runner_birth_date' => $runner_birth_date,
+				'runner_gender' => $runner_gender
+        );
+		
+        $sql = "INSERT INTO runner(FirstName, LastName, DateOfBirth, Gender) VALUES(:runner_first_name, :runner_last_name, :runner_birth_date, :runner_gender)";
+        $req = $db->prepare($sql);
+        $req->execute($e);
+    }
+	
+	function edit_runner($runner_id, $runner_first_name, $runner_last_name, $runner_birth_date) {
+        global $db;
+		
+        $e = array(
+                'runner_id' => $runner_id,
+                'runner_first_name' => $runner_first_name,
+                'runner_last_name' => $runner_last_name,
+                'runner_birth_date' => $runner_birth_date,
+        );
+		
+		
+        $sql = "UPDATE runner SET FirstName = :runner_first_name, LastName = :runner_last_name, DateOfBirth = :runner_birth_date WHERE ID = :runner_id";
+        $req = $db->prepare($sql);
+        $req->execute($e);
+    }
+	
+	function delete_runner($runner_id) {
+        global $db;
+		
+        $r = array(
+                'runner_id' => $runner_id
+        );
+		
+        $sql = "DELETE FROM runner WHERE ID = :runner_id";
         $req = $db->prepare($sql);
         $req->execute($r);
     }
-	
-	function edit_runner($id, $first_name, $last_name, $birth_date) {
+		
+	function is_runner_empty($runner_id) {
         global $db;
+		
         $r = array(
-                'id' => $id,
-                'first_name' => $first_name,
-                'last_name' => $last_name,
-                'birth_date' => $birth_date,
+                'runner_id' => $runner_id
         );
 		
-		
-        $sql = 'UPDATE runner SET FirstName = :first_name, LastName = :last_name, DateOfBirth = :birth_date WHERE ID = :id';
+        $sql = "SELECT * FROM race_runner WHERE Runner = :runner_id";
         $req = $db->prepare($sql);
         $req->execute($r);
+		
+		$empty_race_runner = $req->rowCount($sql);
+		
+        $sql = "SELECT * FROM timestamp WHERE Runner = :runner_id";
+        $req = $db->prepare($sql);
+        $req->execute($r);
+		
+		$empty_timestamp = $req->rowCount($sql);
+		
+        $sql = "SELECT * FROM runner_units WHERE Runner = :runner_id";
+        $req = $db->prepare($sql);
+        $req->execute($r);
+		
+		$empty_runner_unit = $req->rowCount($sql);
+		
+		if(($empty_race_runner + $empty_timestamp + $empty_runner_unit) == 0) {
+			return 1;
+		}
+		
+		else {
+			return 0;
+		}
     }
 	
-	function runner_exists($id) 
+	function does_runner_exist($runner_id) 
 	{
         global $db;
 
         $e = array(
-            'id' => $id
+            'runner_id' => $runner_id
         );
 
-        $sql = "SELECT * FROM runner WHERE ID = :id";
+        $sql = "SELECT * FROM runner WHERE ID = :runner_id";
         $req = $db->prepare($sql);
         $req->execute($e);
 
@@ -266,11 +320,11 @@
         return($exist);
     }
 	
-	function search_runner($keyword) 
+	function search_runner($keyword, $sort) 
 	{
 		global $db;
 
-        $req = $db->query("SELECT * FROM runner WHERE CONCAT(FirstName, ' ', LastName) LIKE '%{$keyword}%'");
+        $req = $db->query("SELECT * FROM runner WHERE CONCAT(FirstName, ' ', LastName) LIKE '%{$keyword}%' {$sort}");
 
 		$results = array();
 		
@@ -283,18 +337,18 @@
 	}
 	
 	
-	/* RACE RUNNER*/
+	/* RACE RUNNER FUNCTIONS*/
 	
-	function get_race_runner($id_runner, $id_race) 
+	function get_race_runner($runner_id, $race_id) 
 	{
 		global $db;
 		
         $e = array(
-            'id_runner' => $id_runner,
-            'id_race' => $id_race
+            'runner_id' => $runner_id,
+            'race_id' => $race_id
         );
 
-        $sql = "SELECT * FROM race_runner WHERE Runner = :id_runner AND Race = :id_race";
+        $sql = "SELECT * FROM race_runner WHERE Runner = :runner_id AND Race = :race_id";
         $req = $db->prepare($sql);
         $req->execute($e);
 
@@ -303,15 +357,15 @@
         return $result;
 	}
 	
-	function get_race_runners($id_race, $keyword) 
+	function get_race_runners($race_id, $keyword) 
 	{
 		global $db;
 		
         $e = array(
-            'id_race' => $id_race
+            'race_id' => $race_id
         );
 
-		$sql = "SELECT rr.* FROM race_runner AS rr, club AS c, runner AS r WHERE rr.Race = :id_race AND c.ID = rr.Club AND r.ID = rr.Runner AND CONCAT(r.FirstName, ' ', r.LastName, ' ', c.Name, ' ', rr.Bib) LIKE '%{$keyword}%' ORDER BY rr.Place ASC";
+		$sql = "SELECT rr.* FROM race_runner AS rr, club AS c, runner AS r WHERE rr.Race = :race_id AND c.ID = rr.Club AND r.ID = rr.Runner AND CONCAT(r.FirstName, ' ', r.LastName, ' ', c.Name, ' ', rr.Bib) LIKE '%{$keyword}%' ORDER BY rr.Place ASC";
         $req = $db->prepare($sql);
         $req->execute($e);
 		
@@ -326,15 +380,15 @@
 	}
 	
 	
-	function get_last_race_runner($id) 
+	function get_last_race_runner($runner_id) 
 	{
 		global $db;
 		
         $e = array(
-            'id' => $id
+            'runner_id' => $runner_id
         );
 
-        $sql = "SELECT * FROM race_runner WHERE Runner = :id";
+        $sql = "SELECT * FROM race_runner WHERE Runner = :runner_id";
         $req = $db->prepare($sql);
         $req->execute($e);
 
@@ -343,15 +397,15 @@
         return $result;
 	}
 	
-	function get_races_runner($id) 
+	function get_races_runner($runner_id) 
 	{
 		global $db;
 		
         $e = array(
-            'id' => $id
+            'runner_id' => $runner_id
         );
 
-        $sql = "SELECT * FROM race_runner WHERE Runner = :id";
+        $sql = "SELECT * FROM race_runner WHERE Runner = :runner_id";
         $req = $db->prepare($sql);
         $req->execute($e);
 
@@ -365,26 +419,26 @@
 		return $results;
 	}
 	
-	function get_race_runner_class($id_runner, $id_race) 
+	function get_race_runner_class($runner_id, $race_id) 
 	{
 		global $db;
 		
         $e = array(
-            'id_runner' => $id_runner,
-            'id_race' => $id_race
+            'runner_id' => $runner_id,
+            'race_id' => $race_id
         );
 
-        $sql = "SELECT * FROM race_runner WHERE Runner = :id_runner AND Race = :id_race";
+        $sql = "SELECT * FROM race_runner WHERE Runner = :runner_id AND Race = :race_id";
         $req = $db->prepare($sql);
         $req->execute($e);
 		
-		$class = $req->fetch()['Class'];
+		$class_id = $req->fetch()['Class'];
 		
 		$e = array(
-            'class' => $class
+            'class_id' => $class_id
         );
 
-        $sql = "SELECT * FROM class WHERE ID = :class";
+        $sql = "SELECT * FROM class WHERE ID = :class_id";
         $req = $db->prepare($sql);
         $req->execute($e);
 
@@ -393,26 +447,26 @@
         return $result;
 	}	
 	
-	function get_race_runner_team($id_runner, $id_race) 
+	function get_race_runner_team($runner_id, $race_id) 
 	{
 		global $db;
 		
         $e = array(
-            'id_runner' => $id_runner,
-            'id_race' => $id_race
+            'runner_id' => $runner_id,
+            'race_id' => $race_id
         );
 
-        $sql = "SELECT * FROM race_runner WHERE Runner = :id_runner AND Race = :id_race";
+        $sql = "SELECT * FROM race_runner WHERE Runner = :runner_id AND Race = :race_id";
         $req = $db->prepare($sql);
         $req->execute($e);
 		
-		$team = $req->fetch()['Club'];
+		$team_id = $req->fetch()['Club'];
 		
 		$e = array(
-            'team' => $team
+            'team_id' => $team_id
         );
 
-        $sql = "SELECT * FROM club WHERE ID = :team";
+        $sql = "SELECT * FROM club WHERE ID = :team_id";
         $req = $db->prepare($sql);
         $req->execute($e);
 
@@ -421,15 +475,15 @@
         return $result;
 	}
 	
-	function get_race_class_genders($id_race) 
+	function get_race_class_genders($race_id) 
 	{
 		global $db;
 		
         $e = array(
-            'id_race' => $id_race
+            'race_id' => $race_id
         );
 
-        $sql = "SELECT DISTINCT Gender FROM class WHERE ID IN (SELECT DISTINCT Class FROM race_runner WHERE Race = :id_race)";
+        $sql = "SELECT DISTINCT Gender FROM class WHERE ID IN (SELECT DISTINCT Class FROM race_runner WHERE Race = :race_id)";
         $req = $db->prepare($sql);
         $req->execute($e);
 		
@@ -443,16 +497,16 @@
 		return $results;
 	}	
 	
-	function get_race_class_gender_distances($id_race, $class_gender) 
+	function get_race_class_gender_distances($race_id, $class_gender) 
 	{
 		global $db;
 		
         $e = array(
-            'id_race' => $id_race,
+            'race_id' => $race_id,
             'class_gender' => $class_gender
         );
 
-        $sql = "SELECT DISTINCT Distance FROM class WHERE Gender = :class_gender AND ID IN (SELECT DISTINCT Class FROM race_runner WHERE Race = :id_race)";
+        $sql = "SELECT DISTINCT Distance FROM class WHERE Gender = :class_gender AND ID IN (SELECT DISTINCT Class FROM race_runner WHERE Race = :race_id)";
         $req = $db->prepare($sql);
         $req->execute($e);
 		
@@ -466,16 +520,19 @@
 		return $results;
 	}
 	
-	function get_timestamps($id_runner, $id_race) 
+	
+	/* TIMESTAMP FUNCTIONS */
+	
+	function get_timestamps($runner_id, $race_id) 
 	{
 		global $db;
 		
         $e = array(
-            'id_runner' => $id_runner,
-            'id_race' => $id_race
+            'runner_id' => $runner_id,
+            'race_id' => $race_id
         );
 
-        $sql = "SELECT * FROM timestamp WHERE Runner = :id_runner AND Race = :id_race ORDER BY Timestamp DESC";
+        $sql = "SELECT * FROM timestamp WHERE Runner = :runner_id AND Race = :race_id ORDER BY Timestamp DESC";
         $req = $db->prepare($sql);
         $req->execute($e);
 		
@@ -489,16 +546,16 @@
 		return $results;
 	}
 	
-	function get_last_timestamp($id_runner, $id_race)
+	function get_last_timestamp($runner_id, $race_id)
 	{
 		global $db;
 		
         $e = array(
-            'id_runner' => $id_runner,
-            'id_race' => $id_race
+            'runner_id' => $runner_id,
+            'race_id' => $race_id
         );
 
-        $sql = "SELECT * FROM timestamp WHERE Timestamp = (SELECT MAX(Timestamp) FROM timestamp WHERE Runner = :id_runner AND Race = :id_race)";
+        $sql = "SELECT * FROM timestamp WHERE Timestamp = (SELECT MAX(Timestamp) FROM timestamp WHERE Runner = :runner_id AND Race = :race_id)";
         $req = $db->prepare($sql);
         $req->execute($e);
 		
@@ -509,15 +566,18 @@
 		return $result;
 	}
 	
-	function get_station($id_station) 
+	
+	/* STATION FUNCTIONS */
+	
+	function get_station($station_id) 
 	{
 		global $db;
 		
         $e = array(
-            'id_station' => $id_station
+            'station_id' => $station_id
         );
 
-        $sql = "SELECT * FROM station WHERE ID = :id_station";
+        $sql = "SELECT * FROM station WHERE ID = :station_id";
         $req = $db->prepare($sql);
         $req->execute($e);
 		
@@ -526,18 +586,18 @@
 		return $result;
 	}
 		
-	function get_number_laps($id_runner, $id_race, $timestamp, $station)
+	function get_number_laps($runner_id, $race_id, $timestamp, $station_id)
 	{
 		global $db;
 		
         $e = array(
-            'id_runner' => $id_runner,
-            'id_race' => $id_race,
+            'runner_id' => $runner_id,
+            'race_id' => $race_id,
             'timestamp' => $timestamp,
-            'station' => $station
+            'station_id' => $station_id
         );
 
-        $sql = "SELECT COUNT(Timestamp) AS Count FROM timestamp WHERE Runner = :id_runner AND Race = :id_race AND Station = :station AND Timestamp < :timestamp";
+        $sql = "SELECT COUNT(Timestamp) AS Count FROM timestamp WHERE Runner = :runner_id AND Race = :race_id AND Station = :station_id AND Timestamp < :timestamp";
         $req = $db->prepare($sql);
         $req->execute($e);
 		
@@ -551,12 +611,12 @@
 		global $db;
 		
         $e = array(
-            'id_runner' => $race_runner->Runner,
-            'id_class' => $race_runner->Class,
-            'id_race' => $race_runner->Race
+            'runner_id' => $race_runner->Runner,
+            'class_id' => $race_runner->Class,
+            'race_id' => $race_runner->Race
         );
 
-        $sql = "SELECT TIMEDIFF(r1.TotalTime, r2.TotalTime) AS TimeBehind FROM race_runner AS r1, race_runner AS r2 WHERE r1.Runner = :id_runner AND r1.Race = :id_race AND r1.Class = :id_class AND r2.Place = 1 AND r2.Race = :id_race AND r2.Class = :id_class";
+        $sql = "SELECT TIMEDIFF(r1.TotalTime, r2.TotalTime) AS TimeBehind FROM race_runner AS r1, race_runner AS r2 WHERE r1.Runner = :runner_id AND r1.Race = :race_id AND r1.Class = :class_id AND r2.Place = 1 AND r2.Race = :race_id AND r2.Class = :class_id";
         $req = $db->prepare($sql);
         $req->execute($e);
 		
@@ -571,11 +631,11 @@
 		
         $e = array(
             'nb_lap' => $lap + 1,
-            'id_station' => $station_id,
-            'id_runner' => $runner_id,
-            'id_race' => $race_id
+            'station_id' => $station_id,
+            'runner_id' => $runner_id,
+            'race_id' => $race_id
         );
-		$sql = "SELECT TIMEDIFF(t1.timestamp, t2.timestamp) AS TimeBehind FROM timestamp AS t1, timestamp AS t2 WHERE t1.Runner = :id_runner AND t1.Race = :id_race AND t1.lap = :nb_lap AND t1.station = :id_station AND t2.Place = 1 AND t2.Race = :id_race AND t2.lap = :nb_lap AND t2.station = :id_station";
+		$sql = "SELECT TIMEDIFF(t1.timestamp, t2.timestamp) AS TimeBehind FROM timestamp AS t1, timestamp AS t2 WHERE t1.Runner = :runner_id AND t1.Race = :race_id AND t1.lap = :nb_lap AND t1.station = :station_id AND t2.Place = 1 AND t2.Race = :race_id AND t2.lap = :nb_lap AND t2.station = :station_id";
         $req = $db->prepare($sql);
         $req->execute($e);
 		
@@ -592,11 +652,11 @@
 		
         $e = array(
             'nb_lap' => $lap + 1,
-            'id_station' => $station_id,
-            'id_runner' => $runner_id,
-            'id_race' => $race_id
+            'station_id' => $station_id,
+            'runner_id' => $runner_id,
+            'race_id' => $race_id
         );
-		$sql = "SELECT TIMEDIFF(t1.timestamp, t2.timestamp) AS TimeBehind FROM timestamp AS t1, timestamp AS t2 WHERE t1.Runner = :id_runner AND t1.Race = :id_race AND t1.lap = :nb_lap AND t1.station = :id_station AND t2.Runner = :id_runner AND t2.Race = :id_race AND t2.station = 0";
+		$sql = "SELECT TIMEDIFF(t1.timestamp, t2.timestamp) AS TimeBehind FROM timestamp AS t1, timestamp AS t2 WHERE t1.Runner = :runner_id AND t1.Race = :race_id AND t1.lap = :nb_lap AND t1.station = :station_id AND t2.Runner = :runner_id AND t2.Race = :race_id AND t2.station = 0";
         $req = $db->prepare($sql);
         $req->execute($e);
 		
@@ -605,9 +665,9 @@
 		return $result;		
 	}	
 
-	/* TEAM */	
-
 	
+	/* TEAM FUNCTIONS */	
+
 	function search_team($keyword) 
 	{
 		global $db;
@@ -679,17 +739,13 @@
         $req = $db->prepare($sql);
         $req->execute($e);
 
-		$results = array();
+        $result = $req->fetchObject();
 		
-        while($rows = $req->fetchObject()) {
-            $results[] = $rows;
-        }
-
-        return $results;
+        return $result;
     }
 	
 			
-	function team_exists($team_id) {
+	function does_team_exist($team_id) {
         global $db;
 		
         $u = array(
@@ -704,5 +760,123 @@
 		
         return($exist);
     }
+	
+		
+	function add_team($team_name) {
+        global $db;
+		
+        $e = array(
+                'team_name' => $team_name
+        );
+		
+        $sql = "INSERT INTO club(Name) VALUES(:team_name)";
+        $req = $db->prepare($sql);
+        $req->execute($e);
+    }
+	
+	function edit_team($team_id, $team_name) {
+        global $db;
+		
+        $e = array(
+                'team_id' => $team_id,
+                'team_name' => $team_name
+        );
+		
+		
+        $sql = "UPDATE club SET Name = :team_name WHERE ID = :team_id";
+        $req = $db->prepare($sql);
+        $req->execute($e);
+    }
+	
+	function delete_team($team_id) {
+        global $db;
+		
+        $r = array(
+                'team_id' => $team_id
+        );
+		
+        $sql = "DELETE FROM club WHERE ID = :team_id";
+        $req = $db->prepare($sql);
+        $req->execute($r);
+    }
+		
+	function is_team_empty($team_id) {
+        global $db;
+		
+        $r = array(
+                'team_id' => $team_id
+        );
+		
+        $sql = "SELECT * FROM race_runner WHERE Club = :team_id";
+        $req = $db->prepare($sql);
+        $req->execute($r);
+		
+		$empty_race_runner = $req->rowCount($sql);
+		
+		if($empty_race_runner == 0) {
+			return 1;
+		}
+		
+		else {
+			return 0;
+		}
+    }
+	
+	
+	/* STATION FUNCTIONS */
+	
+	function search_station($keyword) 
+	{
+		global $db;
+
+        $req = $db->query("SELECT * FROM station WHERE Name LIKE '%{$keyword}%'");
+
+		$results = array();
+		
+        while($rows = $req->fetchObject()) 
+		{
+            $results[] = $rows;
+        }
+
+        return $results;
+	}
+	
+	
+	/* CATEGORY FUNCTIONS */
+	
+	function search_category($keyword) 
+	{
+		global $db;
+
+        $req = $db->query("SELECT * FROM class WHERE Gender LIKE '%{$keyword}%'");
+
+		$results = array();
+		
+        while($rows = $req->fetchObject()) 
+		{
+            $results[] = $rows;
+        }
+
+        return $results;
+	}
+	
+	
+	/* SI-UNIT FUNCTIONS */
+	
+	function search_si_unit($keyword) 
+	{
+		global $db;
+
+        $req = $db->query("SELECT * FROM si_unit WHERE Status LIKE '%{$keyword}%'");
+
+		$results = array();
+		
+        while($rows = $req->fetchObject()) 
+		{
+            $results[] = $rows;
+        }
+
+        return $results;
+	}
 ?>
 

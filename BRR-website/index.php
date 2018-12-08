@@ -63,7 +63,7 @@
 					<?php
 						}
 					?>">
-						<a class="nav-link" href="index.php?page=race-list">Races</a>
+						<a class="nav-link" href="index.php?page=races">Races</a>
 					</li>
 										
 					<li class="nav-item 
@@ -75,7 +75,7 @@
 					<?php
 						}
 					?>">
-						<a class="nav-link" href="index.php?page=runner-list">Runners</a>
+						<a class="nav-link" href="index.php?page=runners">Runners</a>
 					</li>
 										
 					<li class="nav-item 
@@ -87,23 +87,26 @@
 					<?php
 						}
 					?>">
-						<a class="nav-link" href="index.php?page=team-list">Teams</a>
+						<a class="nav-link" href="index.php?page=teams">Teams</a>
 					</li>
 				</ul>
 				
 				
 				<ul class="navbar-nav my-2 my-lg-0">
-					<li class="nav-item">
 						<?php 
 							if(is_logged() == 1) 
 							{
 						?>
-								<a class="nav-link" href="index.php?page=logout">Logout</a>
+								<li class="nav-item">
+									<a class="nav-link" href="index.php?page=dashboard">Dashboard</a>
+								</li>
 								
+								<li class="nav-item">
+									<a class="nav-link" href="index.php?page=logout">Logout</a>
+								</li>
 						<?php 
 							}
 						?>
-					</li>
 				</ul>
 			</div>
 		</nav>

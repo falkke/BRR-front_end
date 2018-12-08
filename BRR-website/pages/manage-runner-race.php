@@ -6,7 +6,7 @@
 	if(isset($_GET['runner']) && !empty($_GET['runner'])) {
 		$id = $_GET['runner'];
 		
-		if(runner_exists($id)) {
+		if(does_runner_exist($id)) {
 			$runner = get_runner($id);
 		}
 		

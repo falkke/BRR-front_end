@@ -6,7 +6,7 @@
 	if(isset($_GET['race']) && !empty($_GET['race'])) {
 		$id = $_GET['race'];
 		
-		if(race_exists($id)) {
+		if(does_race_exist($id)) {
 			$race = get_race($id);
 		}
 		
@@ -21,13 +21,13 @@
 		
 		if(isset($_GET['race'])) {
 			edit_race($id, $name, $date);
+			header('Location:index.php?page=races&race-modified=1');
 		}
 		
 		else {
 			add_race($name, $date);
+			header('Location:index.php?page=races&race-added=1');
 		}
-		
-        header('Location:index.php?page=race-list');
 	}
 ?>
 

@@ -3,7 +3,7 @@
 	{
 		$runner_id = $_GET['runner'];
 		
-		if(runner_exists($runner_id)) {
+		if(does_runner_exist($runner_id)) {
 			$runner = get_runner($runner_id);
 		}
 		

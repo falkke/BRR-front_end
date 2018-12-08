@@ -11,10 +11,20 @@ jQuery(document).ready(function($)
 	});
 });
 
-function DeleteRaceAlert(race_id) 
+function DeleteAlert(type, id) 
 {
 	if(confirm("Are you sure ?")) 
 	{
-		window.location.href = "index.php?page=race-list&race=" + race_id + "&remove=1";
+		if(type == "race") {
+			window.location.href = "index.php?page=race-list&race=" + id + "&remove=1";
+		}
+		
+		else if(type == "runner") {
+			window.location.href = "index.php?page=runner-list&runner=" + id + "&remove=1";
+		}
+		
+		else if(type == "team") {
+			window.location.href = "index.php?page=team-list&team=" + id + "&remove=1";
+		}
 	}
 }
