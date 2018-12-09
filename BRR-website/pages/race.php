@@ -60,9 +60,9 @@
 							<ul class="sub-menu collapse" id="<?=$class_gender ?>">
 								<?php
 									foreach(get_race_class_gender_distances($id, $class_gender) as $class_gender_distance) {
-								?>	
-									<li><a href="index.php?page=race&race=<?= $id ?>&gender=<?=$class_gender ?>&distance=<?=$class_gender_distance ?>"><?=$class_gender_distance ?> miles</a></li>				
-								<?php
+										?>	
+											<li><a href="index.php?page=race&race=<?= $id ?>&gender=<?=$class_gender ?>&distance=<?=$class_gender_distance ?>"><?=$class_gender_distance ?> miles</a></li>				
+										<?php
 									}
 								?>	
 							</ul>
@@ -134,9 +134,8 @@
 			</thead>
 			<tbody>
 				<?php
-					foreach(get_race_runners($race->ID, $search) as $race_runner)
-					{	
-					$class = get_race_runner_class($race_runner->Runner, $race_runner->Race) ;		
+					foreach(get_race_runners($race->ID, $search) as $race_runner) {	
+						$class = get_race_runner_class($race_runner->Runner, $race_runner->Race) ;		
 					
 						if(($class->Gender == $_GET['gender']) && ($class->Distance == $_GET['distance'])) 
 						{

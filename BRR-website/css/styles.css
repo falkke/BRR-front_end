@@ -10,7 +10,7 @@ html, body {
 }
 
 .sort {
-    display: block;
+	display: block;
 	color: black;
 	cursor: pointer;
 }
@@ -60,6 +60,7 @@ html, body {
 	height: 50px;
 }
 
+
 .starter-template {
 	padding: 3rem 1.5rem;
 	text-align: center;
@@ -71,6 +72,22 @@ html, body {
 	position: fixed;
 	right : 0;
 	width: 80%;
+}
+
+.table-scroll-y {
+	position: fixed;
+	display: block;
+	height: 70%;
+	min-width: 78%;
+	overflow-y: auto;
+	-ms-overflow-style: -ms-autohiding-scrollbar;
+}
+
+.table-scroll-y-20 {
+	display: block;
+	height: 20%;
+	overflow-y: auto;
+	-ms-overflow-style: -ms-autohiding-scrollbar;
 }
 
 .add-race-button {

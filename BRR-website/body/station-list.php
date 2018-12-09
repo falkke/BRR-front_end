@@ -1,4 +1,6 @@
 <?php
+	require 'functions/session.php';
+	
 	/*if(	(isset($_GET['team']) && !empty($_GET['team']))
 	&&	(isset($_GET['remove']) && !empty($_GET['remove']))){
 		$team_id = $_GET['team'];
@@ -23,11 +25,12 @@
 	}*/
 
 
-	$search = "";
+	$search = $_SESSION['bbr']['search-station'];
 	$sort = "";
 	
 	if(isset($_POST['submit'])) {
 		$search = htmlspecialchars(trim($_POST['search']));
+		$_SESSION['bbr']['search-station'] = $search;
 	}
 	
 	if(isset($_GET['sort_word']) && isset($_GET['sort_by'])) {
@@ -66,9 +69,9 @@
 <form method="post" class="form-inline my-2">
 	<div class="input-group">
 		<input class="form-control" type="text" style="text-align:right" placeholder="Search" name="search" id="search" aria-label="Search" <?php
-			if(isset($_POST['submit'])) {
+			if(isset($_SESSION['bbr']['search-station'])) {
 				?>
-					value="<?= $_POST['search']?>"
+					value="<?=$_SESSION['bbr']['search-station']?>"
 				<?php
 			}
 		?>>    

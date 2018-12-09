@@ -8,7 +8,8 @@
 		$password = htmlspecialchars(trim($_POST['password']));
 		
 		if(user_exist($username, $password) == 1) {
-			$_SESSION['brr'] = $username;
+			$_SESSION['admin'] = $username;
+			$_SESSION['dashboard'] = 0;
 			header('Location:index.php?page=admin');
 		}
 		else {

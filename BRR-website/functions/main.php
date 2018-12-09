@@ -1,27 +1,26 @@
 <?php
 
 	/* INITIALISATION */
-	
-    session_start();
+	session_start();
 
-    $dbhost = 's679.loopia.se';
-    $dbname = 'sebastianoveland_com_db_1';
-    $dbuser = 'group5@s243341';
-    $dbpassword = 'BlackRiver2019';
+	$dbhost = 's679.loopia.se';
+	$dbname = 'sebastianoveland_com_db_1';
+	$dbuser = 'group5@s243341';
+	$dbpassword = 'BlackRiver2019';
 
-    try {
-        $db = new PDO('mysql:host='.$dbhost.';dbname='.$dbname, $dbuser, $dbpassword, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
+	try {
+		$db = new PDO('mysql:host='.$dbhost.';dbname='.$dbname, $dbuser, $dbpassword, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
 	}
 	
-    catch(PDOexception $e) {
-        die("Error while trying to connect to the database...");
-    }
-	
+	catch(PDOexception $e) {
+		die("Error while trying to connect to the database...");
+	}
+
 	
 	/* LOGIN FUNCTIONS */
 	
     function is_logged() {
-        if(isset($_SESSION['brr'])) {
+        if(isset($_SESSION['admin'])) {
             return 1;
         }
         else {
@@ -194,6 +193,27 @@
         return $results;
 	}
 	
+	function is_planned_race($race_id) {
+		 global $db;
+		
+        $r = array(
+                'race_id' => $race_id
+        );
+		
+        $sql = "SELECT * FROM timestamp WHERE Race = :race_id";
+        $req = $db->prepare($sql);
+        $req->execute($r);
+		
+		$empty_timestamp = $req->rowCount($sql);
+		
+		if($empty_timestamp == 0) {
+			return 1;
+		}
+		
+		else {
+			return 0;
+		}
+	}
 	
 	/* RUNNER FUNCTIONS */
 	
@@ -339,8 +359,7 @@
 	
 	/* RACE RUNNER FUNCTIONS*/
 	
-	function get_race_runner($runner_id, $race_id) 
-	{
+	function get_race_runner($runner_id, $race_id) {
 		global $db;
 		
         $e = array(
@@ -357,8 +376,7 @@
         return $result;
 	}
 	
-	function get_race_runners($race_id, $keyword) 
-	{
+	function get_race_runners($race_id, $keyword) {
 		global $db;
 		
         $e = array(
@@ -379,6 +397,98 @@
 		return $results;
 	}
 	
+	function add_race_runner($race_id, $category_distance, $runner_id, $bib, $team_id) {
+        global $db;
+		
+		$e = array(
+            'runner_id' => $runner_id
+        );
+
+        $sql = "SELECT Gender FROM runner WHERE ID = :runner_id";
+        $req = $db->prepare($sql);
+        $req->execute($e);
+
+		$category_gender = $req->fetch()['Gender'];
+		
+		$e = array(
+            'category_distance' => $category_distance,
+			'category_gender' => $category_gender
+        );
+
+        $sql = "SELECT ID FROM class WHERE Distance = :category_distance AND Gender = :category_gender";
+        $req = $db->prepare($sql);
+        $req->execute($e);
+
+		$category_id = $req->fetch()['ID'];
+		
+        $e = array(
+                'race_id' => $race_id,
+                'category_id' => $category_id,
+                'runner_id' => $runner_id,
+                'bib' => $bib,
+                'team_id' => $team_id,
+        );
+		
+        $sql = "INSERT INTO race_runner(Race, Category, Runner, Bib, Club) VALUES(:race_id, :category_id, :runner_id, :bib, :team_id)";
+        $req = $db->prepare($sql);
+        $req->execute($e);
+    }	
+
+	function add_race_si_unit_runner($race_id, $runner_id, $si_unit_id) {
+        global $db;
+		
+		$e = array(
+            'race_id' => $race_id,
+            'runner_id' => $runner_id,
+            'si_unit_id' => $si_unit_id
+        );
+		
+        $sql = "INSERT INTO runner_units(Race, SI_unit, Runner) VALUES(:race_id, :si_unit_id, :runner_id)";
+        $req = $db->prepare($sql);
+        $req->execute($e);
+    }		
+		
+	function get_race_not_runners($race_id) {
+		global $db;
+		
+        $e = array(
+            'race_id' => $race_id
+        );
+
+		$sql = "SELECT * FROM runner WHERE ID NOT IN (SELECT Runner FROM race_runner WHERE Race = :race_id)";
+        $req = $db->prepare($sql);
+        $req->execute($e);
+		
+		$results = array();
+		
+        while($rows = $req->fetchObject()) 
+		{
+            $results[] = $rows;
+        }
+		
+		return $results;
+	}
+		
+	function get_race_not_si_unit($race_id) {
+		global $db;
+		
+        $e = array(
+            'race_id' => $race_id
+        );
+
+		$sql = "SELECT * FROM si_unit WHERE ID NOT IN (SELECT SI_unit FROM runner_units WHERE Race = :race_id)";
+        $req = $db->prepare($sql);
+        $req->execute($e);
+		
+		$results = array();
+		
+        while($rows = $req->fetchObject()) 
+		{
+            $results[] = $rows;
+        }
+		
+		return $results;
+	}
 	
 	function get_last_race_runner($runner_id) 
 	{
@@ -660,14 +770,30 @@
         $req = $db->prepare($sql);
         $req->execute($e);
 		
-		$result = $req->fetch()['TimeBehind'];;
+		$result = $req->fetch()['TimeBehind'];
 
 		return $result;		
 	}	
 
 	
 	/* TEAM FUNCTIONS */	
+	
+	function get_teams() 
+	{
+		global $db;
 
+        $req = $db->query("SELECT * FROM club");
+
+		$results = array();
+		
+        while($rows = $req->fetchObject()) 
+		{
+            $results[] = $rows;
+        }
+
+        return $results;
+	}
+	
 	function search_team($keyword, $sort) 
 	{
 		global $db;
@@ -853,6 +979,22 @@
 		$results = array();
 		
         while($rows = $req->fetchObject()) 
+		{
+            $results[] = $rows;
+        }
+
+        return $results;
+	}
+	
+	function get_categories_distances() 
+	{
+		global $db;
+
+        $req = $db->query("SELECT DISTINCT Distance FROM class");
+
+		$results = array();
+		
+        while($rows = $req->fetch()['Distance']) 
 		{
             $results[] = $rows;
         }

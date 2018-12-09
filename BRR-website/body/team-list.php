@@ -1,4 +1,6 @@
 <?php
+	require 'functions/session.php';
+	
 	if(	(isset($_GET['team']) && !empty($_GET['team']))
 	&&	(isset($_GET['remove']) && !empty($_GET['remove']))){
 		$team_id = $_GET['team'];
@@ -17,16 +19,24 @@
 			
 			else {
 				delete_team($team_id);
-				header('Location:index.php?page=team-list&team-deleted=1');
+				
+				if($_SESSION['dashboard'] == 1) {
+					header('Location:index.php?page=dashboard&list=teams&team-deleted=1');
+				}
+				
+				else {
+					header('Location:index.php?page=teams&team-deleted=1');
+				}
 			}
 		}
 	}
 
-	$search = "";
+	$search = $_SESSION['bbr']['search-team'];
 	$sort = "";
 	
 	if(isset($_POST['submit'])) {
 		$search = htmlspecialchars(trim($_POST['search']));
+		$_SESSION['bbr']['search-team'] = $search;
 	}
 	
 	if(isset($_GET['sort_word']) && isset($_GET['sort_by'])) {
@@ -64,122 +74,145 @@
 
 <form method="post" class="form-inline my-2">
 	<div class="input-group">
-		<input class="form-control" type="text" style="text-align:right" placeholder="Search" name="search" id="search" aria-label="Search" <?php
-			if(isset($_POST['submit'])) {
-				?>
-					value="<?= $_POST['search']?>"
-				<?php
-			}
-		?>>    
+		<input class="form-control" type="text" style="text-align:right" placeholder="Search" name="search" id="search" aria-label="Search" 
+			<?php
+				if(isset($_SESSION['bbr']['search-team'])) {
+					?>
+						value="<?=$_SESSION['bbr']['search-team']?>"
+					<?php
+				}
+			?>
+		>    
 		<span class="input-group-btn">
 			<button class="btn  btn-default" type="submit" id="submit" name="submit">Search</button>
 		</span>
 	</div>
 </form>
-<table class="table table-bordered table-striped table-condensed">           
-	<thead>
-		<tr>			
-			<?php
-				if(is_logged() == 1)
-				{
-			?>
-				<th>
+
+<?php				
+	if($_SESSION['dashboard'] == 1) {
+		?>	
+			<div class="table-scroll-y">
+		<?php
+	}
+?>
+	<table class="table table-bordered table-striped table-condensed">
+		<thead>
+			<tr>			
+				<?php
+					if(is_logged() == 1)
+					{
+						?>
+							<th class="th-sm">
+								<a class="sort" href="index.php?page=<?=$_GET['page']?>
+									<?php
+										if(isset($_GET['list'])) {
+											?>
+												&list=<?=$_GET['list']?>
+											<?php
+										}
+									?>
+										&sort_word=ID
+									<?php
+										if(isset($_GET['sort_word']) && $_GET['sort_word'] == "ID" &&
+											isset($_GET['sort_by']) && $_GET['sort_by'] == "ASC") {
+											?>
+												&sort_by=DESC
+											<?php
+										}
+										
+										else {
+											?>
+												&sort_by=ASC
+											<?php
+										}
+									?>
+								">
+									ID
+								</a>
+							</th>
+						<?php
+					}
+				?>
+				
+				<th class="th-sm">
 					<a class="sort" href="index.php?page=<?=$_GET['page']?>
-					<?php
-					if(isset($_GET['list']))
-					{
-					?>
-						&list=<?=$_GET['list']?>
-					<?php
-					}
-					?>
-					&sort_word=ID
-					<?php
-					if(isset($_GET['sort_word']) && $_GET['sort_word'] == "ID" &&
-						isset($_GET['sort_by']) && $_GET['sort_by'] == "ASC")
-					{
-					?>
-						&sort_by=DESC
-					<?php
-					}
-					else
-					{
-					?>
-						&sort_by=ASC
-					<?php
-					}
-					?>">ID</a>
+						<?php
+							if(isset($_GET['list'])) {
+								?>
+									&list=<?=$_GET['list']?>
+								<?php
+							}
+						?>
+							&sort_word=Name
+						<?php
+							if(isset($_GET['sort_word']) && $_GET['sort_word'] == "Name" &&
+								isset($_GET['sort_by']) && $_GET['sort_by'] == "ASC") {
+						?>
+							&sort_by=DESC
+						<?php
+							}
+							
+							else {
+								?>
+									&sort_by=ASC
+								<?php
+							}
+						?>
+					">
+						Name
+					</a>
 				</th>
+				
+				<?php
+					if(is_logged() == 1) {
+						?>
+							<th>
+								<a class="bg-success text-white table-button" href="index.php?page=manage&team">+</a>
+							</th>
+						<?php
+					}
+				?>
+			</tr>
+		</thead>
+		
+		<tbody>
 			<?php
-				}
-			?>
-			<th>
-				<a class="sort" href="index.php?page=<?=$_GET['page']?>
-				<?php
-				if(isset($_GET['list']))
-				{
-				?>
-					&list=<?=$_GET['list']?>
-				<?php
-				}
-				?>
-				&sort_word=Name
-				<?php
-				if(isset($_GET['sort_word']) && $_GET['sort_word'] == "Name" &&
-					isset($_GET['sort_by']) && $_GET['sort_by'] == "ASC")
-				{
-				?>
-					&sort_by=DESC
-				<?php
-				}
-				else
-				{
-				?>
-					&sort_by=ASC
-				<?php
-				}
-				?>">Name</a>
-			</th>
-			<?php
-				if(is_logged() == 1)
-				{
-			?>
-				<th>
-					<a class="bg-success text-white table-button" href="index.php?page=manage-team">+</a>
-				</th>
-			<?php
-				}
-			?>
-		</tr>
-	</thead>
-	<tbody>
-	<?php
-		foreach(search_team($search, $sort) as $team) {		
-			?>		
-				<tr class='clickable-row' data-href="index.php?page=team&team=<?=$team->ID ?>">
-					<?php
-						if(is_logged() == 1)
-						{
-					?>
-						<td><?=$team->ID?></td>
-					<?php
-						}
-					?>
-					<td><?=$team->Name?></td>
-					<?php
-						if(is_logged() == 1)
-						{
-							?>
-								<td class="no-change">
-									<a class="bg-primary text-white table-button" href="index.php?page=manage-team&team=<?=$team->ID?>">...</a>
-									<a class="bg-danger text-white table-button" onclick="DeleteAlert('team', <?= $team->ID ?>);" href="#">X</a>
-								</td>
+				foreach(search_team($search, $sort) as $team) {		
+					?>		
+						<tr class='clickable-row' data-href="index.php?page=team&team=<?=$team->ID?>">
 							<?php
-						}
-					?>
-				</tr>
-			<?php
-		}
-	?>					
-	</tbody>
-</table>
+								if(is_logged() == 1)
+								{
+									?>
+										<td><?=$team->ID?></td>
+									<?php
+								}
+							?>
+							
+							<td><?=$team->Name?></td>
+							
+							<?php
+								if(is_logged() == 1)
+								{
+									?>
+										<td class="no-change">
+											<a class="bg-primary text-white table-button" href="index.php?page=manage&team=<?=$team->ID?>">...</a>
+											<a class="bg-danger text-white table-button" onclick="DeleteAlert(<?=$_SESSION['dashboard']?>, 'team', <?=$team->ID ?>);" href="#">X</a>
+										</td>
+									<?php
+								}
+							?>
+						</tr>
+					<?php
+				}
+			?>					
+		</tbody>
+	</table>
+<?php				
+	if($_SESSION['dashboard'] == 1) {
+		?>	
+			</div>
+		<?php
+	}
+?>

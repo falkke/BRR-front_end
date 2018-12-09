@@ -1,6 +1,7 @@
 <?php
 	$list = "";
-
+	$_SESSION['dashboard'] = 1;
+	
 	if(is_logged() == 0) {
         header('Location:index.php?page=home');
     }
@@ -33,13 +34,17 @@
 					<li data-toggle="collapse" data-target="#races" class="collapsed">
 						<a href="#">Planned Races</a>
 					</li>
-					<ul class="sub-menu collapse <?php 
-						//if(isset($_GET['runners']) || isset($_GET['races']) || isset($_GET['teams']) || isset($_GET['si-units']) || isset($_GET['categories']) || isset($_GET['stations'])) {
-					?>
-					show
-					<?php 
-						//}
-					?>" id="races">
+					<ul class="sub-menu collapse 
+						<?php 
+							if(isset($_GET['race'])) {
+								?>
+									show
+								<?php 
+							}
+						?>
+					" id="races">
+						<li><a href="index.php?page=dashboard">List</a></li>
+						<li><a href="index.php?page=dashboard">Add</a></li>
 					</ul>
 				</ul>
 			</div>
