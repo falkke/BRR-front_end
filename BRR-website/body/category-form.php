@@ -1,13 +1,19 @@
 <?php
+	$category = "";
+	
 	if(is_logged() == 0) {
         header('Location:index.php?page=home');
     }
 	
-	if(isset($_GET['runner']) && !empty($_GET['runner'])) {
-		$id = $_GET['runner'];
+	if(!isset($_GET['category'])) {
+		header('Location:index.php?page=dashboard&list=categories');
+	}
+	
+	if(!empty($_GET['category'])) {
+		$category_id = $_GET['category'];
 		
-		if(does_runner_exist($id)) {
-			$runner = get_runner($id);
+		if(does_category_exist($category_id)) {
+			$category = get_category($category_id);
 		}
 		
 		else {
@@ -16,115 +22,84 @@
 	}
 	
 	if(isset($_POST['submit'])) {
-		//$ssn = htmlspecialchars(trim($_POST['ssn']));
-		$first_name = htmlspecialchars(trim($_POST['first_name']));
-		$last_name = htmlspecialchars(trim($_POST['last_name']));
-		$birth_date = $_POST['birth_date'];
 		$gender = $_POST['gender'];
+		$distance = $_POST['distance'];
 		
-		if(isset($_GET['runner'])) {
-			edit_runner($id, $first_name, $last_name, $birth_date, $gender);
+		if(!empty($_GET['category'])) {
+			edit_category($category_id, $gender, $distance);
+			header('Location:index.php?page=dashboard&list=categories&category-modified=1');
 		}
 		
 		else {
-			add_runner($first_name, $last_name, $birth_date, $gender);
+			add_category($gender, $distance);
+			header('Location:index.php?page=dashboard&list=categories&category-added=1');
 		}
-		
-        header('Location:index.php?page=runner-list');
 	}
 ?>
 
 <h2 class="page-title">
-<?php
-	if(isset($_GET['runner']))
-	{
-?>
-	Edit Runner
-<?php
-	}
-	
-	else 
-	{
-?>
-	Add Runner
-<?php
-	}
-?>
+	<?php
+		if(!empty($_GET['category']))
+		{
+			?>
+				Edit Category
+			<?php
+		}
+		
+		else 
+		{
+			?>
+				Add Category
+			<?php
+		}
+	?>
 </h2>
 
 <form method="post" class="form-horizontal form-add-edit">
-	<!--<div class="form-group">
-		<label for="first_name" class="col-lg-3 d-inline-block  control-label">First Name : </label>
-		<input id="first_name" name="first_name" type="text" class="col-lg-9 d-inline-block form-control h-100" required autofocus <?php
-			if(isset($_GET['runner']))
-			{
-		?>
-			value='<?= $runner->FirstName ?>'
-		<?php
-			}
-		?>>
-	</div>	
-	
-	<div class="form-group">
-		<label for="last_name" class="col-lg-3 d-inline-block  control-label">Last Name : </label>
-		<input id="last_name" name="last_name" type="text" class="col-lg-9 d-inline-block form-control h-100" required <?php
-			if(isset($_GET['runner']))
-			{
-		?>
-			value='<?= $runner->LastName ?>'
-		<?php
-			}
-		?>>
-	</div>	
-	
-	<div class="form-group">
-		<label for="birth_date" class="col-lg-3 d-inline-block  control-label">Birth Date : </label>
-		<input id="birth_date" name="birth_date" type="date" class="col-lg-9 d-inline-block form-control h-100" required <?php
-			if(isset($_GET['runner']))
-			{
-		?>
-			value='<?= $runner->DateOfBirth ?>'
-		<?php
-			}
-		?>>
-	</div>	
-	
 	<div class="form-group">
 		<label for="gender" class="col-lg-3 d-inline-block control-label">Gender : </label>
-		<select id="gender" name="gender" class="col-lg-9 d-inline-block form-control h-100" required <?php
-			if(isset($_GET['runner']))
-			{
-		?>
-			disabled
-		<?php
-			}
-		?>>
-			<option <?php
-				if(isset($_GET['runner']) && ($runner->Gender == "Man"))
-				{ 
-			?>
-				selected="selected"
-			<?php
-				}
-			?>
-			>Man</option>
-			<option	<?php
-				if(isset($_GET['runner']) && ($runner->Gender == "Woman"))
-				{
-			?>
-				selected="selected"
-			<?php
-				}
-			?>
-			>Woman</option>
+		<select id="gender" name="gender" class="col-lg-9 d-inline-block form-control h-100" required>
+			<option 
+				<?php
+					if(!empty($_GET['category']) && ($category->Gender == "Man")) { 
+						?>
+							selected="selected"
+						<?php
+					}
+				?>
+			>
+				Man
+			</option>
+			
+			<option	
+				<?php
+					if(!empty($_GET['category']) && ($category->Gender == "Woman")) {
+						?>
+							selected="selected"
+						<?php
+					}
+				?>
+			>
+				Woman
+			</option>
 		</select>
 	</div>	
 	
 	<div class="form-group">
+		<label for="distance" class="col-lg-3 d-inline-block  control-label">Distance : </label>
+		<input id="distance" name="distance" type="number" class="col-lg-9 d-inline-block form-control h-100" required <?php
+			if(!empty($_GET['category']))
+			{
+				?>
+					value='<?=$category->Distance ?>'
+				<?php
+			}
+		?>>
+	</div>	
+	
+	<div class="form-group">
 		<div class="col-lg-3 d-inline-block"></div>
-		<input class="col-lg-3 pull-right btn btn-default" type="button" value="Cancel" onclick="location.href='index.php?page=runner-list'" />
+		<input class="col-lg-3 pull-right btn btn-default" type="button" value="Cancel" onclick="location.href='index.php?page=dashboard&list=categories'" />
 		<button class="col-lg-3	pull-right btn btn-default" type="submit" name="submit">Submit</button>
 	</div>
-
-	-->
 </form>

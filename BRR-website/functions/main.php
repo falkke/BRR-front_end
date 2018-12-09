@@ -676,26 +676,6 @@
 		return $result;
 	}
 	
-	
-	/* STATION FUNCTIONS */
-	
-	function get_station($station_id) 
-	{
-		global $db;
-		
-        $e = array(
-            'station_id' => $station_id
-        );
-
-        $sql = "SELECT * FROM station WHERE ID = :station_id";
-        $req = $db->prepare($sql);
-        $req->execute($e);
-		
-		$result = $req->fetchObject();
-
-		return $result;
-	}
-		
 	function get_number_laps($runner_id, $race_id, $timestamp, $station_id)
 	{
 		global $db;
@@ -967,6 +947,107 @@
         return $results;
 	}
 	
+	function get_station($station_id) {
+        global $db;
+		
+        $r = array(
+            'station_id' => $station_id
+        );
+				
+        $sql = "SELECT * FROM station WHERE ID = :station_id";
+        $req = $db->prepare($sql);
+        $req->execute($r);
+		
+        $result = $req->fetchObject();
+		
+        return $result;
+    }
+		
+	function add_station($name, $code, $length_from_start) {
+        global $db;
+		
+        $r = array(
+                'name' => $name,
+                'code' => $code,
+                'length_from_start' => $length_from_start
+        );
+		
+        $sql = "INSERT INTO station(Name, Code, LengthFromStart, LastID) VALUES(:name, :code, :length_from_start, 0)";
+        $req = $db->prepare($sql);
+        $req->execute($r);
+    }		
+	
+	function edit_station($station_id, $name, $code, $length_from_start) {
+        global $db;
+		
+        $r = array(
+                'station_id' => $station_id,
+                'name' => $name,
+                'code' => $code,
+                'length_from_start' => $length_from_start
+        );
+		
+        $sql = "UPDATE station SET Name = :name, Code = :code, LengthFromStart = :length_from_start WHERE ID = :station_id";
+        $req = $db->prepare($sql);
+        $req->execute($r);
+    }
+		
+	function delete_station($station_id) {
+        global $db;
+		
+        $r = array(
+                'station_id' => $station_id
+        );
+		
+        $sql = "DELETE FROM station WHERE ID = :station_id";
+        $req = $db->prepare($sql);
+        $req->execute($r);
+    }
+		
+	function is_station_empty($station_id) {
+        global $db;
+		
+        $r = array(
+                'station_id' => $station_id
+        );
+		
+        $sql = "SELECT * FROM race_station WHERE Station = :station_id";
+        $req = $db->prepare($sql);
+        $req->execute($r);
+		
+		$empty_race_station = $req->rowCount($sql);
+		
+        $sql = "SELECT * FROM timestamp WHERE Station = :station_id";
+        $req = $db->prepare($sql);
+        $req->execute($r);
+		
+		$empty_timestamp = $req->rowCount($sql);
+		
+		if(($empty_race_station + $empty_timestamp) == 0) {
+			return 1;
+		}
+		
+		else {
+			return 0;
+		}
+    }
+	
+	function does_station_exist($station_id) {
+        global $db;
+
+        $e = array(
+            'station_id' => $station_id
+        );
+
+        $sql = "SELECT * FROM station WHERE ID = :station_id";
+        $req = $db->prepare($sql);
+        $req->execute($e);
+
+        $exist = $req->rowCount($sql);
+		
+        return($exist);
+    }
+	
 	
 	/* CATEGORY FUNCTIONS */
 	
@@ -1002,11 +1083,102 @@
         return $results;
 	}
 	
+	function get_category($category_id) {
+        global $db;
+		
+        $r = array(
+            'category_id' => $category_id
+        );
+				
+        $sql = "SELECT * FROM class WHERE ID = :category_id";
+        $req = $db->prepare($sql);
+        $req->execute($r);
+		
+        $result = $req->fetchObject();
+		
+        return $result;
+    }
+		
+	function add_category($gender, $distance) {
+        global $db;
+		
+        $r = array(
+			'gender' => $gender,
+			'distance' => $distance
+        );
+		
+        $sql = "INSERT INTO class(Gender, Distance) VALUES(:gender, :distance)";
+        $req = $db->prepare($sql);
+        $req->execute($r);
+    }		
+	
+	function edit_category($category_id, $gender, $distance) {
+        global $db;
+		
+        $r = array(
+			'category_id' => $category_id,
+			'gender' => $gender,
+			'distance' => $distance
+        );
+		
+        $sql = "UPDATE class SET Gender = :gender, Distance = :distance WHERE ID = :category_id";
+        $req = $db->prepare($sql);
+        $req->execute($r);
+    }
+		
+	function delete_category($category_id) {
+        global $db;
+		
+        $r = array(
+            'category_id' => $category_id
+        );
+		
+        $sql = "DELETE FROM class WHERE ID = :category_id";
+        $req = $db->prepare($sql);
+        $req->execute($r);
+    }
+		
+	function is_category_empty($category_id) {
+        global $db;
+		
+        $r = array(
+            'category_id' => $category_id
+        );
+		
+        $sql = "SELECT * FROM race_runner WHERE Class = :category_id";
+        $req = $db->prepare($sql);
+        $req->execute($r);
+		
+		$empty_race_runner = $req->rowCount($sql);
+
+		if($empty_race_runner == 0) {
+			return 1;
+		}
+		
+		else {
+			return 0;
+		}
+    }
+	
+	function does_category_exist($category_id) {
+        global $db;
+
+        $e = array(
+            'category_id' => $category_id
+        );
+
+        $sql = "SELECT * FROM class WHERE ID = :category_id";
+        $req = $db->prepare($sql);
+        $req->execute($e);
+
+        $exist = $req->rowCount($sql);
+		
+        return($exist);
+    }
 	
 	/* SI-UNIT FUNCTIONS */
 	
-	function search_si_unit($keyword, $sort) 
-	{
+	function search_si_unit($keyword, $sort) {
 		global $db;
 
         $req = $db->query("SELECT * FROM si_unit WHERE Status LIKE '%{$keyword}%' {$sort}");
@@ -1019,6 +1191,118 @@
         }
 
         return $results;
+	}	
+	
+	function get_si_unit($si_unit_id) {
+        global $db;
+
+        $r = array(
+                'si_unit_id' => $si_unit_id
+        );
+		
+        $sql = "SELECT * FROM si_unit WHERE ID = :si_unit_id";
+        $req = $db->prepare($sql);
+        $req->execute($r);
+		
+        $result = $req->fetchObject();
+		
+        return $result;
+	}	
+	
+	function get_status() {
+        global $db;
+
+        $req = $db->query("SELECT * FROM si_unit_status");
+		
+		$results = array();
+		
+        while($rows = $req->fetchObject()) 
+		{
+            $results[] = $rows;
+        }
+
+        return $results;
 	}
+	
+	function add_si_unit($status) {
+        global $db;
+		
+        $r = array(
+                'status' => $status
+        );
+		
+        $sql = "INSERT INTO si_unit(Status) VALUES(:status)";
+        $req = $db->prepare($sql);
+        $req->execute($r);
+    }		
+	
+	function edit_si_unit($si_unit_id, $status) {
+        global $db;
+		
+        $r = array(
+                'si_unit_id' => $si_unit_id,
+                'status' => $status
+        );
+		
+        $sql = "UPDATE si_unit SET Status = :status WHERE ID = :si_unit_id";
+        $req = $db->prepare($sql);
+        $req->execute($r);
+    }
+		
+	function delete_si_unit($si_unit_id) {
+        global $db;
+		
+        $r = array(
+                'si_unit_id' => $si_unit_id
+        );
+		
+        $sql = "DELETE FROM si_unit WHERE ID = :si_unit_id";
+        $req = $db->prepare($sql);
+        $req->execute($r);
+    }
+		
+	function is_si_unit_empty($si_unit_id) {
+        global $db;
+		
+        $r = array(
+                'si_unit_id' => $si_unit_id
+        );
+		
+        $sql = "SELECT * FROM timestamp WHERE SI_unit = :si_unit_id";
+        $req = $db->prepare($sql);
+        $req->execute($r);
+		
+		$empty_timestamp = $req->rowCount($sql);
+		
+        $sql = "SELECT * FROM runner_units WHERE SI_unit = :si_unit_id";
+        $req = $db->prepare($sql);
+        $req->execute($r);
+		
+		$empty_runner_units = $req->rowCount($sql);
+		
+		if(($empty_timestamp + $empty_runner_units) == 0) {
+			return 1;
+		}
+		
+		else {
+			return 0;
+		}
+    }
+	
+	function does_si_unit_exist($si_unit_id) {
+        global $db;
+
+        $e = array(
+            'si_unit_id' => $si_unit_id
+        );
+
+        $sql = "SELECT * FROM si_unit WHERE ID = :si_unit_id";
+        $req = $db->prepare($sql);
+        $req->execute($e);
+
+        $exist = $req->rowCount($sql);
+		
+        return($exist);
+    }
 ?>
 

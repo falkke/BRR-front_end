@@ -4,20 +4,14 @@
     }
 	
 	if(!isset($_GET['station'])) {
-		if($_SESSION['dashboard'] == 1) {
-			header('Location:index.php?page=dashboard&list=stations');
-		}
-		
-		else {
-			header('Location:index.php?page=stations');
-		}
+		header('Location:index.php?page=dashboard&list=stations');
 	}
 	
 	if(!empty($_GET['station'])) {
-		$runner_id = $_GET['station'];
+		$station_id = $_GET['station'];
 		
-		if(does_runner_exist($runner_id)) {
-			$station = get_runner($runner_id);
+		if(does_station_exist($station_id)) {
+			$station = get_station($station_id);
 		}
 		
 		else {
@@ -26,33 +20,18 @@
 	}
 	
 	if(isset($_POST['submit'])) {
-		$first_name = htmlspecialchars(trim($_POST['first_name']));
-		$last_name = htmlspecialchars(trim($_POST['last_name']));
-		$birth_date = $_POST['birth_date'];
-		$gender = $_POST['gender'];
+		$name = htmlspecialchars(trim($_POST['name']));
+		$code = $_POST['code'];
+		$length_from_start = $_POST['length_from_start'];
 		
 		if(!empty($_GET['station'])) {
-			edit_runner($runner_id, $first_name, $last_name, $birth_date, $gender);
-			
-			if($_SESSION['dashboard'] == 1) {
-				header('Location:index.php?page=dashboard&list=stations&station-modified=1');
-			}
-			
-			else {
-				header('Location:index.php?page=stations&station-modified=1');
-			}
+			edit_station($station_id, $name, $code, $length_from_start);
+			header('Location:index.php?page=dashboard&list=stations&station-modified=1');
 		}
 		
 		else {
-			add_runner($first_name, $last_name, $birth_date, $gender);
-			
-			if($_SESSION['dashboard'] == 1) {
-				header('Location:index.php?page=dashboard&list=stations&station-added=1');
-			}
-			
-			else {
-				header('Location:index.php?page=stations&station-added=1');
-			}
+			add_station($name, $code, $length_from_start);
+			header('Location:index.php?page=dashboard&list=stations&station-added=1');
 		}
 	}
 ?>
@@ -77,12 +56,12 @@
 		
 		<form method="post" class="form-horizontal form-add-edit">
 			<div class="form-group">
-				<label for="first_name" class="col-lg-3 d-inline-block  control-label">First Name : </label>
-				<input id="first_name" name="first_name" type="text" class="col-lg-9 d-inline-block form-control h-100" required autofocus 
+				<label for="name" class="col-lg-3 d-inline-block  control-label">Name : </label>
+				<input id="name" name="name" type="text" class="col-lg-9 d-inline-block form-control h-100" required autofocus 
 					<?php
 						if(!empty($_GET['station'])) {
 							?>
-								value='<?=$runner->FirstName?>'
+								value='<?=$station->Name?>'
 							<?php
 						}
 					?>
@@ -90,12 +69,12 @@
 			</div>	
 			
 			<div class="form-group">
-				<label for="last_name" class="col-lg-3 d-inline-block  control-label">Last Name : </label>
-				<input id="last_name" name="last_name" type="text" class="col-lg-9 d-inline-block form-control h-100" required 
+				<label for="code" class="col-lg-3 d-inline-block  control-label">Code : </label>
+				<input id="code" name="code" type="number" class="col-lg-9 d-inline-block form-control h-100" required 
 					<?php
-						if(!empty($_GET['runner'])) {
+						if(!empty($_GET['station'])) {
 							?>
-								value='<?=$runner->LastName?>'
+								value='<?=$station->Code?>'
 							<?php
 						}
 					?>
@@ -103,70 +82,21 @@
 			</div>	
 			
 			<div class="form-group">
-				<label for="birth_date" class="col-lg-3 d-inline-block  control-label">Birth Date : </label>
-				<input id="birth_date" name="birth_date" type="date" class="col-lg-9 d-inline-block form-control h-100" required 
+				<label for="length_from_start" class="col-lg-3 d-inline-block  control-label">Length From Start : </label>
+				<input id="length_from_start" name="length_from_start" type="number" class="col-lg-9 d-inline-block form-control h-100" required 
 					<?php
-						if(!empty($_GET['runner'])) {
+						if(!empty($_GET['station'])) {
 							?>
-								value='<?=$runner->DateOfBirth?>'
+								value='<?=$station->LengthFromStart?>'
 							<?php
 						}
 					?>
 				>
-			</div>	
-			
-			<div class="form-group">
-				<label for="gender" class="col-lg-3 d-inline-block control-label">Gender : </label>
-				<select id="gender" name="gender" class="col-lg-9 d-inline-block form-control h-100" required 
-					<?php
-						if(!empty($_GET['runner'])) {
-							?>
-								disabled
-							<?php
-						}
-					?>
-				>
-					<option 
-						<?php
-							if(!empty($_GET['runner']) && ($runner->Gender == "Man")) { 
-								?>
-									selected="selected"
-								<?php
-							}
-						?>
-					>
-						Man
-					</option>
-					
-					<option	
-						<?php
-							if(!empty($_GET['runner']) && ($runner->Gender == "Woman")) {
-								?>
-									selected="selected"
-								<?php
-							}
-						?>
-					>
-						Woman
-					</option>
-				</select>
 			</div>	
 			
 			<div class="form-group">
 				<div class="col-lg-3 d-inline-block"></div>
-				<?php
-					if($_SESSION['dashboard'] == 1) {
-						?>
-							<input class="col-lg-3 pull-right btn btn-default" type="button" value="Cancel" onclick="location.href='index.php?page=dashboard&list=stations'" />
-						<?php
-					}
-					
-					else {
-						?>
-							<input class="col-lg-3 pull-right btn btn-default" type="button" value="Cancel" onclick="location.href='index.php?page=stations'" />
-						<?php
-					}
-				?>
+				<input class="col-lg-3 pull-right btn btn-default" type="button" value="Cancel" onclick="location.href='index.php?page=dashboard&list=stations'" />
 				<button class="col-lg-3	pull-right btn btn-default" type="submit" name="submit">Submit</button>
 			</div>
 		</form>

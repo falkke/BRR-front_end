@@ -27,6 +27,18 @@ function DeleteAlert(from_dashboard, type, id)
 			else if(type == "team") {
 				window.location.href = "index.php?page=dashboard&list=teams&team=" + id + "&remove=1";
 			}
+			
+			else if(type == "station") {
+				window.location.href = "index.php?page=dashboard&list=stations&station=" + id + "&remove=1";
+			}
+			
+			else if(type == "si-unit") {
+				window.location.href = "index.php?page=dashboard&list=si-units&si-unit=" + id + "&remove=1";
+			}
+			
+			else if(type == "category") {
+				window.location.href = "index.php?page=dashboard&list=categories&category=" + id + "&remove=1";
+			}
 		}		
 		
 		else {
