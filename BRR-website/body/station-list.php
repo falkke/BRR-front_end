@@ -110,6 +110,22 @@
 					?>
 				">
 					ID
+					<font class="sort-arrow">
+						<?php
+							if(isset($_GET['sort_word']) && $_GET['sort_word'] == "ID" &&
+								isset($_GET['sort_by']) && $_GET['sort_by'] == "ASC") {
+						?>
+								 v
+						<?php
+							}
+							else if(isset($_GET['sort_word']) && $_GET['sort_word'] == "ID" &&
+								isset($_GET['sort_by']) && $_GET['sort_by'] == "DESC") {
+						?>
+								 ^
+						<?php
+							}
+						?>
+					</font>
 				</a>
 			</th>
 			
@@ -139,6 +155,22 @@
 					?>
 				">
 					Name
+					<font class="sort-arrow">
+						<?php
+							if(isset($_GET['sort_word']) && $_GET['sort_word'] == "Name" &&
+								isset($_GET['sort_by']) && $_GET['sort_by'] == "ASC") {
+						?>
+								 v
+						<?php
+							}
+							else if(isset($_GET['sort_word']) && $_GET['sort_word'] == "Name" &&
+								isset($_GET['sort_by']) && $_GET['sort_by'] == "DESC") {
+						?>
+								 ^
+						<?php
+							}
+						?>
+					</font>
 				</a>
 			</th>
 			
@@ -168,6 +200,22 @@
 					?>
 				">
 					Code
+					<font class="sort-arrow">
+						<?php
+							if(isset($_GET['sort_word']) && $_GET['sort_word'] == "Code" &&
+								isset($_GET['sort_by']) && $_GET['sort_by'] == "ASC") {
+						?>
+								 v
+						<?php
+							}
+							else if(isset($_GET['sort_word']) && $_GET['sort_word'] == "Code" &&
+								isset($_GET['sort_by']) && $_GET['sort_by'] == "DESC") {
+						?>
+								 ^
+						<?php
+							}
+						?>
+					</font>
 				</a>
 			</th>
 			<th>
@@ -196,6 +244,22 @@
 					?>
 				">
 					Length From Start
+					<font class="sort-arrow">
+						<?php
+							if(isset($_GET['sort_word']) && $_GET['sort_word'] == "LengthFromStart" &&
+								isset($_GET['sort_by']) && $_GET['sort_by'] == "ASC") {
+						?>
+								 v
+						<?php
+							}
+							else if(isset($_GET['sort_word']) && $_GET['sort_word'] == "LengthFromStart" &&
+								isset($_GET['sort_by']) && $_GET['sort_by'] == "DESC") {
+						?>
+								 ^
+						<?php
+							}
+						?>
+					</font>
 				</a>
 			</th>
 			

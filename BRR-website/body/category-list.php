@@ -109,6 +109,22 @@
 					?>
 				">
 					ID
+					<font class="sort-arrow">
+						<?php
+							if(isset($_GET['sort_word']) && $_GET['sort_word'] == "ID" &&
+								isset($_GET['sort_by']) && $_GET['sort_by'] == "ASC") {
+						?>
+								 v
+						<?php
+							}
+							else if(isset($_GET['sort_word']) && $_GET['sort_word'] == "ID" &&
+								isset($_GET['sort_by']) && $_GET['sort_by'] == "DESC") {
+						?>
+								 ^
+						<?php
+							}
+						?>
+					</font>
 				</a>
 			</th>
 			
@@ -138,6 +154,22 @@
 					?>
 				">
 					Gender
+					<font class="sort-arrow">
+						<?php
+							if(isset($_GET['sort_word']) && $_GET['sort_word'] == "Gender" &&
+								isset($_GET['sort_by']) && $_GET['sort_by'] == "ASC") {
+						?>
+								 v
+						<?php
+							}
+							else if(isset($_GET['sort_word']) && $_GET['sort_word'] == "Gender" &&
+								isset($_GET['sort_by']) && $_GET['sort_by'] == "DESC") {
+						?>
+								 ^
+						<?php
+							}
+						?>
+					</font>
 				</a>
 			</th>
 			
@@ -167,6 +199,22 @@
 					?>
 				">
 					Distance
+					<font class="sort-arrow">
+						<?php
+							if(isset($_GET['sort_word']) && $_GET['sort_word'] == "Distance" &&
+								isset($_GET['sort_by']) && $_GET['sort_by'] == "ASC") {
+						?>
+								 v
+						<?php
+							}
+							else if(isset($_GET['sort_word']) && $_GET['sort_word'] == "Distance" &&
+								isset($_GET['sort_by']) && $_GET['sort_by'] == "DESC") {
+						?>
+								 ^
+						<?php
+							}
+						?>
+					</font>
 				</a>
 			</th>
 			<?php

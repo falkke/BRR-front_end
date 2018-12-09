@@ -128,6 +128,22 @@
 									?>
 								">
 									ID
+									<font class="sort-arrow">
+										<?php
+											if(isset($_GET['sort_word']) && $_GET['sort_word'] == "ID" &&
+												isset($_GET['sort_by']) && $_GET['sort_by'] == "ASC") {
+										?>
+												 v
+										<?php
+											}
+											else if(isset($_GET['sort_word']) && $_GET['sort_word'] == "ID" &&
+												isset($_GET['sort_by']) && $_GET['sort_by'] == "DESC") {
+										?>
+												 ^
+										<?php
+											}
+										?>
+									</font>
 								</a>
 							</th>
 						<?php
@@ -160,6 +176,22 @@
 						?>
 					">
 						Name
+						<font class="sort-arrow">
+							<?php
+								if(isset($_GET['sort_word']) && $_GET['sort_word'] == "LastName" &&
+									isset($_GET['sort_by']) && $_GET['sort_by'] == "ASC") {
+							?>
+									 v
+							<?php
+								}
+								else if(isset($_GET['sort_word']) && $_GET['sort_word'] == "LastName" &&
+									isset($_GET['sort_by']) && $_GET['sort_by'] == "DESC") {
+							?>
+									 ^
+							<?php
+								}
+							?>
+						</font>
 					</a>
 				</th>
 				
@@ -189,6 +221,22 @@
 						?>
 					">
 						Date Of Birth
+						<font class="sort-arrow">
+							<?php
+								if(isset($_GET['sort_word']) && $_GET['sort_word'] == "DateOfBirth" &&
+									isset($_GET['sort_by']) && $_GET['sort_by'] == "ASC") {
+							?>
+									 v
+							<?php
+								}
+								else if(isset($_GET['sort_word']) && $_GET['sort_word'] == "DateOfBirth" &&
+									isset($_GET['sort_by']) && $_GET['sort_by'] == "DESC") {
+							?>
+									 ^
+							<?php
+								}
+							?>
+						</font>
 					</a>
 				</th>
 				<th>
@@ -217,6 +265,22 @@
 						?>
 					">
 						Gender
+						<font class="sort-arrow">
+							<?php
+								if(isset($_GET['sort_word']) && $_GET['sort_word'] == "Gender" &&
+									isset($_GET['sort_by']) && $_GET['sort_by'] == "ASC") {
+							?>
+									 v
+							<?php
+								}
+								else if(isset($_GET['sort_word']) && $_GET['sort_word'] == "Gender" &&
+									isset($_GET['sort_by']) && $_GET['sort_by'] == "DESC") {
+							?>
+									 ^
+							<?php
+								}
+							?>
+						</font>
 					</a>
 				</th>
 				

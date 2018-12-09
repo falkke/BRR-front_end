@@ -112,6 +112,22 @@
 					?>
 				">
 					ID
+					<font class="sort-arrow">
+						<?php
+							if(isset($_GET['sort_word']) && $_GET['sort_word'] == "ID" &&
+								isset($_GET['sort_by']) && $_GET['sort_by'] == "ASC") {
+						?>
+								 v
+						<?php
+							}
+							else if(isset($_GET['sort_word']) && $_GET['sort_word'] == "ID" &&
+								isset($_GET['sort_by']) && $_GET['sort_by'] == "DESC") {
+						?>
+								 ^
+						<?php
+							}
+						?>
+					</font>
 				</a>
 			</th>
 			
@@ -141,6 +157,22 @@
 					?>
 				">
 					Status
+					<font class="sort-arrow">
+						<?php
+							if(isset($_GET['sort_word']) && $_GET['sort_word'] == "Status" &&
+								isset($_GET['sort_by']) && $_GET['sort_by'] == "ASC") {
+						?>
+								 v
+						<?php
+							}
+							else if(isset($_GET['sort_word']) && $_GET['sort_word'] == "Status" &&
+								isset($_GET['sort_by']) && $_GET['sort_by'] == "DESC") {
+						?>
+								 ^
+						<?php
+							}
+						?>
+					</font>
 				</a>
 			</th>
 			

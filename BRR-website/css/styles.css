@@ -20,6 +20,10 @@ html, body {
 	color: grey;
 }
 
+.sort-arrow{
+	color: grey;
+}
+
 .link-title {
 	color: black;
 	cursor: pointer;
