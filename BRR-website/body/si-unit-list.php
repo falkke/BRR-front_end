@@ -32,7 +32,7 @@
 		$_SESSION['bbr']['search-si-unit'] = $search;
 	}
 	
-	if(isset($_GET['sort_word']) && ($_GET['sort_word'] == "ID" || $_GET['sort_word'] == "Status")
+	if(isset($_GET['sort_word']) && ($_GET['sort_word'] == "ID" || $_GET['sort_word'] == "Status" || $_GET['sort_word'] == "Holder")
 	&& isset($_GET['sort_by']) && ($_GET['sort_by'] == "ASC" || $_GET['sort_by'] == "DESC")) {
 		$sort = "ORDER BY ".$_GET['sort_word']." ".$_GET['sort_by'];
 	}
@@ -72,6 +72,7 @@
 	else if(isset($_GET['si-unit-modified']) && ($_GET['si-unit-modified'] == 0)
 			&& isset($_GET['si-unit'])) {	
 		edit_si_unit($_GET['si-unit'], "Returned");
+		delete_all_runner_si_unit($_GET['si-unit']);
 		header('Location:index.php?page=dashboard&list=si-units&si-unit-modified=1');
 	}
 ?>
@@ -245,18 +246,7 @@
 					<tr>
 						<td><?=$si_unit->ID?></td>
 						<td><?=$si_unit->Status?></td>
-						<td>
-							<?php
-								if($si_unit->Status == "Active") {
-									$runner = get_not_returned_si_unit($si_unit->ID);
-									echo $runner->FirstName." ".$runner->LastName;
-								}
-									
-								else {
-									echo "-";
-								}
-							?>
-						</td>
+						<td><?=$si_unit->Holder?></td>
 						
 						<td class="no-change">
 							<a class="bg-primary text-white table-button" href="index.php?page=dashboard&list=si-units&si-unit=<?=$si_unit->ID?>&si-unit-modified=0"><- </a>

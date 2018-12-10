@@ -686,6 +686,18 @@
         $req->execute($r);
     }
 	
+	function delete_all_runner_si_unit($si_unit_id) {
+        global $db;
+		
+        $r = array(
+			'si_unit_id' => $si_unit_id
+        );
+		
+        $sql = "DELETE FROM runner_units WHERE SI_unit = :si_unit_id";
+        $req = $db->prepare($sql);
+        $req->execute($r);
+    }
+	
 	function has_si_unit($race_id, $runner_id) {
 		global $db;
 		
@@ -1253,7 +1265,14 @@
 	function search_si_unit($keyword, $sort) {
 		global $db;
 
-        $req = $db->query("SELECT * FROM si_unit WHERE Status LIKE '%{$keyword}%' {$sort}");
+        $req = $db->query("	SELECT su.ID, su.Status, '-' AS Holder
+							FROM si_unit AS su
+							WHERE su.Status = 'Returned' AND CONCAT(su.Status, ' ', su.ID) LIKE '%{$keyword}%'
+							UNION
+							SELECT su.ID, su.Status, CONCAT(r.FirstName, ' ', r.LastName) AS Holder 
+							FROM si_unit AS su, runner_units AS ru, runner AS r 
+							WHERE ru.SI_unit = su.ID AND r.ID = ru.Runner AND CONCAT(r.FirstName, ' ', r.LastName, ' ', su.Status, ' ', su.ID) LIKE '%{$keyword}%'
+							{$sort}");
 
 		$results = array();
 		
