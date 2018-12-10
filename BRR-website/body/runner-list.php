@@ -38,9 +38,19 @@
 		$search = htmlspecialchars(trim($_POST['search']));
 		$_SESSION['bbr']['search-runner'] = $search;
 	}
-
-	if(isset($_GET['sort_word']) && isset($_GET['sort_by'])) {
+	
+	if(isset($_GET['sort_word']) && ($_GET['sort_word'] == "ID" || $_GET['sort_word'] == "LastName" || $_GET['sort_word'] == "DateOfBirth" || $_GET['sort_word'] == "Gender")
+	&& isset($_GET['sort_by']) && ($_GET['sort_by'] == "ASC" || $_GET['sort_by'] == "DESC")) {
 		$sort = "ORDER BY ".$_GET['sort_word']." ".$_GET['sort_by'];
+	}
+	else if(isset($_GET['sort_word']) || isset($_GET['sort_by']))
+	{
+		if($dashboard == 1) {
+			header('Location:index.php?page=dashboard&list=runners');
+		}
+		else {
+			header('Location:index.php?page=runners');
+		}
 	}
 ?>
 

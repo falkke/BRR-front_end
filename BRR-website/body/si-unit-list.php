@@ -32,8 +32,13 @@
 		$_SESSION['bbr']['search-si-unit'] = $search;
 	}
 	
-	if(isset($_GET['sort_word']) && isset($_GET['sort_by'])) {
+	if(isset($_GET['sort_word']) && ($_GET['sort_word'] == "ID" || $_GET['sort_word'] == "Status")
+	&& isset($_GET['sort_by']) && ($_GET['sort_by'] == "ASC" || $_GET['sort_by'] == "DESC")) {
 		$sort = "ORDER BY ".$_GET['sort_word']." ".$_GET['sort_by'];
+	}
+	else if(isset($_GET['sort_word']) || isset($_GET['sort_by']))
+	{
+		header('Location:index.php?page=dashboard&list=si-units');
 	}
 ?>
 
