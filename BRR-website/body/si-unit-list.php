@@ -52,11 +52,6 @@
 		<?php
 	}
 	
-	else if(isset($_GET['si-unit-added']) && ($_GET['si-unit-added'] == 0)) {	
-		add_si_unit("Returned");
-		header('Location:index.php?page=dashboard&list=si-units&si-unit-added=1');
-	}
-	
 	else if(isset($_GET['si-unit-added']) && !empty($_GET['si-unit-added']) && ($_GET['si-unit-added'] == 1)) {	
 		?>
 			<p class="alert alert-success" role="alert">The SI-unit has been succefully added.</p>
@@ -65,8 +60,14 @@
 	
 	else if(isset($_GET['si-unit-modified']) && !empty($_GET['si-unit-modified']) && ($_GET['si-unit-modified'] == 1)) {				
 		?>
-			<p class="alert alert-success" role="alert">The SI-unit has been succefully modified.</p>
+			<p class="alert alert-success" role="alert">The SI-unit has been succefully returned.</p>
 		<?php
+	}
+	
+	else if(isset($_GET['si-unit-modified']) && ($_GET['si-unit-modified'] == 0)
+			&& isset($_GET['si-unit'])) {	
+		edit_si_unit($_GET['si-unit'], "Returned");
+		header('Location:index.php?page=dashboard&list=si-units&si-unit-modified=1');
 	}
 ?>
 
@@ -227,10 +228,7 @@
 			</th>
 			
 			<th>
-				<a class="bg-success text-white table-button" href="index.php?page=dashboard&list=si-units&si-unit-added=0">+</a>
-				<!--
-					<a class="bg-success text-white table-button" href="index.php?page=manage&si-unit">+</a>
-				-->
+				<a class="bg-success text-white table-button" href="index.php?page=manage&si-unit">+</a>
 			</th>
 		</tr>
 	</thead>
@@ -256,7 +254,7 @@
 						</td>
 						
 						<td class="no-change">
-							<a class="bg-primary text-white table-button" href="index.php?page=manage&si-unit=<?=$si_unit->ID?>">...</a>
+							<a class="bg-primary text-white table-button" href="index.php?page=dashboard&list=si-units&si-unit=<?=$si_unit->ID?>&si-unit-modified=0"><- </a>
 							<a class="bg-danger text-white table-button" onclick="DeleteAlert(1, 'si-unit', <?=$si_unit->ID?>);" href="#">X</a>
 						</td>
 					</tr>

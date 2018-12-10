@@ -1296,14 +1296,15 @@
         return $results;
 	}
 	
-	function add_si_unit($status) {
+	function add_si_unit($si_unit_id, $status) {
         global $db;
 		
         $r = array(
+                'si_unit_id' => $si_unit_id,
                 'status' => $status
         );
 		
-        $sql = "INSERT INTO si_unit(Status) VALUES(:status)";
+        $sql = "INSERT INTO si_unit(ID, Status) VALUES(:si_unit_id, :status)";
         $req = $db->prepare($sql);
         $req->execute($r);
     }		
