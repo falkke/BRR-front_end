@@ -7,7 +7,7 @@
 		header('Location:index.php?page=dashboard&list=stations');
 	}
 	
-	if(!empty($_GET['station'])) {
+	if(!empty($_GET['station']) || ($_GET['station'] == 0)) {
 		$station_id = $_GET['station'];
 		
 		if(does_station_exist($station_id)) {
@@ -20,17 +20,18 @@
 	}
 	
 	if(isset($_POST['submit'])) {
+		$identifier = htmlspecialchars(trim($_POST['identifier']));
 		$name = htmlspecialchars(trim($_POST['name']));
 		$code = $_POST['code'];
 		$length_from_start = $_POST['length_from_start'];
 		
-		if(!empty($_GET['station'])) {
+		if(!empty($_GET['station']) || ($_GET['station'] == 0)) {
 			edit_station($station_id, $name, $code, $length_from_start);
 			header('Location:index.php?page=dashboard&list=stations&station-modified=1');
 		}
 		
 		else {
-			add_station($name, $code, $length_from_start);
+			add_station($identifier, $name, $code, $length_from_start);
 			header('Location:index.php?page=dashboard&list=stations&station-added=1');
 		}
 	}
@@ -40,7 +41,7 @@
 	<div class="starter-template">
 		<h2 class="page-title">
 			<?php
-				if(!empty($_GET['station'])) {
+				if(!empty($_GET['station']) || ($_GET['station'] == 0)) {
 					?>
 						Edit Station
 					<?php
@@ -54,12 +55,25 @@
 			?>
 		</h2>
 		
-		<form method="post" class="form-horizontal form-add-edit">
+		<form method="post" class="form-horizontal form-add-edit">			
+			<div class="form-group">
+				<label for="identifier" class="col-lg-3 d-inline-block  control-label">Identifier : </label>
+				<input id="identifier" name="identifier" type="text" class="col-lg-9 d-inline-block form-control h-100" required autofocus 
+					<?php
+					if(!empty($_GET['station']) || ($_GET['station'] == 0)) {
+							?>
+								disabled value='<?=$station->ID?>'
+							<?php
+						}
+					?>
+				>
+			</div>	
+			
 			<div class="form-group">
 				<label for="name" class="col-lg-3 d-inline-block  control-label">Name : </label>
 				<input id="name" name="name" type="text" class="col-lg-9 d-inline-block form-control h-100" required autofocus 
 					<?php
-						if(!empty($_GET['station'])) {
+						if(!empty($_GET['station']) || ($_GET['station'] == 0)) {
 							?>
 								value='<?=$station->Name?>'
 							<?php
@@ -72,7 +86,7 @@
 				<label for="code" class="col-lg-3 d-inline-block  control-label">Code : </label>
 				<input id="code" name="code" type="number" class="col-lg-9 d-inline-block form-control h-100" required 
 					<?php
-						if(!empty($_GET['station'])) {
+						if(!empty($_GET['station']) || ($_GET['station'] == 0)) {
 							?>
 								value='<?=$station->Code?>'
 							<?php
@@ -85,7 +99,7 @@
 				<label for="length_from_start" class="col-lg-3 d-inline-block  control-label">Length From Start : </label>
 				<input id="length_from_start" name="length_from_start" type="number" class="col-lg-9 d-inline-block form-control h-100" required 
 					<?php
-						if(!empty($_GET['station'])) {
+						if(!empty($_GET['station']) || ($_GET['station'] == 0)) {
 							?>
 								value='<?=$station->LengthFromStart?>'
 							<?php

@@ -180,6 +180,51 @@
 					</font>
 				</a>
 			</th>
+		
+			<th>
+				<a class="sort" href="index.php?page=<?=$_GET['page']?>
+					<?php
+						if(isset($_GET['list'])) {
+							?>
+								&list=<?=$_GET['list']?>
+							<?php
+						}
+					?>
+						&sort_word=Holder
+					<?php
+						if(isset($_GET['sort_word']) && $_GET['sort_word'] == "Holder" &&
+						isset($_GET['sort_by']) && $_GET['sort_by'] == "ASC") {
+							?>
+								&sort_by=DESC
+							<?php
+						}
+						
+						else {
+							?>
+								&sort_by=ASC
+							<?php
+						}
+					?>
+				">
+					Holder
+					<font class="sort-arrow">
+						<?php
+							if(isset($_GET['sort_word']) && $_GET['sort_word'] == "Holder" &&
+								isset($_GET['sort_by']) && $_GET['sort_by'] == "ASC") {
+						?>
+								 v
+						<?php
+							}
+							else if(isset($_GET['sort_word']) && $_GET['sort_word'] == "Holder" &&
+								isset($_GET['sort_by']) && $_GET['sort_by'] == "DESC") {
+						?>
+								 ^
+						<?php
+							}
+						?>
+					</font>
+				</a>
+			</th>
 			
 			<th>
 				<a class="bg-success text-white table-button" href="index.php?page=dashboard&list=si-units&si-unit-added=0">+</a>
@@ -197,10 +242,22 @@
 					<tr>
 						<td><?=$si_unit->ID?></td>
 						<td><?=$si_unit->Status?></td>
+						<td>
+							<?php
+								if($si_unit->Status == "Active") {
+									$runner = get_not_returned_si_unit($si_unit->ID);
+									echo $runner->FirstName." ".$runner->LastName;
+								}
+									
+								else {
+									echo "-";
+								}
+							?>
+						</td>
 						
 						<td class="no-change">
 							<a class="bg-primary text-white table-button" href="index.php?page=manage&si-unit=<?=$si_unit->ID?>">...</a>
-							<a class="bg-danger text-white table-button" onclick="DeleteAlert(1, 'si-unit', <?= $si_unit->ID ?>);" href="#">X</a>
+							<a class="bg-danger text-white table-button" onclick="DeleteAlert(1, 'si-unit', <?=$si_unit->ID?>);" href="#">X</a>
 						</td>
 					</tr>
 				<?php

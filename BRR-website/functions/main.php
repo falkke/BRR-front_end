@@ -429,7 +429,7 @@
                 'team_id' => $team_id,
         );
 		
-        $sql = "INSERT INTO race_runner(Race, Category, Runner, Bib, Club) VALUES(:race_id, :category_id, :runner_id, :bib, :team_id)";
+        $sql = "INSERT INTO race_runner(Race, Class, Runner, Bib, Club) VALUES(:race_id, :category_id, :runner_id, :bib, :team_id)";
         $req = $db->prepare($sql);
         $req->execute($e);
     }	
@@ -438,12 +438,20 @@
         global $db;
 		
 		$e = array(
-            'race_id' => $race_id,
             'runner_id' => $runner_id,
+            'si_unit_id' => $si_unit_id,
+            'race_id' => $race_id
+        );
+		
+        $sql = "INSERT INTO runner_units(Runner, SI_unit, Race) VALUES(:runner_id, :si_unit_id, :race_id)";
+        $req = $db->prepare($sql);
+        $req->execute($e);
+		
+		$e = array(
             'si_unit_id' => $si_unit_id
         );
 		
-        $sql = "INSERT INTO runner_units(Race, SI_unit, Runner) VALUES(:race_id, :si_unit_id, :runner_id)";
+        $sql = "UPDATE si_unit SET Status = 'Active' WHERE ID = :si_unit_id";
         $req = $db->prepare($sql);
         $req->execute($e);
     }		
@@ -585,6 +593,27 @@
         return $result;
 	}
 	
+	function get_race_runner_units($race_id) {
+		global $db;
+		
+        $e = array(
+            'race_id' => $race_id
+        );
+
+        $sql = "SELECT su.ID AS ID, r.ID AS Runner, su.Status AS Status, r.FirstName AS FirstName, r.LastName AS LastName FROM si_unit su, runner_units ru, runner r WHERE su.ID = ru.SI_unit AND ru.Runner = r.ID AND ru.Race = :race_id";
+        $req = $db->prepare($sql);
+        $req->execute($e);
+		
+		$results = array();
+		
+        while($rows = $req->fetchObject()) 
+		{
+            $results[] = $rows;
+        }
+		
+		return $results;
+	}
+	
 	function get_race_class_genders($race_id) 
 	{
 		global $db;
@@ -630,6 +659,49 @@
 		return $results;
 	}
 	
+	function delete_race_runner($race_id, $runner_id) {
+        global $db;
+		
+        $r = array(
+            'race_id' => $race_id,
+            'runner_id' => $runner_id
+        );
+		
+        $sql = "DELETE FROM race_runner WHERE Race = :race_id AND Runner = :runner_id";
+        $req = $db->prepare($sql);
+        $req->execute($r);
+    }
+	
+	function delete_runner_si_unit($runner_id, $si_unit_id, $race_id) {
+        global $db;
+		
+        $r = array(
+            'race_id' => $race_id,
+            'runner_id' => $runner_id,
+			'si_unit_id' => $si_unit_id
+        );
+		
+        $sql = "DELETE FROM runner_units WHERE Race = :race_id AND Runner = :runner_id AND SI_unit = :si_unit_id";
+        $req = $db->prepare($sql);
+        $req->execute($r);
+    }
+	
+	function has_si_unit($race_id, $runner_id) {
+		global $db;
+		
+        $r = array(
+            'race_id' => $race_id,
+            'runner_id' => $runner_id
+        );
+		
+		$sql = "SELECT * FROM runner_units WHERE Runner = :runner_id AND Race = :race_id";
+        $req = $db->prepare($sql);
+        $req->execute($r);
+
+        $exist = $req->rowCount($sql);
+		
+        return($exist);
+	}
 	
 	/* TIMESTAMP FUNCTIONS */
 	
@@ -1318,6 +1390,22 @@
         }
 
         return $results;
+	}
+	
+	function get_not_returned_si_unit($si_unit_id) {
+		global $db;
+		
+        $e = array(
+            'si_unit_id' => $si_unit_id
+        );
+
+        $sql = "SELECT * FROM runner WHERE ID IN (SELECT Runner FROM runner_units WHERE SI_unit = :si_unit_id)";
+        $req = $db->prepare($sql);
+        $req->execute($e);
+		
+        $result = $req->fetchObject();
+		
+        return $result;
 	}
 ?>
 

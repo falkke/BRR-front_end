@@ -22,6 +22,8 @@ html, body {
 
 .sort-arrow{
 	color: grey;
+	display: inline-block;
+	width: 20px;
 }
 
 .link-title {
@@ -89,7 +91,7 @@ html, body {
 
 .table-scroll-y-20 {
 	display: block;
-	height: 20%;
+	height: 200px;
 	overflow-y: auto;
 	-ms-overflow-style: -ms-autohiding-scrollbar;
 }
@@ -108,6 +110,14 @@ html, body {
 
 .table-button:hover {
     text-decoration: none;
+}
+
+.line {
+    height: 25px;
+}
+
+.clickable-row:hover {
+	background-color : rgba(100,100,100,0.3) !important;
 }
 
 /* Login Form */

@@ -30,8 +30,25 @@
 						<li><a href="index.php?page=dashboard&list=si-units">SI-Units</a></li>
 						<li><a href="index.php?page=dashboard&list=categories">Categories</a></li>
 						<li><a href="index.php?page=dashboard&list=stations">Stations</a></li>
-					</ul>					
-					<li data-toggle="collapse" data-target="#races" class="collapsed">
+					</ul>	
+
+					<li data-toggle="collapse" data-target="#current_races" class="collapsed">
+						<a href="#">Current Races</a>
+					</li>
+					<ul class="sub-menu collapse 
+						<?php 
+							if(isset($_GET['race'])) {
+								?>
+									show
+								<?php 
+							}
+						?>
+					" id="current_races">
+						<!--<li><a href="index.php?page=dashboard">List</a></li>
+						<li><a href="index.php?page=dashboard">Add</a></li>-->
+					</ul>
+
+					<li data-toggle="collapse" data-target="#planned_races" class="collapsed">
 						<a href="#">Planned Races</a>
 					</li>
 					<ul class="sub-menu collapse 
@@ -42,9 +59,25 @@
 								<?php 
 							}
 						?>
-					" id="races">
-						<li><a href="index.php?page=dashboard">List</a></li>
-						<li><a href="index.php?page=dashboard">Add</a></li>
+					" id="planned_races">
+						<!--<li><a href="index.php?page=dashboard">List</a></li>
+						<li><a href="index.php?page=dashboard">Add</a></li>-->
+					</ul>
+
+					<li data-toggle="collapse" data-target="#past_races" class="collapsed">
+						<a href="#">Past Races</a>
+					</li>
+					<ul class="sub-menu collapse 
+						<?php 
+							if(isset($_GET['race'])) {
+								?>
+									show
+								<?php 
+							}
+						?>
+					" id="past_races">
+						<!--<li><a href="index.php?page=dashboard">List</a></li>
+						<li><a href="index.php?page=dashboard">Add</a></li>-->
 					</ul>
 				</ul>
 			</div>
