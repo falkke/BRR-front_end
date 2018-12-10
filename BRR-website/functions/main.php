@@ -1303,6 +1303,21 @@
         $exist = $req->rowCount($sql);
 		
         return($exist);
-    }
+    }	
+	
+	function get_not_returned_si_units() {
+		global $db;
+		
+        $req = $db->query("SELECT ru.Runner, ru.SI_unit, r.FirstName, r.LastName FROM runner AS r, runner_units AS ru, si_unit AS su WHERE su.Status = 'Active' AND su.ID = ru.SI_unit AND r.ID = ru.Runner");
+		
+		$results = array();
+		
+        while($rows = $req->fetchObject()) 
+		{
+            $results[] = $rows;
+        }
+
+        return $results;
+	}
 ?>
 
