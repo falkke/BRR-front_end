@@ -52,7 +52,12 @@
 		<?php
 	}
 	
-	else if(isset($_GET['si-unit-added']) && !empty($_GET['si-unit-added']) && ($_GET['si-unit-added'] == 1)) {				
+	else if(isset($_GET['si-unit-added']) && ($_GET['si-unit-added'] == 0)) {	
+		add_si_unit("Returned");
+		header('Location:index.php?page=dashboard&list=si-units&si-unit-added=1');
+	}
+	
+	else if(isset($_GET['si-unit-added']) && !empty($_GET['si-unit-added']) && ($_GET['si-unit-added'] == 1)) {	
 		?>
 			<p class="alert alert-success" role="alert">The SI-unit has been succefully added.</p>
 		<?php
@@ -177,7 +182,7 @@
 			</th>
 			
 			<th>
-				<a class="bg-success text-white table-button" href="index.php?page=manage&si-unit">+</a>
+				<a class="bg-success text-white table-button" href="index.php?page=dashboard&list=si-units&si-unit-added=0">+</a>
 			</th>
 		</tr>
 	</thead>

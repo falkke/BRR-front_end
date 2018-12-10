@@ -53,7 +53,7 @@
 		<?php
 	}
 	
-	else if(isset($_GET['team-deleted']) && !empty($_GET['team-deleted']) && ($_GET['team-deleted'] == 1)) {				
+	else if(isset($_GET['team-deleted']) && !empty($_GET['team-deleted']) && ($_GET['team-deleted'] == 1)) {
 		?>
 			<p class="alert alert-success" role="alert">The team has been succefully deleted.</p>
 		<?php
