@@ -50,6 +50,18 @@
 		}
     }
 	
+	function edit_user($username, $password) {
+        global $db;
+		
+        $r = array(
+                'username' => $username,
+                'password' => $password
+        );
+
+        $sql = "UPDATE administrator SET Password = :password WHERE Username = :username";
+        $req = $db->prepare($sql);
+        $req->execute($r);
+    }
 	
 	/* RACE FUNCTIONS */
 	
