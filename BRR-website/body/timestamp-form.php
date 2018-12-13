@@ -3,128 +3,137 @@
         header('Location:index.php?page=home');
     }
 	
-	if(isset($_GET['runner']) && !empty($_GET['runner'])) {
-		$id = $_GET['runner'];
+	if(!isset($_GET['runner'])) {
+		header('Location:index.php?page=runners');
+	}
+	if(!empty($_GET['runner'])) {
+		$runner_id = $_GET['runner'];
 		
-		if(does_runner_exist($id)) {
-			$runner = get_runner($id);
+		if(does_runner_exist($runner_id)) {
+			$runner = get_runner($runner_id);
 		}
-		
 		else {
-			header("Location:index.php?page=home");
+			header("Location:index.php?page=runners");
+		}
+	}
+	
+	if(!isset($_GET['race'])) {
+		header('Location:index.php?page=runners');
+	}
+	if(!empty($_GET['race'])) {
+		$race_id = $_GET['race'];
+		
+		if(does_race_exist($race_id)) {
+			$race = get_race($race_id);
+		}
+		else {
+			header("Location:index.php?page=runners");
+		}
+	}
+	
+	if(!isset($_GET['timestamp'])) {
+		header('Location:index.php?page=runners');
+	}
+	if(!empty($_GET['timestamp'])) {
+		$timestamp_time = $_GET['timestamp'];
+		
+		if(does_timestamp_exist($timestamp_time, $runner_id, $race_id)) {
+			$timestamp = get_timestamp($timestamp_time, $runner_id);
+		}
+		else {
+			header("Location:index.php?page=runners");
 		}
 	}
 	
 	if(isset($_POST['submit'])) {
-		//$ssn = htmlspecialchars(trim($_POST['ssn']));
-		$first_name = htmlspecialchars(trim($_POST['first_name']));
-		$last_name = htmlspecialchars(trim($_POST['last_name']));
-		$birth_date = $_POST['birth_date'];
-		$gender = $_POST['gender'];
+		$new_datetime = "'" . $_POST['date'] . " " . $_POST['time'] . "'";
+		$station = explode(" - ", $_POST['station']);
 		
-		if(isset($_GET['runner'])) {
-			edit_runner($id, $first_name, $last_name, $birth_date, $gender);
+		if(!empty($_GET['timestamp'])) {
+			edit_timestamp($timestamp_time, $runner_id, $race_id, $new_datetime, $station[0]);
+			//header('Location:index.php&'.$timestamp_time.'&'.$station[0]);
+			header('Location:index.php?page=runner&runner='.$runner_id.'&race='.$race_id.'&timestamp-modified=1');
 		}
-		
 		else {
-			add_runner($first_name, $last_name, $birth_date, $gender);
+			add_timestamp($runner_id, $race_id, $new_datetime, $station[0]);
+			header('Location:index.php?page=runner&runner='.$runner_id.'&race='.$race_id.'&timestamp-added=1');
 		}
+	}
+?>
+
+<main role="main" class="container">
+	<div class="starter-template">
+		<h2 class="page-title">
+			<?php
+				if(!empty($_GET['timestamp'])) {
+					?>
+						Edit Timestamp
+					<?php
+				}
+				
+				else {
+					?>
+						Add Timestamp
+					<?php
+				}
+			?>
+		</h2>
 		
-        header('Location:index.php?page=runner-list');
-	}
-?>
-
-<h2 class="page-title">
-<?php
-	if(isset($_GET['runner']))
-	{
-?>
-	Edit Runner
-<?php
-	}
-	
-	else 
-	{
-?>
-	Add Runner
-<?php
-	}
-?>
-</h2>
-
-<form method="post" class="form-horizontal form-add-edit">
-	<!--<div class="form-group">
-		<label for="first_name" class="col-lg-3 d-inline-block  control-label">First Name : </label>
-		<input id="first_name" name="first_name" type="text" class="col-lg-9 d-inline-block form-control h-100" required autofocus <?php
-			if(isset($_GET['runner']))
-			{
-		?>
-			value='<?= $runner->FirstName ?>'
-		<?php
-			}
-		?>>
-	</div>	
-	
-	<div class="form-group">
-		<label for="last_name" class="col-lg-3 d-inline-block  control-label">Last Name : </label>
-		<input id="last_name" name="last_name" type="text" class="col-lg-9 d-inline-block form-control h-100" required <?php
-			if(isset($_GET['runner']))
-			{
-		?>
-			value='<?= $runner->LastName ?>'
-		<?php
-			}
-		?>>
-	</div>	
-	
-	<div class="form-group">
-		<label for="birth_date" class="col-lg-3 d-inline-block  control-label">Birth Date : </label>
-		<input id="birth_date" name="birth_date" type="date" class="col-lg-9 d-inline-block form-control h-100" required <?php
-			if(isset($_GET['runner']))
-			{
-		?>
-			value='<?= $runner->DateOfBirth ?>'
-		<?php
-			}
-		?>>
-	</div>	
-	
-	<div class="form-group">
-		<label for="gender" class="col-lg-3 d-inline-block control-label">Gender : </label>
-		<select id="gender" name="gender" class="col-lg-9 d-inline-block form-control h-100" required <?php
-			if(isset($_GET['runner']))
-			{
-		?>
-			disabled
-		<?php
-			}
-		?>>
-			<option <?php
-				if(isset($_GET['runner']) && ($runner->Gender == "Man"))
-				{ 
-			?>
-				selected="selected"
-			<?php
-				}
-			?>
-			>Man</option>
-			<option	<?php
-				if(isset($_GET['runner']) && ($runner->Gender == "Woman"))
-				{
-			?>
-				selected="selected"
-			<?php
-				}
-			?>
-			>Woman</option>
-		</select>
-	</div>	
-	
-	<div class="form-group">
-		<div class="col-lg-3 d-inline-block"></div>
-		<input class="col-lg-3 pull-right btn btn-default" type="button" value="Cancel" onclick="location.href='index.php?page=runner-list'" />
-		<button class="col-lg-3	pull-right btn btn-default" type="submit" name="submit">Submit</button>
+		<!-- max='<?=$race->EndDate?>' -->
+		<form method="post" class="form-horizontal form-add-edit">
+			<div class="form-group">
+				<label for="date" class="col-lg-3 d-inline-block  control-label">Timestamp Date: </label>
+				<input id="date" name="date" type="date" min='<?=$race->Date?>' class="col-lg-9 d-inline-block form-control h-100" required autofocus 
+					<?php
+						if(!empty($_GET['timestamp'])) {
+							?>
+								value='<?=$timestamp->Date?>'
+							<?php
+						}
+					?>
+				>
+			</div>
+			<div class="form-group">
+				<label for="time" class="col-lg-3 d-inline-block  control-label">Timestamp Time: </label>
+				<input id="time" name="time" type="time" min="00:00:00" max="23:59:59" step="1" class="col-lg-9 d-inline-block form-control h-100" required autofocus 
+					<?php
+						if(!empty($_GET['timestamp'])) {
+							?>
+								value='<?=$timestamp->Time?>'
+							<?php
+						}
+					?>
+				>
+			</div>
+			<div class="form-group">
+				<label for="station" class="col-lg-3 d-inline-block  control-label">Station : </label>
+				<select id="station" name="station" class="col-lg-9 d-inline-block form-control h-100" required>
+				<?php
+					foreach(get_stations() as $station) {
+				?>	
+						<option
+							<?php
+								if(!empty($_GET['timestamp']) && $timestamp->Station == $station->ID)
+								{
+							?>
+									selected="selected"
+							<?php
+								}
+							?>
+						>
+							<?=$station->ID." - ".$station->Name?>
+						</option>					
+				<?php
+					}
+				?>
+				</select>
+			</div>
+			
+			<div class="form-group">
+				<div class="col-lg-3 d-inline-block"></div>
+				<input class="col-lg-3 pull-right btn btn-default" type="button" value="Cancel" onclick="location.href='index.php?page=runner&runner=<?=$runner_id?>&race=<?=$race_id?>'" />
+				<button class="col-lg-3	pull-right btn btn-default" type="submit" name="submit">Submit</button>
+			</div>
+		</form>
 	</div>
-
-	-->
-</form>
+</main>

@@ -1,7 +1,10 @@
 <main role="main" class="container">
 	<div class="starter-template">
 		<?php
-			if(isset($_GET['race'])) {
+			if(isset($_GET['timestamp'])) {
+				require 'body/timestamp-form.php';
+			}
+			else if(isset($_GET['race'])) {
 				require 'body/race-form.php';
 			}
 			

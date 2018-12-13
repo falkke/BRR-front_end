@@ -11,6 +11,14 @@ jQuery(document).ready(function($)
 	});
 });
 
+function DeleteAlert_timestamp(timestamp, runner_id, race_id) 
+{
+	if(confirm("Are you sure ?")) 
+	{
+		window.location.href = "index.php?page=runner&runner=" + runner_id + "&race=" + race_id + "&timestamp=" + timestamp + "&remove=1";
+	}
+}
+
 function DeleteAlert(from_dashboard, type, id) 
 {
 	if(confirm("Are you sure ?")) 

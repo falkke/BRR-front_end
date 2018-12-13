@@ -1,4 +1,27 @@
 <?php
+	if(	(isset($_GET['timestamp']) && !empty($_GET['timestamp']))
+	&&	(isset($_GET['runner']) && !empty($_GET['runner']) && does_runner_exist($_GET['runner']))
+	&&	(isset($_GET['race']) && !empty($_GET['race']) && does_race_exist($_GET['race']))
+	&&	(isset($_GET['remove']) && !empty($_GET['remove']))){
+		$timestamp = $_GET['timestamp'];
+		$remove = $_GET['remove'];
+		$runner_id = $_GET['runner'];
+		$race_id = $_GET['race'];
+		
+		$delete_runner_error = "";
+		
+		if($remove == 1) {
+			if(!does_timestamp_exist($timestamp, $runner_id, $race_id)) {
+				$delete_timestamp_error = "This timestamp does not exist.";
+			}
+			
+			else {
+				delete_timestamp($timestamp, $runner_id, $race_id);
+				header('Location:index.php?page=runner&runner='.$runner_id.'&race='.$race_id.'&timestamp-deleted=1');
+			}
+		}
+	}
+
 	if(isset($_GET['runner']) && !empty($_GET['runner'])) 
 	{
 		$runner_id = $_GET['runner'];
@@ -110,7 +133,31 @@
 		?>
 			<a class="link-title" href="index.php?page=race&race=<?=$race->ID?>&gender=<?=$class->Gender?>&distance=<?=$class->Distance?>"><h2 class="page-title followed-title"><?= $race->Name ?></h2></a>
 			<h3 class="page-subtitle"><?= "Results " . $class->Gender . " - " . $class->Distance ?> miles</h3>
-			
+			<?php
+				if(isset($delete_timestamp_error)) {
+					?>
+						<p class="alert alert-danger" role="alert"><?=$delete_timestamp_error?></p>
+					<?php
+				}
+				
+				else if(isset($_GET['timestamp-deleted']) && !empty($_GET['timestamp-deleted']) && ($_GET['timestamp-deleted'] == 1)) {				
+					?>
+						<p class="alert alert-success" role="alert">The timestamp has been succefully deleted.</p>
+					<?php
+				}
+				
+				else if(isset($_GET['timestamp-added']) && !empty($_GET['timestamp-added']) && ($_GET['timestamp-added'] == 1)) {				
+					?>
+						<p class="alert alert-success" role="alert">The timestamp has been succefully added.</p>
+					<?php
+				}
+				
+				else if(isset($_GET['timestamp-modified']) && !empty($_GET['timestamp-modified']) && ($_GET['timestamp-modified'] == 1)) {				
+					?>
+						<p class="alert alert-success" role="alert">The timestamp has been succefully modified.</p>
+					<?php
+				}
+			?>
 			<table class="table table-bordered table-striped table-condensed">           
 			<thead>
 				<tr>
@@ -124,7 +171,7 @@
 						{
 					?>
 						<th>
-							<a class="bg-success text-white table-button" href="index.php?page=add-runner">+</a>
+							<a class="bg-success text-white table-button" href="index.php?page=manage&timestamp&runner=<?=$runner_id?>&race=<?=$race->ID?>">+</a>
 						</th>
 					<?php
 						}
@@ -138,7 +185,7 @@
 						$station = get_station($timestamp->Station);						
 						$lap = get_number_laps($runner_id, $race->ID, $timestamp->Timestamp, $timestamp->Station);
 						$behind = get_time_behind_at_timestamp($runner_id, $race->ID, $lap, $station->ID);
-						$elapsed = get_elapsed_time_at_timestamp($runner_id, $race->ID, $lap, $station->ID)
+						$elapsed = get_elapsed_time_at_timestamp($runner_id, $race->ID, $station->ID, $timestamp->Timestamp)
 						?>	
 							<tr>
 								<td><?=($lap * 10) + $station->LengthFromStart?></td>
@@ -161,7 +208,7 @@
 								</td>
 								<td>
 										<?php
-											if($behind == "00:00:00")
+											if($behind == "00:00:00" || $behind == null)
 											{
 												echo "-";
 											}
@@ -177,8 +224,8 @@
 									{
 								?>
 									<td class="no-change">
-										<a class="bg-primary text-white table-button" href="index.php?page=manage-timestamp">...</a>
-										<a class="bg-danger text-white table-button" href="index.php?page=home&timestamp=<?=$timestamp->Timestamp?>&remove=1">X</a>
+										<a class="bg-primary text-white table-button" href="index.php?page=manage&timestamp=<?=$timestamp->Timestamp?>&runner=<?=$timestamp->Runner?>&race=<?=$race->ID?>">...</a>
+										<a class="bg-danger text-white table-button" onclick="DeleteAlert_timestamp('<?=$timestamp->Timestamp?>', <?=$runner_id?>, <?=$race->ID?>);" href="#">X</a>
 									</td>
 								<?php
 									}

@@ -78,7 +78,7 @@
 		<form method="post" class="form-horizontal form-add-edit">
 			<div class="form-group">
 				<label for="name" class="col-lg-3 d-inline-block control-label h-100">Name : </label>
-				<input type="name" id="name" name="name" class="col-lg-9 d-inline-block form-control h-100" placeholder="Name" required autofocus
+				<input type="text" id="name" name="name" class="col-lg-9 d-inline-block form-control h-100" placeholder="Name" required autofocus
 					<?php
 						if(!empty($_GET['race'])) {
 							?>

@@ -717,6 +717,48 @@
 	
 	/* TIMESTAMP FUNCTIONS */
 	
+	function add_timestamp($runner_id, $race_id, $new_datetime, $station) {
+        global $db;
+        $r = array(
+                'runner_id' => $runner_id,
+                'race_id' => $race_id,
+                'station' => $station
+        );
+		
+        $sql = "INSERT INTO timestamp(Timestamp, SI_Unit, Runner, Station, Race) VALUES({$new_datetime}, 0, :runner_id, :station, :race_id)";
+        $req = $db->prepare($sql);
+        $req->execute($r);
+    }		
+	
+	function edit_timestamp($old_timestamp, $runner_id, $race_id, $new_datetime,  $station) {
+        global $db;
+		
+        $r = array(
+                'old_timestamp' => $old_timestamp,
+                'station' => $station,
+                'runner_id' => $runner_id,
+                'race_id' => $race_id
+        );
+		
+        $sql = "UPDATE timestamp SET Station = :station, Timestamp = {$new_datetime} WHERE Race = :race_id AND Runner = :runner_id AND Timestamp = :old_timestamp";
+        $req = $db->prepare($sql);
+        $req->execute($r);
+    }
+		
+	function delete_timestamp($timestamp, $runner_id, $race_id) {
+        global $db;
+		
+        $r = array(
+            'timestamp' => $timestamp,
+            'runner_id' => $runner_id,
+            'race_id' => $race_id
+        );
+		
+        $sql = "DELETE FROM timestamp WHERE Runner = :runner_id AND Timestamp = :timestamp AND Race = :race_id";
+        $req = $db->prepare($sql);
+        $req->execute($r);
+    }
+	
 	function get_timestamps($runner_id, $race_id) 
 	{
 		global $db;
@@ -820,17 +862,17 @@
 
 
 	
-	function get_elapsed_time_at_timestamp($runner_id, $race_id, $lap, $station_id)
+	function get_elapsed_time_at_timestamp($runner_id, $race_id, $station_id, $timestamp)
 	{
 		global $db;
 		
         $e = array(
-            'nb_lap' => $lap + 1,
             'station_id' => $station_id,
             'runner_id' => $runner_id,
-            'race_id' => $race_id
+            'race_id' => $race_id,
+			'timestamp' => $timestamp
         );
-		$sql = "SELECT TIMEDIFF(t1.timestamp, t2.timestamp) AS TimeBehind FROM timestamp AS t1, timestamp AS t2 WHERE t1.Runner = :runner_id AND t1.Race = :race_id AND t1.lap = :nb_lap AND t1.station = :station_id AND t2.Runner = :runner_id AND t2.Race = :race_id AND t2.station = 0";
+		$sql = "SELECT TIMEDIFF(t1.timestamp, t2.timestamp) AS TimeBehind FROM timestamp AS t1, timestamp AS t2 WHERE t1.Runner = :runner_id AND t1.Race = :race_id AND t1.Timestamp = :timestamp AND t1.station = :station_id AND t2.Runner = :runner_id AND t2.Race = :race_id AND t2.station = 0";
         $req = $db->prepare($sql);
         $req->execute($e);
 		
@@ -838,7 +880,42 @@
 
 		return $result;		
 	}	
+	
+	function does_timestamp_exist($timestamp, $runner_id, $race_id) 
+	{
+        global $db;
 
+        $e = array(
+            'timestamp' => $timestamp,
+            'runner_id' => $runner_id,
+            'race_id' => $race_id
+        );
+
+        $sql = "SELECT * FROM timestamp WHERE Runner = :runner_id AND Timestamp = :timestamp AND Race = :race_id";
+        $req = $db->prepare($sql);
+        $req->execute($e);
+
+        $exist = $req->rowCount($sql);
+		
+        return($exist);
+    }
+	
+	function get_timestamp($timestamp_time, $runner_id) {
+        global $db;
+		
+		$e = array(
+            'timestamp_time' => $timestamp_time,
+            'runner_id' => $runner_id
+        );
+		$sql = "SELECT Runner, Race, Place, Station, DATE_FORMAT(timestamp, '%Y-%m-%d') AS Date, DATE_FORMAT(timestamp, '%H:%i:%s') AS Time FROM timestamp WHERE Runner = :runner_id AND Timestamp = :timestamp_time";
+        $req = $db->prepare($sql);
+        $req->execute($e);
+		
+        $result = $req->fetchObject();
+		
+        return $result;
+    }
+	
 	
 	/* TEAM FUNCTIONS */	
 	
@@ -1030,6 +1107,21 @@
 
         return $results;
 	}
+	
+	function get_stations() {
+		global $db;
+
+        $req = $db->query("SELECT * FROM station");
+
+		$results = array();
+		
+        while($rows = $req->fetchObject()) 
+		{
+            $results[] = $rows;
+        }
+
+        return $results;
+    }
 	
 	function get_station($station_id) {
         global $db;
