@@ -53,15 +53,20 @@
 					</li>
 					<ul class="sub-menu collapse 
 						<?php 
-							if(isset($_GET['race'])) {
+							if(isset($_GET['planned-race'])) {
 								?>
 									show
 								<?php 
 							}
 						?>
 					" id="planned_races">
-						<!--<li><a href="index.php?page=dashboard">List</a></li>
-						<li><a href="index.php?page=dashboard">Add</a></li>-->
+						<?php
+							foreach(get_planned_races() as $planned_race) {
+								?>		
+									<li><a href="index.php?page=dashboard&planned-race&race=<?=$planned_race->ID?>"><?=$planned_race->Name ?></a></li>
+								<?php
+							}
+						?>
 					</ul>
 
 					<li data-toggle="collapse" data-target="#past_races" class="collapsed">
@@ -69,15 +74,20 @@
 					</li>
 					<ul class="sub-menu collapse 
 						<?php 
-							if(isset($_GET['race'])) {
+							if(isset($_GET['past-race'])) {
 								?>
 									show
 								<?php 
 							}
 						?>
 					" id="past_races">
-						<!--<li><a href="index.php?page=dashboard">List</a></li>
-						<li><a href="index.php?page=dashboard">Add</a></li>-->
+						<?php
+							foreach(get_past_races() as $past_race) {
+								?>		
+									<li><a href="index.php?page=dashboard&past-race&race=<?=$past_race->ID?>"><?=$past_race->Name ?></a></li>
+								<?php
+							}
+						?>
 					</ul>
 				</ul>
 			</div>
@@ -99,6 +109,11 @@
 					require 'body/category-list.php';
 				else if($_GET['list'] == "si-units")
 					require 'body/si-unit-list.php';
+			}
+			
+			
+			else if(isset($_GET['planned-race']) || isset($_GET['past-race'])) {
+				require 'body/race-form.php';
 			}
 		?>
 	</div>

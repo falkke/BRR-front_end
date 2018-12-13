@@ -51,8 +51,8 @@
 		
 		if(!empty($_GET['timestamp'])) {
 			edit_timestamp($timestamp_time, $runner_id, $race_id, $new_datetime, $station[0]);
-			//header('Location:index.php&'.$timestamp_time.'&'.$station[0]);
-			header('Location:index.php?page=runner&runner='.$runner_id.'&race='.$race_id.'&timestamp-modified=1');
+			//set_laps($runner_id, $race_id);
+			//header('Location:index.php?page=runner&runner='.$runner_id.'&race='.$race_id.'&timestamp-modified=1');
 		}
 		else {
 			add_timestamp($runner_id, $race_id, $new_datetime, $station[0]);

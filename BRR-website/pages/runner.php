@@ -16,7 +16,7 @@
 			}
 			
 			else {
-				delete_timestamp($timestamp, $runner_id, $race_id);
+				delete_timestamp($runner_id, $race_id, $timestamp);
 				header('Location:index.php?page=runner&runner='.$runner_id.'&race='.$race_id.'&timestamp-deleted=1');
 			}
 		}
@@ -161,6 +161,8 @@
 			<table class="table table-bordered table-striped table-condensed">           
 			<thead>
 				<tr>
+					<th>Lap</th>
+					<th>Station</th>
 					<th>Distance</th>
 					<th>Place</th>
 					<th>Elapsed Time</th>
@@ -180,23 +182,23 @@
 			</thead>
 			<tbody>
 				<?php
-					$lap = -1;
-					foreach(get_timestamps($runner_id, $race->ID) as $timestamp) {		
-						$station = get_station($timestamp->Station);						
-						$lap = get_number_laps($runner_id, $race->ID, $timestamp->Timestamp, $timestamp->Station);
-						$behind = get_time_behind_at_timestamp($runner_id, $race->ID, $lap, $station->ID);
-						$elapsed = get_elapsed_time_at_timestamp($runner_id, $race->ID, $station->ID, $timestamp->Timestamp)
+					foreach(get_runner_timestamps($runner_id, $race->ID) as $timestamp) {		
+						$station = get_station($timestamp->Station);
+						$behind = get_time_behind_at_timestamp($runner_id, $race->ID, $timestamp->Lap, $station->ID);
+						$elapsed = get_elapsed_time_at_timestamp($runner_id, $race->ID, $station->ID, $timestamp->Timestamp);
+						
 						?>	
 							<tr>
-								<td><?=($lap * 10) + $station->LengthFromStart?></td>
+								<td><?=$timestamp->Lap?></td>
+								<td><?=$station->Code?></td>
+								<td><?=(($timestamp->Lap - 1) * 10) + $station->LengthFromStart?></td>
 								<td>
 										<?php
-											if($timestamp->Station == 0)
-											{
+											if($timestamp->Station == 0) {
 												echo "-";
 											}
-											else
-											{
+											
+											else {
 												echo $timestamp->Place;
 											}
 										?>
@@ -208,9 +210,13 @@
 								</td>
 								<td>
 										<?php
-											if($behind == "00:00:00" || $behind == null)
+											if($behind == "00:00:00")
 											{
 												echo "-";
+											}
+											else if($behind == null)
+											{
+												echo "NULL";
 											}
 											else
 											{
