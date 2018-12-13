@@ -210,13 +210,9 @@
 								</td>
 								<td>
 										<?php
-											if($behind == "00:00:00")
+											if($behind == "00:00:00" || $behind == null)
 											{
 												echo "-";
-											}
-											else if($behind == null)
-											{
-												echo "NULL";
 											}
 											else
 											{

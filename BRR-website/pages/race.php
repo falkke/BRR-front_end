@@ -108,7 +108,11 @@
 				</span>
 			</div>
 		</form>
-
+		
+		<?php 
+		if(exist_race_runners($race->ID, $search, "Running"))
+		{
+		?>
 		<table class="table table-bordered table-striped table-condensed">           
 			<thead>
 				<tr>
@@ -134,7 +138,7 @@
 			</thead>
 			<tbody>
 				<?php
-					foreach(get_race_runners($race->ID, $search) as $race_runner) {	
+					foreach(get_race_runners($race->ID, $search, "Running") as $race_runner) {	
 						$class = get_race_runner_class($race_runner->Runner, $race_runner->Race) ;		
 					
 						if(($class->Gender == $_GET['gender']) && ($class->Distance == $_GET['distance'])) 
@@ -194,6 +198,243 @@
 				?>
 			</tbody>
 		</table>
+		<?php
+		}
+		?>
+		<?php 
+		if(exist_race_runners($race->ID, $search, "Finished"))
+		{
+		?>
+		<h3 class="form-inline my-2"> Finished </h3>
+		<table class="table table-bordered table-striped table-condensed">           
+			<thead>
+				<tr>
+					<th>Place</th>
+					<th>Bib</th>
+					<th>Name</th>
+					<th>Team</th>
+					<th>Elaspsed Time</th>
+					<th>Behind</th>
+					<th>Date & Time</th>
+					<th>Status</th>
+					<?php
+						if(is_logged() == 1)
+						{
+					?>
+						<th>
+							<a class="bg-success text-white table-button" href="index.php?page=manage-runner-race&race=<?=$id?>">+</a>
+						</th>
+					<?php
+						}
+					?>
+				</tr>
+			</thead>
+			<tbody>
+				<?php
+					foreach(get_race_runners($race->ID, $search, "Finished") as $race_runner) {	
+						$class = get_race_runner_class($race_runner->Runner, $race_runner->Race) ;		
+					
+						if(($class->Gender == $_GET['gender']) && ($class->Distance == $_GET['distance'])) 
+						{
+							$runner = get_runner($race_runner->Runner);
+							$timestamp = get_last_timestamp($race_runner->Runner, $race_runner->Race);
+							$behind = get_time_behind($race_runner);
+							$team = get_race_runner_team($race_runner->Runner, $race_runner->Race);
+							$elapsed = get_total_elapsed_time($race_runner->Runner, $race_runner->Race);
+							?>	
+								<tr class='clickable-row' data-href="index.php?page=runner&runner=<?=$race_runner->Runner?>&race=<?=$race_runner->Race?>">
+									<td><?=$race_runner->Place?></td>
+									<td><?=$race_runner->Bib?></td>
+									<td><?=$runner->FirstName." ".$runner->LastName?></td>
+									<td><?=$team->Name?></td>
+									<td><?=$elapsed?></td>
+									<td>
+										<?php
+											if($behind == "00:00:00")
+											{
+												echo "-";
+											}
+											else
+											{
+												echo "+" . $behind;
+											}
+										?>
+									</td>
+									<td>
+										<?php
+											if($timestamp != null)
+											{
+												echo $timestamp->Timestamp;
+											}
+											else
+											{
+												echo "-";
+											}
+										?>
+									</td>
+									<td><?=$race_runner->Status?></td>				
+									<?php
+										if(is_logged() == 1)
+										{
+									?>
+										<td class="no-change">
+											<a class="bg-primary text-white table-button" href="index.php?page=manage-runner-race">...</a>
+											<a class="bg-danger text-white table-button" href="index.php?page=home&runner=<?=$race_runner->Runner?>&race=<?=$race_runner->Race?>&remove=1">X</a>
+										</td>
+									<?php
+										}
+									?>
+								</tr>						
+							<?php
+						}
+					}
+				?>
+			</tbody>
+		</table>
+		<?php
+		}
+		?>
+		<?php 
+		if(exist_race_runners($race->ID, $search, "DNF"))
+		{
+		?>
+		<h3 class="form-inline my-2"> Do Not Finish </h3>
+		<table class="table table-bordered table-striped table-condensed">           
+			<thead>
+				<tr>
+					<th>Distance</th>
+					<th>Bib</th>
+					<th>Name</th>
+					<th>Team</th>
+					<th>Elaspsed Time</th>
+					<th>Date & Time</th>
+					<th>Status</th>
+					<?php
+						if(is_logged() == 1)
+						{
+					?>
+						<th>
+							<a class="bg-success text-white table-button" href="index.php?page=manage-runner-race&race=<?=$id?>">+</a>
+						</th>
+					<?php
+						}
+					?>
+				</tr>
+			</thead>
+			<tbody>
+				<?php
+					foreach(get_race_runners($race->ID, $search, "DNF") as $race_runner) {	
+						$class = get_race_runner_class($race_runner->Runner, $race_runner->Race) ;		
+					
+						if(($class->Gender == $_GET['gender']) && ($class->Distance == $_GET['distance'])) 
+						{
+							$runner = get_runner($race_runner->Runner);
+							$timestamp = get_last_timestamp($race_runner->Runner, $race_runner->Race);
+							$behind = get_time_behind($race_runner);
+							$team = get_race_runner_team($race_runner->Runner, $race_runner->Race);
+							$elapsed = get_total_elapsed_time($race_runner->Runner, $race_runner->Race);
+							?>	
+								<tr class='clickable-row' data-href="index.php?page=runner&runner=<?=$race_runner->Runner?>&race=<?=$race_runner->Race?>">
+									<td><?=$race_runner->Distance?></td>
+									<td><?=$race_runner->Bib?></td>
+									<td><?=$runner->FirstName." ".$runner->LastName?></td>
+									<td><?=$team->Name?></td>
+									<td><?=$elapsed?></td>
+									<td>
+										<?php
+											if($timestamp != null)
+											{
+												echo $timestamp->Timestamp;
+											}
+											else
+											{
+												echo "-";
+											}
+										?>
+									</td>
+									<td><?=$race_runner->Status?></td>				
+									<?php
+										if(is_logged() == 1)
+										{
+									?>
+										<td class="no-change">
+											<a class="bg-primary text-white table-button" href="index.php?page=manage-runner-race">...</a>
+											<a class="bg-danger text-white table-button" href="index.php?page=home&runner=<?=$race_runner->Runner?>&race=<?=$race_runner->Race?>&remove=1">X</a>
+										</td>
+									<?php
+										}
+									?>
+								</tr>						
+							<?php
+						}
+					}
+				?>
+			</tbody>
+		</table>
+		<?php
+		}
+		?>
+		<?php 
+		if(exist_race_runners($race->ID, $search, "DNS"))
+		{
+		?> 
+		<h3 class="form-inline my-2"> Do Not Start </h3>
+		<table class="table table-bordered table-striped table-condensed">           
+			<thead>
+				<tr>
+					<th>Bib</th>
+					<th>Name</th>
+					<th>Team</th>
+					<th>Status</th>
+					<?php
+						if(is_logged() == 1)
+						{
+					?>
+						<th>
+							<a class="bg-success text-white table-button" href="index.php?page=manage-runner-race&race=<?=$id?>">+</a>
+						</th>
+					<?php
+						}
+					?>
+				</tr>
+			</thead>
+			<tbody>
+				<?php
+					foreach(get_race_runners($race->ID, $search, "DNS") as $race_runner) {	
+						$class = get_race_runner_class($race_runner->Runner, $race_runner->Race) ;		
+					
+						if(($class->Gender == $_GET['gender']) && ($class->Distance == $_GET['distance'])) 
+						{
+							$runner = get_runner($race_runner->Runner);
+							$timestamp = get_last_timestamp($race_runner->Runner, $race_runner->Race);
+							$team = get_race_runner_team($race_runner->Runner, $race_runner->Race);
+							?>	
+								<tr class='clickable-row' data-href="index.php?page=runner&runner=<?=$race_runner->Runner?>&race=<?=$race_runner->Race?>">
+									<td><?=$race_runner->Bib?></td>
+									<td><?=$runner->FirstName." ".$runner->LastName?></td>
+									<td><?=$team->Name?></td>
+									<td><?=$race_runner->Status?></td>				
+									<?php
+										if(is_logged() == 1)
+										{
+									?>
+										<td class="no-change">
+											<a class="bg-primary text-white table-button" href="index.php?page=manage-runner-race">...</a>
+											<a class="bg-danger text-white table-button" href="index.php?page=home&runner=<?=$race_runner->Runner?>&race=<?=$race_runner->Race?>&remove=1">X</a>
+										</td>
+									<?php
+										}
+									?>
+								</tr>						
+							<?php
+						}
+					}
+				?>
+			</tbody>
+		</table>
+		<?php
+		}
+		?>
 	
 	<?php 
 		} 
