@@ -860,6 +860,23 @@
 		return $result;		
 	}
 
+	function get_total_elapsed_time($runner_id, $race_id)
+	{
+		global $db;
+		
+        $e = array(
+            'runner_id' => $runner_id,
+            'race_id' => $race_id
+        );
+		$sql = "SELECT TIMEDIFF(t1.timestamp, t2.timestamp) AS TimeBehind FROM timestamp AS t1, timestamp AS t2 WHERE t1.Runner = :runner_id AND t1.Race = :race_id AND t2.Runner = :runner_id AND t2.Race = :race_id AND t2.station = 0 AND t1.Timestamp =
+				(SELECT MAX(t3.timestamp) FROM timestamp AS t3 WHERE t3.Runner = :runner_id AND t3.Race = :race_id)";
+        $req = $db->prepare($sql);
+        $req->execute($e);
+		
+		$result = $req->fetch()['TimeBehind'];
+
+		return $result;		
+	}	
 
 	
 	function get_elapsed_time_at_timestamp($runner_id, $race_id, $station_id, $timestamp)
