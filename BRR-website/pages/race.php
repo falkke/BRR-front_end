@@ -143,7 +143,7 @@
 					
 					<tbody>
 						<?php
-							foreach(get_race_runners($race->ID, $search, "Running") as $race_runner) {	
+							foreach(get_race_runners_by_status($race->ID, $search, "Running") as $race_runner) {	
 								$class = get_race_runner_class($race_runner->Runner, $race_runner->Race) ;		
 							
 								if(($class->Gender == $_GET['gender']) && ($class->Distance == $_GET['distance'])) 
@@ -234,7 +234,7 @@
 					
 					<tbody>
 						<?php
-							foreach(get_race_runners($race->ID, $search, "Finished") as $race_runner) {	
+							foreach(get_race_runners_by_status($race->ID, $search, "Finished") as $race_runner) {	
 								$class = get_race_runner_class($race_runner->Runner, $race_runner->Race) ;		
 							
 								if(($class->Gender == $_GET['gender']) && ($class->Distance == $_GET['distance'])) 
@@ -324,7 +324,7 @@
 					
 					<tbody>
 						<?php
-							foreach(get_race_runners($race->ID, $search, "DNF") as $race_runner) {	
+							foreach(get_race_runners_by_status($race->ID, $search, "DNF") as $race_runner) {	
 								$class = get_race_runner_class($race_runner->Runner, $race_runner->Race) ;		
 							
 								if(($class->Gender == $_GET['gender']) && ($class->Distance == $_GET['distance'])) 
@@ -400,7 +400,7 @@
 					
 					<tbody>
 						<?php
-							foreach(get_race_runners($race->ID, $search, "DNS") as $race_runner) {	
+							foreach(get_race_runners_by_status($race->ID, $search, "DNS") as $race_runner) {	
 								$class = get_race_runner_class($race_runner->Runner, $race_runner->Race) ;		
 							
 								if(($class->Gender == $_GET['gender']) && ($class->Distance == $_GET['distance'])) 

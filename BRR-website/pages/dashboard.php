@@ -37,15 +37,20 @@
 					</li>
 					<ul class="sub-menu collapse 
 						<?php 
-							if(isset($_GET['race'])) {
+							if(isset($_GET['curent-race'])) {
 								?>
 									show
 								<?php 
 							}
 						?>
 					" id="current_races">
-						<!--<li><a href="index.php?page=dashboard">List</a></li>
-						<li><a href="index.php?page=dashboard">Add</a></li>-->
+						<?php
+							foreach(get_current_races() as $current_race) {
+								?>		
+									<li><a href="index.php?page=dashboard&current-race&race=<?=$current_race->ID?>"><?=$current_race->Name ?></a></li>
+								<?php
+							}
+						?>
 					</ul>
 
 					<li data-toggle="collapse" data-target="#planned_races" class="collapsed">

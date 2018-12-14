@@ -10,7 +10,7 @@
 		if(user_exist($username, $password) == 1) {
 			if($password1 == $password2) {
 				$new_password = password_hash($password1, PASSWORD_BCRYPT);
-				edit_user($username, $new_password);
+				edit_admin($username, $new_password);
 				
 				header('Location:index.php?page=settings&password-modified=1');
 			}
