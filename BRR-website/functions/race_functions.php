@@ -21,7 +21,7 @@
         global $db;
 		
         $r = array(
-                'race_id' => $race_id
+			'race_id' => $race_id
         );
 				
         $sql = "SELECT * FROM race WHERE ID = :race_id";
@@ -104,9 +104,9 @@
         global $db;
 		
         $var = array(
-                'race_name' => $race_name,
-                'race_start_date' => $race_start_date,
-                'race_end_datetime' => $race_end_datetime
+			'race_name' => $race_name,
+			'race_start_date' => $race_start_date,
+			'race_end_datetime' => $race_end_datetime
         );
 		
         $sql = "INSERT INTO race(Name, Date, EndTime) VALUES(:race_name, :race_start_date, :race_end_datetime)";
@@ -119,10 +119,10 @@
         global $db;
 		
         $var = array(
-                'race_id' => $race_id,
-                'race_name' => $race_name,
-                'race_start_date' => $race_start_date,
-                'race_end_datetime' => $race_end_datetime,
+			'race_id' => $race_id,
+			'race_name' => $race_name,
+			'race_start_date' => $race_start_date,
+			'race_end_datetime' => $race_end_datetime
         );
 		
         $sql = "UPDATE race SET Name = :race_name, Date = :race_start_date, EndTime = :race_end_datetime WHERE ID = :race_id";
@@ -134,49 +134,54 @@
 	function delete_race($race_id) {
         global $db;
 		
-        $r = array(
+        $var = array(
                 'race_id' => $race_id
         );
 		
         $sql = "DELETE FROM race WHERE ID = :race_id";
         $req = $db->prepare($sql);
-        $req->execute($r);
+        $req->execute($var);
     }
 		
-		
-		
+	// Function that returns 1 if the race has no link with other table and 0 if else.
 	function is_race_empty($race_id) {
         global $db;
 		
-        $r = array(
-                'race_id' => $race_id
+        $var = array(
+            'race_id' => $race_id
         );
 		
         $sql = "SELECT * FROM race_runner WHERE Race = :race_id";
         $req = $db->prepare($sql);
-        $req->execute($r);
+        $req->execute($var);
 		
 		$empty_race_runner = $req->rowCount($sql);
 		
         $sql = "SELECT * FROM timestamp WHERE Race = :race_id";
         $req = $db->prepare($sql);
-        $req->execute($r);
+        $req->execute($var);
 		
 		$empty_timestamp = $req->rowCount($sql);
 		
         $sql = "SELECT * FROM runner_units WHERE Race = :race_id";
         $req = $db->prepare($sql);
-        $req->execute($r);
+        $req->execute($var);
 		
 		$empty_runner_unit = $req->rowCount($sql);
 		
         $sql = "SELECT * FROM race_station WHERE Race = :race_id";
         $req = $db->prepare($sql);
-        $req->execute($r);
+        $req->execute($var);
 		
 		$empty_race_station = $req->rowCount($sql);
 		
-		if(($empty_race_runner + $empty_timestamp + $empty_runner_unit + $empty_race_station) == 0) {
+        $sql = "SELECT * FROM race_instance WHERE Race = :race_id";
+        $req = $db->prepare($sql);
+        $req->execute($var);
+		
+		$empty_race_instance = $req->rowCount($sql);
+		
+		if(($empty_race_runner + $empty_timestamp + $empty_runner_unit + $empty_race_station + $empty_race_instance) == 0) {
 			return 1;
 		}
 		
@@ -185,52 +190,66 @@
 		}
     }
 	
+	// Function that returns 1 if the race exists and 0 if not.
 	function does_race_exist($race_id) {
         global $db;
 
-        $e = array(
+        $var = array(
             'race_id' => $race_id
         );
 
         $sql = "SELECT * FROM race WHERE ID = :race_id";
         $req = $db->prepare($sql);
-        $req->execute($e);
+        $req->execute($var);
 
         $exist = $req->rowCount($sql);
 		
         return($exist);
     }
-	
-	function search_race($keyword, $sort) 
-	{
+
+	// Function that gets races matching with a giving keyword.
+	function search_race($keyword, $sort) {
 		global $db;
 
         $req = $db->query("SELECT * FROM race WHERE Name LIKE '%{$keyword}%' {$sort}");
 
 		$results = array();
 		
-        while($rows = $req->fetchObject()) 
-		{
+        while($rows = $req->fetchObject()) {
             $results[] = $rows;
         }
 
         return $results;
 	}
 	
+	// Function that returns 1 if a race is planned and 0 if not.
 	function is_planned_race($race_id) {
 		 global $db;
 		
-        $r = array(
-                'race_id' => $race_id
+        $var = array(
+            'race_id' => $race_id
         );
 		
-        $sql = "SELECT * FROM timestamp WHERE Race = :race_id";
+        $sql = "
+			SELECT *
+			FROM race
+			WHERE ID = :race_id AND Date > CURDATE()
+			UNION (
+				SELECT r.ID AS ID, r.Name AS Name, r.Date AS Date, r.EndTime AS EndTime
+				FROM race r, race_instance ri 
+				WHERE r.ID = :race_id AND r.ID = ri.Race AND r.Date = CURDATE() AND ri.StartTime > CURTIME() AND ri.StartTime IN (
+					SELECT Min(StartTime) 
+					FROM race_instance 
+					WHERE Race = r.ID
+				)
+			)
+		";
         $req = $db->prepare($sql);
-        $req->execute($r);
+        $req->execute($var);
 		
-		$empty_timestamp = $req->rowCount($sql);
+		$result = $req->rowCount($sql);
 		
-		if($empty_timestamp == 0) {
+		if($result != 0) {
 			return 1;
 		}
 		

@@ -184,56 +184,59 @@
 				<?php
 					foreach(get_runner_timestamps($runner_id, $race->ID) as $timestamp) {		
 						$station = get_station($timestamp->Station);
-						$behind = get_time_behind_at_timestamp($runner_id, $race->ID, $timestamp->Lap, $station->ID);
-						$elapsed = get_elapsed_time_at_timestamp($runner_id, $race->ID, $station->ID, $timestamp->Timestamp);
+						if(is_logged() == 1 || $station->Code != 99)
+						{
+							$behind = get_time_behind_at_timestamp($runner_id, $race->ID, $timestamp->Lap, $station->ID);
+							$elapsed = get_elapsed_time_at_timestamp($runner_id, $race->ID, $station->ID, $timestamp->Timestamp);
 						
-						?>	
-							<tr>
-								<td><?=$timestamp->Lap?></td>
-								<td><?=$station->Code?></td>
-								<td><?=(($timestamp->Lap - 1) * 10) + $station->LengthFromStart?></td>
-								<td>
-										<?php
-											if($timestamp->Station == 0) {
-												echo "-";
-											}
-											
-											else {
-												echo $timestamp->Place;
-											}
-										?>
-								</td>
-								<td>
-										<?php 
-											echo $elapsed; 
-										?>
-								</td>
-								<td>
-										<?php
-											if($behind == "00:00:00" || $behind == null)
-											{
-												echo "-";
-											}
-											else
-											{
-												echo "+" . $behind;
-											}
-										?>
-								</td>
-								<td><?=$timestamp->Timestamp?></td>						
-								<?php
-									if(is_logged() == 1)
-									{
-								?>
-									<td class="no-change">
-										<a class="bg-primary text-white table-button" href="index.php?page=manage&timestamp=<?=$timestamp->Timestamp?>&runner=<?=$timestamp->Runner?>&race=<?=$race->ID?>">...</a>
-										<a class="bg-danger text-white table-button" onclick="DeleteAlert_timestamp('<?=$timestamp->Timestamp?>', <?=$runner_id?>, <?=$race->ID?>);" href="#">X</a>
+							?>	
+								<tr>
+									<td><?=$timestamp->Lap?></td>
+									<td><?=$station->Code?></td>
+									<td><?=(($timestamp->Lap - 1) * 10) + $station->LengthFromStart?></td>
+									<td>
+											<?php
+												if($timestamp->Station == 0) {
+													echo "-";
+												}
+												
+												else {
+													echo $timestamp->Place;
+												}
+											?>
 									</td>
-								<?php
-									}
-								?>
-							</tr>						
-						<?php
+									<td>
+											<?php 
+												echo $elapsed; 
+											?>
+									</td>
+									<td>
+											<?php
+												if($behind == "00:00:00" || $behind == null)
+												{
+													echo "-";
+												}
+												else
+												{
+													echo "+" . $behind;
+												}
+											?>
+									</td>
+									<td><?=$timestamp->Timestamp?></td>						
+									<?php
+										if(is_logged() == 1)
+										{
+									?>
+										<td class="no-change">
+											<a class="bg-primary text-white table-button" href="index.php?page=manage&timestamp=<?=$timestamp->Timestamp?>&runner=<?=$timestamp->Runner?>&race=<?=$race->ID?>">...</a>
+											<a class="bg-danger text-white table-button" onclick="DeleteAlert_timestamp('<?=$timestamp->Timestamp?>', <?=$runner_id?>, <?=$race->ID?>);" href="#">X</a>
+										</td>
+									<?php
+										}
+									?>
+								</tr>						
+							<?php
+						}
 					}
 				?>
 				</tbody>

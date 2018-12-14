@@ -125,7 +125,6 @@
 							<th>Name</th>
 							<th>Team</th>
 							<th>Elaspsed Time</th>
-							<th>Behind</th>
 							<th>Date & Time</th>
 							<th>Status</th>
 							<?php
@@ -150,7 +149,6 @@
 								{
 									$runner = get_runner($race_runner->Runner);
 									$timestamp = get_last_timestamp($race_runner->Runner, $race_runner->Race);
-									$behind = get_time_behind($race_runner);
 									$team = get_race_runner_team($race_runner->Runner, $race_runner->Race);
 									$elapsed = get_total_elapsed_time($race_runner->Runner, $race_runner->Race);
 									?>	
@@ -160,18 +158,6 @@
 											<td><?=$runner->FirstName." ".$runner->LastName?></td>
 											<td><?=$team->Name?></td>
 											<td><?=$elapsed?></td>
-											<td>
-												<?php
-													if($behind == "00:00:00")
-													{
-														echo "-";
-													}
-													else
-													{
-														echo "+" . $behind;
-													}
-												?>
-											</td>
 											<td>
 												<?php
 													if($timestamp != null)
@@ -302,6 +288,7 @@
 				<table class="table table-bordered table-striped table-condensed">           
 					<thead>
 						<tr>
+							<th>Place</th>
 							<th>Distance</th>
 							<th>Bib</th>
 							<th>Name</th>
@@ -336,6 +323,7 @@
 									$elapsed = get_total_elapsed_time($race_runner->Runner, $race_runner->Race);
 									?>	
 										<tr class='clickable-row' data-href="index.php?page=runner&runner=<?=$race_runner->Runner?>&race=<?=$race_runner->Race?>">
+											<td><?=$race_runner->Place?></td>
 											<td><?=$race_runner->Distance?></td>
 											<td><?=$race_runner->Bib?></td>
 											<td><?=$runner->FirstName." ".$runner->LastName?></td>
@@ -345,7 +333,7 @@
 												<?php
 													if($timestamp != null)
 													{
-														echo $timestamp->Timestamp;
+														echo $race_runner->Timestamp;
 													}
 													else
 													{
@@ -381,6 +369,7 @@
 				<table class="table table-bordered table-striped table-condensed">           
 					<thead>
 						<tr>
+							<th>Place</th>
 							<th>Bib</th>
 							<th>Name</th>
 							<th>Team</th>
@@ -410,6 +399,7 @@
 									$team = get_race_runner_team($race_runner->Runner, $race_runner->Race);
 									?>	
 										<tr class='clickable-row' data-href="index.php?page=runner&runner=<?=$race_runner->Runner?>&race=<?=$race_runner->Race?>">
+											<td><?=$race_runner->Place?></td>
 											<td><?=$race_runner->Bib?></td>
 											<td><?=$runner->FirstName." ".$runner->LastName?></td>
 											<td><?=$team->Name?></td>

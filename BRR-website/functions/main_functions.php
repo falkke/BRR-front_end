@@ -110,14 +110,14 @@
 		
 		if($status == "DNF")
 		{
-			$sql = "SELECT ri.Race, ri.Class, ri.StartTime, rr.Runner, rr.Bib, rr.Status, rr.Club, rr.Place, rr.TotalTime, (((t.Lap - 1) * 10) + s.LengthFromStart) AS Distance
+			$sql = "SELECT ri.Race, ri.Class, ri.StartTime, rr.Runner, rr.Bib, rr.Status, rr.Club, rr.Place, rr.TotalTime, (((t.Lap - 1) * 10) + s.LengthFromStart) AS Distance, t.Timestamp
 					FROM race_runner AS rr, club AS c, runner AS r, race_instance AS ri, timestamp AS t, station AS s
 					WHERE rr.Race = :race_id AND c.ID = rr.Club AND r.ID = rr.Runner AND ri.ID = rr.RaceInstance AND rr.Status = :status
 					AND CONCAT(r.FirstName, ' ', r.LastName, ' ', c.Name, ' ', rr.Bib) LIKE '%{$keyword}%'
 					AND t.Runner = rr.Runner AND t.Race = ri.Race AND  t.Timestamp = 
 					(SELECT MAX(t.timestamp) FROM timestamp AS t, station AS s WHERE t.Runner = rr.Runner AND t.Race = :race_id AND s.Code <> 99 AND t.Station = s.ID)
 					AND  t.Station = s.ID
-					ORDER BY Distance ASC";
+					ORDER BY Place ASC";
 		}
 		else if($status == "Running")
 		{
@@ -155,7 +155,7 @@
 		return $results;
 	}
 	
-	function add_race_runner($race_id, $category_distance, $runner_id, $bib, $team_id) {
+	function add_race_runner($race_id, $category_distance, $runner_id, $bib, $team_id, $race_instance_id) {
         global $db;
 		
 		$e = array(
@@ -185,9 +185,10 @@
                 'runner_id' => $runner_id,
                 'bib' => $bib,
                 'team_id' => $team_id,
+                'race_instance_id' => $race_instance_id
         );
 		
-        $sql = "INSERT INTO race_runner(Race, Class, Runner, Bib, Club) VALUES(:race_id, :category_id, :runner_id, :bib, :team_id)";
+        $sql = "INSERT INTO race_runner(RaceInstance, Race, Class, Runner, Bib, Club) VALUES(:race_instance_id, :race_id, :category_id, :runner_id, :bib, :team_id)";
         $req = $db->prepare($sql);
         $req->execute($e);
     }	
@@ -474,134 +475,6 @@
 	}
 	
 	/* TIMESTAMP FUNCTIONS */
-	
-	function add_timestamp($runner_id, $race_id, $new_datetime, $station) {
-        global $db;
-		
-		$lap = get_number_laps($runner_id, $race_id, $new_datetime, $station);
-
-        $r = array(
-                'runner_id' => $runner_id,
-                'race_id' => $race_id,
-                'station' => $station,
-				'lap' => $lap	
-        );
-		
-        $sql = "INSERT INTO timestamp(Timestamp, SI_Unit, Runner, Station, Race, Lap) VALUES({$new_datetime}, 0, :runner_id, :station, :race_id, :lap)";
-        $req = $db->prepare($sql);
-        $req->execute($r);
-		
-				
-		$r = array(
-			'runner_id' => $runner_id,
-			'race_id' => $race_id,
-			'lap' => $lap
-        );
-		
-		$sql = "UPDATE timestamp SET Lap = Lap + 1 WHERE Race = :race_id AND Runner = :runner_id AND Timestamp > {$new_datetime} AND Lap >= :lap";
-        $req = $db->prepare($sql);
-        $req->execute($r);
-		//set_places($race_id, $station, $lap); 
-		$r = array(
-                'runner_id' => $runner_id,
-                'race_id' => $race_id
-        );
-		
-        $sql = "SELECT MAX(Lap) AS Max FROM timestamp WHERE Race = :race_id AND Runner = :runner_id";
-        $req = $db->prepare($sql);
-        $req->execute($r);
-		$max_lap = $req->fetch()['Max'];
-				
-		$i = $lap;
-		
-		while($i <= $max_lap)
-		{
-			set_places($race_id, $station, $i);
-			$i = $i + 1;
-		}  
-    }		
-	
-	function edit_timestamp($old_timestamp, $runner_id, $race_id, $new_datetime,  $station) {
-		delete_timestamp($runner_id, $race_id, $old_timestamp);
-		add_timestamp($runner_id, $race_id, $new_datetime, $station);
-    }
-		
-	function delete_timestamp($runner_id, $race_id, $timestamp) {
-        global $db;
-		
-		// get the timestamp to delete
-		$r = array(
-				'timestamp' => $timestamp,
-                'runner_id' => $runner_id,
-                'race_id' => $race_id
-        );
-		
-        $sql = "SELECT * FROM timestamp WHERE Race = :race_id AND Runner = :runner_id AND Timestamp = :timestamp";
-        $req = $db->prepare($sql);
-        $req->execute($r);
-		$timestamp_to_delete = $req->fetchObject();
-		
-		// count the number of timestamp in a given lap
-		$r = array(
-				'lap' => $timestamp_to_delete->Lap,
-                'runner_id' => $runner_id,
-                'race_id' => $race_id
-        );
-		
-        $sql = "SELECT COUNT(Timestamp) AS Count FROM timestamp WHERE Race = :race_id AND Runner = :runner_id AND Lap = :lap";
-        $req = $db->prepare($sql);
-        $req->execute($r);
-		$timestamp_count = $req->fetch()['Count'];
-		
-		$lap = $timestamp_to_delete->Lap;
-		$station = $timestamp_to_delete->Station;
-		
-		// delete the timestamp
-		$r = array(
-            'timestamp' => $timestamp,
-            'runner_id' => $runner_id,
-            'race_id' => $race_id
-        );
-		
-        $sql = "DELETE FROM timestamp WHERE Runner = :runner_id AND Timestamp = :timestamp AND Race = :race_id";
-        $req = $db->prepare($sql);
-        $req->execute($r);
-		
-		//update Lap if needed
-		if((($timestamp_count == 2) && ($lap == 1)) || ($timestamp_count == 1))
-		{
-			$r = array(
-				'timestamp' => $timestamp,
-				'runner_id' => $runner_id,
-				'race_id' => $race_id
-			);
-			
-			$sql = "UPDATE timestamp SET Lap = Lap - 1 WHERE Race = :race_id AND Runner = :runner_id AND Timestamp > :timestamp";
-			$req = $db->prepare($sql);
-			$req->execute($r);
-			
-			// update place
-			$r = array(
-				'runner_id' => $runner_id,
-				'race_id' => $race_id
-			);
-				
-			$sql = "SELECT MAX(Lap) AS Max FROM timestamp WHERE Race = :race_id AND Runner = :runner_id";
-			$req = $db->prepare($sql);
-			$req->execute($r);
-			$max_lap = $req->fetch()['Max'];	
-			
-			while($lap <= $max_lap)
-			{
-				set_places($race_id, $station, $lap);
-				$lap = $lap + 1;
-			} 
-		}
-		else
-		{
-			set_places($race_id, $station, $lap);
-		}
-    }
 	
 	function get_runner_timestamps($runner_id, $race_id) 
 	{
@@ -1187,8 +1060,7 @@
         return $results;
 	}
 	
-	function get_categories_distances() 
-	{
+	function get_categories_distances() {
 		global $db;
 
         $req = $db->query("SELECT DISTINCT Distance FROM class");
@@ -1217,6 +1089,23 @@
         $result = $req->fetchObject();
 		
         return $result;
+    }
+	
+	function get_categories() {
+        global $db;
+			
+        $sql = "SELECT * FROM class";
+        $req = $db->prepare($sql);
+        $req->execute($r);
+		
+		$results = array();
+		
+        while($rows = $req->fetchObject()) 
+		{
+            $results[] = $rows;
+        }
+
+        return $results;
     }
 		
 	function add_category($gender, $distance) {
@@ -1462,6 +1351,165 @@
         $result = $req->fetchObject();
 		
         return $result;
+	}
+	
+	
+	
+	/* RACE INSTANCE FUNCTIONS */
+		
+	function get_race_instances($race_instance_id) {
+        global $db;
+
+        $var = array(
+			'race_instance_id' => $race_instance_id
+        );
+		
+        $sql = "SELECT * FROM race_instance WHERE Race = :race_instance_id";
+        $req = $db->prepare($sql);
+        $req->execute($var);
+		
+		$results = array();
+		
+        while($rows = $req->fetchObject()) 
+		{
+            $results[] = $rows;
+        }
+
+        return $results;
+	}
+	
+	/*function get_race_instance_by_id($race_instance_id) {
+        global $db;
+
+        $var = array(
+			'race_instance_id' => $race_instance_id
+        );
+		
+        $sql = "SELECT * FROM race_instance WHERE ID = :race_instance_id";
+        $req = $db->prepare($sql);
+        $req->execute($var);
+		
+        $result = $req->fetchObject();
+		
+        return $result;
+	}*/
+	
+	function add_race_instance($race_id, $category_id, $start_time) {
+        global $db;
+		
+        $var = array(
+			'race_id' => $race_id,
+			'category_id' => $category_id,
+			'start_time' => $start_time
+        );
+		
+        $sql = "INSERT INTO race_instance(Race, Class, StartTime) VALUES(:race_id, :category_id, :start_time)";
+        $req = $db->prepare($sql);
+        $req->execute($var);
+    }		
+	
+	function edit_race_instance($race_instance_id, $race_id, $category_id, $start_time) {
+        global $db;
+		
+        $var = array(
+			'race_instance_id' => $race_instance_id,
+			'race_id' => $race_id,
+			'category_id' => $category_id,
+			'start_time' => $start_time
+        );
+		
+        $sql = "UPDATE race_instance SET Race = :race_id, Class = :category_id, StartTime = :start_time WHERE ID = :race_instance_id";
+        $req = $db->prepare($sql);
+        $req->execute($var);
+    }
+		
+	function delete_race_instance($race_instance_id) {
+        global $db;
+		
+        $var = array(
+            'race_instance_id' => $race_instance_id
+        );
+		
+        $sql = "DELETE FROM race_instance WHERE ID = :race_instance_id";
+        $req = $db->prepare($sql);
+        $req->execute($var);
+    }
+		
+	function is_race_instance_empty($race_instance_id) {
+        global $db;
+		
+        $var = array(
+            'race_instance_id' => $race_instance_id
+        );
+		
+        $sql = "SELECT * FROM race_runner WHERE RaceInstance = :race_instance_id";
+        $req = $db->prepare($sql);
+        $req->execute($var);
+		
+		$empty_race_runner = $req->rowCount($sql);
+		
+		if($empty_race_runner == 0) {
+			return 1;
+		}
+		
+		else {
+			return 0;
+		}
+    }
+	
+	/*function does_race_instance_exist($race_instance_id) {
+        global $db;
+
+        $e = array(
+            'race_instance_id' => $race_instance_id
+        );
+
+        $sql = "SELECT * FROM race_instance WHERE ID = :race_instance_id";
+        $req = $db->prepare($sql);
+        $req->execute($e);
+
+        $exist = $req->rowCount($sql);
+		
+        return($exist);
+    }*/
+	
+	function does_race_instance_exist($race_id, $gender, $distance) {
+        global $db;
+
+        $e = array(
+            'race_id' => $race_id,
+            'gender' => $gender,
+            'distance' => $distance
+        );
+
+        $sql = "SELECT c.ID FROM race_instance ri, class c WHERE ri.Race = :race_id AND ri.Class = c.ID AND c.Gender = :gender AND c.Distance = :distance";
+        $req = $db->prepare($sql);
+        $req->execute($e);
+
+        $exist = $req->rowCount($sql);
+		
+        return($exist);
+    }
+	
+	function get_instances_distances($race_id) {
+		global $db;
+
+        $e = array(
+            'race_id' => $race_id
+        );
+
+        $sql = "SELECT DISTINCT c.Distance FROM race_instance ri, class c WHERE ri.Race = :race_id AND ri.Class = c.ID";
+        $req = $db->prepare($sql);
+        $req->execute($e);
+		
+		$results = array();
+		
+        while($rows = $req->fetch()['Distance']) 
+		{
+            $results[] = $rows;
+        }
+
+        return $results;
 	}
 ?>
 

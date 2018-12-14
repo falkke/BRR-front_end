@@ -4,4 +4,5 @@
 	require 'functions/race_functions.php';
 	require 'functions/runner_functions.php';
 	require 'functions/main_functions.php';
+	require 'functions/timestamp_functions.php';
 ?>
