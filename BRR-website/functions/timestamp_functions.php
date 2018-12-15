@@ -1,4 +1,130 @@
 <?php
+	function get_runner_by_instance($race_instance, $status)
+	{
+		global $db;
+				
+        $r = array(
+            'race_instance' => $race_instance,
+            'status' => $status
+        );
+
+		if($status == "Finished" || $status == "DNS") 
+		{
+			$sql = "SELECT * FROM race_runner WHERE RaceInstance = :race_instance AND Status = :status";
+		}
+		else if ($status == "Running" || $status == "DNF") {
+			$sql = 	"SELECT rr1.RaceInstance AS RaceInstance, rr1.Runner AS Runner, rr1.Place AS Place, t1.Timestamp AS Timestamp, (((t1.Lap - 1) * 10) + s1.LengthFromStart) AS Distance
+					FROM race_runner AS rr1, timestamp AS t1, race_instance AS ri, station AS s1
+					WHERE ri.ID = :race_instance AND rr1.RaceInstance = ri.Race AND rr1.Status = :status
+					AND t1.Race = ri.Race AND rr1.Runner = t1.Runner
+					AND t1.Timestamp =
+						(SELECT MAX(t.Timestamp) AS Timestamp
+						FROM timestamp AS t, race_runner AS rr, station AS s 
+						WHERE rr.RaceInstance = :race_instance AND t.Race = rr.Race AND s.Code <> 99 AND t.Station = s.ID 
+						AND rr.Runner = t.Runner AND rr.Status = :status AND rr.Runner = rr1.Runner
+						GROUP BY rr.Runner)
+					AND s1.ID = t1.Station
+					ORDER BY (((t1.Lap - 1) * 10) + s1.LengthFromStart) DESC, t1.Timestamp ASC";
+		}
+        $req = $db->prepare($sql);
+        $req->execute($r);
+		
+		$results = array();
+		while($rows = $req->fetchObject()) 
+		{
+            $results[] = $rows;
+        }
+		
+		return $results;
+	}
+	
+	function set_final_places($runner_id, $race_id)
+	{
+		global $db;
+		$i = 0;
+		
+		$r = array(
+			'race_id' => $race_id,
+			'runner_id' => $runner_id
+			);
+		$sql = "SELECT ri.ID AS ID, ri.Class AS Class, ri.Race AS Race
+				FROM race_runner AS rr, race_instance AS ri 
+				WHERE rr.Runner = :runner_id AND ri.Race = :race_id AND ri.ID = rr.RaceInstance";
+		$req = $db->prepare($sql);
+		$req->execute($r);
+		$race_instance = $req->fetchObject();
+		if(!empty($race_instance)) {
+			foreach(get_runner_by_instance($race_instance->ID, "Finished") as $race_runner) {
+				$i = $i + 1;
+				$r = array(
+					'race_id' => $race_instance->Race,
+					'runner_id' => $race_runner->Runner
+				);
+				$sql = "SELECT Place 
+						FROM timestamp 
+						WHERE Race = :race_id AND Runner = :runner_id
+						AND Timestamp = (
+							SELECT MAX(Timestamp)
+							FROM timestamp
+							WHERE Race = :race_id AND Runner = :runner_id)";
+				$req = $db->prepare($sql);
+				$req->execute($r);
+				$place = $req->fetch()['Place'];
+				$r = array(
+					'place' => $place,
+					'race_instance_id' => $race_instance->ID,
+					'runner_id' => $race_runner->Runner
+				);
+				$sql = "UPDATE race_runner 
+						SET Place = :place
+						WHERE RaceInstance = :race_instance_id AND Runner = :runner_id";
+				$req = $db->prepare($sql);
+				$req->execute($r);
+			}
+			foreach(get_runner_by_instance($race_instance->ID, "Running") as $race_runner) {
+				$i = $i + 1;
+				//echo "Runner = " . $race_runner->Runner . ";Timestamp = " . $race_runner->Timestamp . ";Distance = " . $race_runner->Distance . '<br>';
+				$r = array(
+					'place' => $i,
+					'race_instance_id' => $race_instance->ID,
+					'runner_id' => $race_runner->Runner
+				);
+				$sql = "UPDATE race_runner 
+						SET Place = :place
+						WHERE RaceInstance = :race_instance_id AND Runner = :runner_id";
+				$req = $db->prepare($sql);
+				$req->execute($r);
+			}
+			foreach(get_runner_by_instance($race_instance->ID, "DNF") as $race_runner) {
+				$i = $i + 1;
+				$r = array(
+					'place' => $i,
+					'race_instance_id' => $race_instance->ID,
+					'runner_id' => $race_runner->Runner
+				);
+				$sql = "UPDATE race_runner 
+						SET Place = :place
+						WHERE RaceInstance = :race_instance_id AND Runner = :runner_id";
+				$req = $db->prepare($sql);
+				$req->execute($r);
+			}
+			foreach(get_runner_by_instance($race_instance->ID, "DNS") as $race_runner) {
+				$i = $i + 1;
+				$r = array(
+					'place' => $i,
+					'race_instance_id' => $race_instance->ID,
+					'runner_id' => $race_runner->Runner
+				);
+				$sql = "UPDATE race_runner 
+						SET Place = :place
+						WHERE RaceInstance = :race_instance_id AND Runner = :runner_id";
+				$req = $db->prepare($sql);
+				$req->execute($r);
+			}
+		}
+	}
+
+
 	function set_totaltime($runner_id, $race_id) {
 		global $db;
 		
@@ -9,7 +135,7 @@
 		$sql = "SELECT t.Timestamp AS Timestamp, t.Station AS Station
 				FROM timestamp AS t
 				WHERE t.Runner = :runner_id AND t.Race = :race_id AND t.Timestamp = 
-				(SELECT MAX(t.timestamp) FROM timestamp AS t, station AS s WHERE t.Runner = rr.Runner AND t.Race = :race_id AND s.Code <> 99 AND t.Station = s.ID)";
+				(SELECT MAX(t.timestamp) FROM timestamp AS t, station AS s WHERE t.Runner = :runner_id AND t.Race = :race_id AND s.Code <> 99 AND t.Station = s.ID)";
 		$req = $db->prepare($sql);
         $req->execute($r);
 		$timestamp = $req->fetchObject();
@@ -138,6 +264,17 @@
 		$lap = get_number_laps($runner_id, $race_id, $new_datetime, $station);
 
         $r = array(
+            'runner_id' => $runner_id,
+            'race_id' => $race_id,
+            'station' => $station,
+			'lap' => $lap	
+        );
+		$sql = "SELECT * FROM timestamp WHERE Runner = :runner_id AND Race = :race_id AND Station = :station AND Lap = :lap";
+        $req = $db->prepare($sql);
+        $req->execute($r);
+        $exist = $req->rowCount($sql);
+		
+        $r = array(
                 'runner_id' => $runner_id,
                 'race_id' => $race_id,
                 'station' => $station,
@@ -148,21 +285,22 @@
         $req = $db->prepare($sql);
         $req->execute($r);
 		
-				
+		if ($exist) {	
+			$r = array(
+				'runner_id' => $runner_id,
+				'race_id' => $race_id,
+				'lap' => $lap
+			);
+			
+			$sql = "UPDATE timestamp SET Lap = Lap + 1 WHERE Race = :race_id AND Runner = :runner_id AND Timestamp > {$new_datetime} AND Lap >= :lap";
+			$req = $db->prepare($sql);
+			$req->execute($r);
+		}
+		
 		$r = array(
 			'runner_id' => $runner_id,
-			'race_id' => $race_id,
-			'lap' => $lap
-        );
-		
-		$sql = "UPDATE timestamp SET Lap = Lap + 1 WHERE Race = :race_id AND Runner = :runner_id AND Timestamp > {$new_datetime} AND Lap >= :lap";
-        $req = $db->prepare($sql);
-        $req->execute($r);
-		$r = array(
-                'runner_id' => $runner_id,
-                'race_id' => $race_id
-        );
-		
+			'race_id' => $race_id
+		);
         $sql = "SELECT MAX(Lap) AS Max FROM timestamp WHERE Race = :race_id AND Runner = :runner_id";
         $req = $db->prepare($sql);
         $req->execute($r);
@@ -173,9 +311,9 @@
 		while($i <= $max_lap)
 		{
 			set_places($race_id, $station, $i);
-// update placeS in race_runner
 			$i = $i + 1;
 		}
+		set_final_places($runner_id, $race_id);
     }		
 	
 	function edit_timestamp($old_timestamp, $runner_id, $race_id, $new_datetime,  $station) {

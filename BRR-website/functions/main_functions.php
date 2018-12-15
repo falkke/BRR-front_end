@@ -101,7 +101,7 @@
 	
 	
 	function get_race_runners_by_status($race_id, $keyword, $status) {
-		global $db;
+global $db;
 		
         $e = array(
             'race_id' => $race_id,
@@ -121,15 +121,21 @@
 		}
 		else if($status == "Running")
 		{
-			$sql = "SELECT ri.Race, ri.Class, ri.StartTime, rr.Runner, rr.Bib, rr.Status, rr.Club, rr.Place, rr.TotalTime
-					FROM race_runner AS rr, club AS c, runner AS r, race_instance AS ri
+			$sql = "SELECT ri.Race, ri.Class, ri.StartTime, rr.Runner, rr.Bib, rr.Status, rr.Club, rr.Place, rr.TotalTime, (((t.Lap - 1) * 10) + s.LengthFromStart) AS Distance, t.Timestamp
+					FROM race_runner AS rr, club AS c, runner AS r, race_instance AS ri, timestamp AS t, station AS s
 					WHERE rr.Race = :race_id AND c.ID = rr.Club AND r.ID = rr.Runner AND ri.ID = rr.RaceInstance AND rr.Status = :status
 					AND CONCAT(r.FirstName, ' ', r.LastName, ' ', c.Name, ' ', rr.Bib) LIKE '%{$keyword}%'
+					AND t.Runner = rr.Runner AND t.Race = ri.Race AND  t.Timestamp = 
+					(SELECT MAX(t.timestamp) FROM timestamp AS t WHERE t.Runner = rr.Runner AND t.Race = :race_id)
+					AND  t.Station = s.ID
 					UNION
-					SELECT ri.Race, ri.Class, ri.StartTime, rr.Runner, rr.Bib, rr.Status, rr.Club, rr.Place, rr.TotalTime
-					FROM race_runner AS rr, club AS c, runner AS r, race_instance AS ri
+					SELECT ri.Race, ri.Class, ri.StartTime, rr.Runner, rr.Bib, rr.Status, rr.Club, rr.Place, rr.TotalTime, (((t.Lap - 1) * 10) + s.LengthFromStart) AS Distance, t.Timestamp
+					FROM race_runner AS rr, club AS c, runner AS r, race_instance AS ri, timestamp AS t, station AS s
 					WHERE rr.Race = :race_id AND c.ID = rr.Club AND r.ID = rr.Runner AND ri.ID = rr.RaceInstance AND rr.Status is null
 					AND CONCAT(r.FirstName, ' ', r.LastName, ' ', c.Name, ' ', rr.Bib) LIKE '%{$keyword}%'
+					AND t.Runner = rr.Runner AND t.Race = ri.Race AND  t.Timestamp = 
+					(SELECT MAX(t.timestamp) FROM timestamp AS t WHERE t.Runner = rr.Runner AND t.Race = :race_id)
+					AND  t.Station = s.ID
 					ORDER BY Place ASC";
 		}
 		
@@ -578,35 +584,9 @@
 			return $result->Lap;
 		}
 	}
-	
-	
-	function set_laps($runner_id, $race_id) {
-		global $db;
-		
-		foreach(get_runner_timestamps($runner_id, $race_id) as $timestamp) {
-			$previous_lap = $timestamp->Lap;
-			$lap = get_number_laps($runner_id, $race_id, $timestamp->Timestamp, $timestamp->Station);
-			
-			if($previous_lap != $lap) {
-				$e = array(
-					'timestamp' => $timestamp->Timestamp,
-					'lap' => $lap
-				);
-			
-				$sql = "UPDATE timestamp SET Lap = :lap WHERE Timestamp = :timestamp";
-				$req = $db->prepare($sql);
-				$req->execute($e);
-			}
-			
-			set_places($race_id, $timestamp->Station, $lap);
-		}
-	}
 		
 	function set_places($race_id, $station_id, $lap) {
 		global $db;
-		
-		echo "Lap : ".$lap;
-		echo " Station : ".$station_id;
 		
 		foreach(get_timestamps($race_id, $station_id, $lap) as $timestamp) {
 			$e = array(
@@ -623,14 +603,14 @@
 			$place = $req->fetch()['Count'] + 1;
 			
 			$e = array(
+				'race_id' => $race_id,
+				'station_id' => $station_id,
+				'lap' => $lap,
 				'timestamp' => $timestamp->Timestamp,
 				'place' => $place
 			);
 			
-			
-			echo " Place : ".$place;
-			
-			$sql = "UPDATE timestamp SET Place = :place WHERE Timestamp = :timestamp";
+			$sql = "UPDATE timestamp SET Place = :place WHERE Race = :race_id AND Station = :station_id AND Lap = :lap AND  Timestamp = :timestamp";
 			$req = $db->prepare($sql);
 			$req->execute($e);
 		}
