@@ -6,20 +6,27 @@
 	if(!isset($_GET['runner'])) {
 		header('Location:index.php?page=runners');
 	}
+	
 	if(!empty($_GET['runner'])) {
 		$runner_id = $_GET['runner'];
 		
 		if(does_runner_exist($runner_id)) {
 			$runner = get_runner($runner_id);
 		}
+		
 		else {
 			header("Location:index.php?page=runners");
 		}
 	}
 	
+	else {
+		header("Location:index.php?page=runners");
+	}
+		
 	if(!isset($_GET['race'])) {
 		header('Location:index.php?page=runners');
 	}
+	
 	if(!empty($_GET['race'])) {
 		$race_id = $_GET['race'];
 		
@@ -37,7 +44,7 @@
 	if(!empty($_GET['timestamp'])) {
 		$timestamp_time = $_GET['timestamp'];
 		
-		if(does_timestamp_exist($timestamp_time, $runner_id, $race_id)) {
+		if(does_timestamp_exist($timestamp_time, $runner_id)) {
 			$timestamp = get_timestamp($timestamp_time, $runner_id);
 		}
 		else {
@@ -46,16 +53,65 @@
 	}
 	
 	if(isset($_POST['submit'])) {
-		$new_datetime = "'" . $_POST['date'] . " " . $_POST['time'] . "'";
-		$station = explode(" - ", $_POST['station']);
+		$new_datetime = $_POST['date'] . " " . $_POST['time'];
+		$station_id = explode(" - ", $_POST['station']);
 		
 		if(!empty($_GET['timestamp'])) {
-			edit_timestamp($timestamp_time, $runner_id, $race_id, $new_datetime, $station[0]);
-			header('Location:index.php?page=runner&runner='.$runner_id.'&race='.$race_id.'&timestamp-modified=1');
+			if((!does_timestamp_exist($new_datetime, $runner_id)) || ($new_datetime == $timestamp_time)) {
+				edit_timestamp($timestamp_time, $runner_id, $race_id, $new_datetime, $station_id[0]);
+				
+				$race_runner = get_race_runner($runner_id, $race->ID);
+				
+				$last_timestamp = get_last_timestamp($runner_id, $race_runner->RaceInstance);
+				
+				$lap = get_number_laps($runner_id, $race_id, $last_timestamp->Timestamp, $last_timestamp->Station);
+				
+				$race_instance = get_race_instance_by_id($race_runner->RaceInstance);
+				$race_category = get_category($race_instance->Class);
+				$station = get_station($last_timestamp->Station);
+				
+				if(((($lap - 1) * 10) + $station->LengthFromStart) <= $race_category->Distance) {
+					header('Location:index.php?page=runner&runner='.$runner_id.'&race='.$race_id.'&timestamp-modified=1');
+				}
+				
+				else {
+					delete_timestamp($runner_id, $race->ID, $new_datetime);
+					$error = "This timestamp can not be added to the system because the distance will exceed the distance of the race.";
+				}
+			}
+									
+			else {
+				$error = "This timestamp already exists.";
+			}
 		}
+		
 		else {
-			add_timestamp($runner_id, $race_id, $new_datetime, $station[0]);
-			header('Location:index.php?page=runner&runner='.$runner_id.'&race='.$race_id.'&timestamp-added=1');
+			if(!does_timestamp_exist($new_datetime, $runner_id)) {
+				add_timestamp($runner_id, $race->ID, $new_datetime, $station_id[0]);
+				
+				$race_runner = get_race_runner($runner_id, $race->ID);
+				
+				$last_timestamp = get_last_timestamp($runner_id, $race_runner->RaceInstance);
+				
+				$lap = get_number_laps($runner_id, $race_id, $last_timestamp->Timestamp, $last_timestamp->Station);
+				
+				$race_instance = get_race_instance_by_id($race_runner->RaceInstance);
+				$race_category = get_category($race_instance->Class);
+				$station = get_station($last_timestamp->Station);
+				
+				if(((($lap - 1) * 10) + $station->LengthFromStart) <= $race_category->Distance) {
+					header('Location:index.php?page=runner&runner='.$runner_id.'&race='.$race_id.'&timestamp-added=1');
+				}
+				
+				else {
+					delete_timestamp($runner_id, $race->ID, $new_datetime);
+					$error = "This timestamp can not be added to the system because the distance will exceed the distance of the race.";
+				}
+			}
+									
+			else {
+				$error = "This timestamp already exists.";
+			}
 		}
 	}
 ?>
@@ -77,6 +133,14 @@
 				}
 			?>
 		</h2>
+		
+		<?php
+			if(isset($error) && !empty($error)) {
+				?>
+					<p class="alert alert-danger" role="alert"><?=$error?></p>
+				<?php
+			}
+		?>
 		
 		<!-- max='<?=$race->EndDate?>' -->
 		<form method="post" class="form-horizontal form-add-edit">

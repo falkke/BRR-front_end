@@ -1,4 +1,29 @@
 <?php
+	function get_last_timestamp($runner_id, $instance_id) {
+		global $db;
+				
+		$var = array(
+            'runner_id' => $runner_id,
+            'instance_id' => $instance_id
+        );
+
+		$sql = 	"
+			SELECT rr.Runner AS Runner, t.Timestamp AS Timestamp, t.Station AS Station
+			FROM timestamp t, race_runner rr, race_instance ri
+			WHERE rr.RaceInstance = :instance_id AND rr.Runner = :runner_id AND t.Runner = rr.Runner AND t.Timestamp = (
+				SELECT MAX(Timestamp) 
+				FROM timestamp t2, race_runner rr2, race_instance ri2
+				WHERE t2.Runner = :runner_id AND rr2.RaceInstance = :instance_id AND rr2.Runner = :runner_id AND t2.Runner = rr2.Runner 
+			)
+		";
+        $req = $db->prepare($sql);
+        $req->execute($var);
+		
+        $result = $req->fetchObject();
+		
+		return $result;
+	}
+
 	function get_runner_by_instance($race_instance, $status)
 	{
 		global $db;
@@ -278,10 +303,11 @@
                 'runner_id' => $runner_id,
                 'race_id' => $race_id,
                 'station' => $station,
+                'new_datetime' => $new_datetime,
 				'lap' => $lap	
         );
 		
-        $sql = "INSERT INTO timestamp(Timestamp, SI_Unit, Runner, Station, Race, Lap) VALUES({$new_datetime}, 0, :runner_id, :station, :race_id, :lap)";
+        $sql = "INSERT INTO timestamp(Timestamp, SI_Unit, Runner, Station, Race, Lap) VALUES(:new_datetime, 0, :runner_id, :station, :race_id, :lap)";
         $req = $db->prepare($sql);
         $req->execute($r);
 		
@@ -289,10 +315,11 @@
 			$r = array(
 				'runner_id' => $runner_id,
 				'race_id' => $race_id,
+                'new_datetime' => $new_datetime,
 				'lap' => $lap
 			);
 			
-			$sql = "UPDATE timestamp SET Lap = Lap + 1 WHERE Race = :race_id AND Runner = :runner_id AND Timestamp > {$new_datetime} AND Lap >= :lap";
+			$sql = "UPDATE timestamp SET Lap = Lap + 1 WHERE Race = :race_id AND Runner = :runner_id AND Timestamp > :new_datetime AND Lap >= :lap";
 			$req = $db->prepare($sql);
 			$req->execute($r);
 		}

@@ -529,7 +529,7 @@ global $db;
 		return $results;
 	}
 	
-	function get_last_timestamp($runner_id, $race_id)
+	/*function get_last_timestamp($runner_id, $race_id)
 	{
 		global $db;
 		
@@ -547,7 +547,7 @@ global $db;
 		$result = $req->fetchObject();
 
 		return $result;
-	}
+	}*/
 	
 	function get_number_laps($runner_id, $race_id, $timestamp, $station_id)
 	{
@@ -555,7 +555,8 @@ global $db;
 	
 		$var = array(
 			'runner_id' => $runner_id,
-			'race_id' => $race_id
+			'race_id' => $race_id,
+			'timestamp' => $timestamp
 		);
 			
 		$sql = "
@@ -564,7 +565,7 @@ global $db;
 			WHERE Runner = :runner_id AND Race = :race_id AND Timestamp IN (
 				SELECT MAX(Timestamp) AS Max 
 				FROM timestamp 
-				WHERE Runner = :runner_id AND Race = :race_id AND Timestamp < {$timestamp}
+				WHERE Runner = :runner_id AND Race = :race_id AND Timestamp < :timestamp
 			)
 		";
 		
@@ -695,17 +696,15 @@ global $db;
 		return $result;		
 	}	
 	
-	function does_timestamp_exist($timestamp, $runner_id, $race_id) 
-	{
+	function does_timestamp_exist($timestamp, $runner_id) {
         global $db;
 
         $e = array(
             'timestamp' => $timestamp,
-            'runner_id' => $runner_id,
-            'race_id' => $race_id
+            'runner_id' => $runner_id
         );
 
-        $sql = "SELECT * FROM timestamp WHERE Runner = :runner_id AND Timestamp = :timestamp AND Race = :race_id";
+        $sql = "SELECT * FROM timestamp WHERE Runner = :runner_id AND Timestamp = :timestamp";
         $req = $db->prepare($sql);
         $req->execute($e);
 
@@ -1375,7 +1374,7 @@ global $db;
         return $results;
 	}
 	
-	/*function get_race_instance_by_id($race_instance_id) {
+	function get_race_instance_by_id($race_instance_id) {
         global $db;
 
         $var = array(
@@ -1389,7 +1388,7 @@ global $db;
         $result = $req->fetchObject();
 		
         return $result;
-	}*/
+	}
 	
 	function add_race_instance($race_id, $category_id, $start_time) {
         global $db;
