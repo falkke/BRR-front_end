@@ -546,20 +546,37 @@
 	function get_number_laps($runner_id, $race_id, $timestamp, $station_id)
 	{
 		global $db;
+	
+		$var = array(
+			'runner_id' => $runner_id,
+			'race_id' => $race_id
+		);
+			
+		$sql = "
+			SELECT * 
+			FROM timestamp 
+			WHERE Runner = :runner_id AND Race = :race_id AND Timestamp IN (
+				SELECT MAX(Timestamp) AS Max 
+				FROM timestamp 
+				WHERE Runner = :runner_id AND Race = :race_id AND Timestamp < {$timestamp}
+			)
+		";
 		
-        $e = array(
-            'runner_id' => $runner_id,
-            'race_id' => $race_id,
-            'station_id' => $station_id
-        );
-
-        $sql = "SELECT COUNT(Timestamp) AS Count FROM timestamp WHERE Runner = :runner_id AND Race = :race_id AND Station = :station_id AND Timestamp < {$timestamp}";
-        $req = $db->prepare($sql);
-        $req->execute($e);
+		$req = $db->prepare($sql);
+		$req->execute($var);
+		$result = $req->fetchObject();
+			
+		if(empty($result)) {
+			return 1;
+		}
 		
-		$result = $req->fetch()['Count'] + 1;
+		else if($result->Station >= $station_id) {
+			return $result->Lap + 1;
+		}
 
-		return $result;
+		else {
+			return $result->Lap;
+		}
 	}
 	
 	

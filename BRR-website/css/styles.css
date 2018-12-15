@@ -75,7 +75,7 @@ html, body {
 .section-template {	
 	padding: 3rem 1.5rem;
 	text-align: center;
-	position: fixed;
+	position: absolute;
 	right : 0;
 	width: 80%;
 }
