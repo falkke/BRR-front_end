@@ -115,126 +115,18 @@
 		</form>
 		
 		<?php 
-<<<<<<< HEAD
-<<<<<<< HEAD
-			if	((isset($_GET['race']) && !empty($_GET['race'])) && 
-				(isset($_GET['gender']) && !empty($_GET['gender'])) &&
-				(isset($_GET['distance']) && !empty($_GET['distance'])))
-			{
-		?>	
-			<h2 class="page-title followed-title"><?= $race->Name ?></h2>
-			<h3 class="page-subtitle"><?= "Results " . $gender . " - " . $distance ?></h3>
-			<!--
-			<form class="form-inline my-2">
-				<div class="input-group">
-					<input class="form-control" type="text" style="text-align:right" placeholder="Search" aria-label="Search">    
-					<span class="input-group-btn">
-						<button class="btn  btn-default" type="submit">Search</button>
-					</span>
-				</div>
-			</form>
-			-->
-			<form method="post" class="form-inline my-2">
-				<div class="input-group">
-					<input class="form-control" type="text" style="text-align:right" placeholder="Search" name="search" id="search" aria-label="Search" <?php
-						if(isset($_POST['submit'])) {
-=======
-=======
->>>>>>> parent of 18d043c... get_number_laps function fixed.
 		if(exist_race_runners($instance, $search, "Running") || exist_race_runners($instance, $search, NULL)) {
 			?>
 				<table class="table table-bordered table-striped table-condensed">           
 					<thead>
 						<tr>
 							<th>Place</th>
-<<<<<<< HEAD
-=======
-							<th>Distance</th>
->>>>>>> parent of 18d043c... get_number_laps function fixed.
 							<th>Bib</th>
 							<th>Name</th>
 							<th>Team</th>
 							<th>Elaspsed Time</th>
 							<th>Date & Time</th>
 							<th>Status</th>
-<<<<<<< HEAD
-							<?php
-								if(is_logged() == 1)
-								{
->>>>>>> parent of 4cf38f7... update
-							?>
-								value="<?= $_POST['search']?>"
-							<?php
-<<<<<<< HEAD
-						}
-					?>>    
-					<span class="input-group-btn">
-						<button class="btn  btn-default" type="submit" id="submit" name="submit">Search</button>
-					</span>
-				</div>
-			</form>
-			
-			<?php 
-			if(exist_race_runners($instance, $search, "Running") || exist_race_runners($instance, $search, NULL)) {
-				?>
-					<table class="table table-bordered table-striped table-condensed">           
-						<thead>
-							<tr>
-								<th>Place</th>
-								<th>Distance</th>
-								<th>Bib</th>
-								<th>Name</th>
-								<th>Team</th>
-								<th>Elaspsed Time</th>
-								<th>Date & Time</th>
-								<th>Status</th>
-								<?php
-									if(is_logged() == 1)
-									{
-								?>
-									<th>
-										<a class="bg-success text-white table-button" href="index.php?page=manage-runner-race&race=<?=$id?>">+</a>
-									</th>
-								<?php
-									}
-								?>
-							</tr>
-						</thead>
-						
-						<tbody>
-							<?php
-								foreach(get_race_runners_by_status($race->ID, $search, "Running") as $race_runner) {	
-									$class = get_race_runner_class($race_runner->Runner, $race_runner->Race) ;		
-								
-									if(($class->Gender == $_GET['gender']) && ($class->Distance == $_GET['distance'])) 
-									{
-										$runner = get_runner($race_runner->Runner);
-										$timestamp = get_last_timestamp($race_runner->Runner, $race_runner->Race);
-										$team = get_race_runner_team($race_runner->Runner, $race_runner->Race);
-										$elapsed = get_total_elapsed_time($race_runner->Runner, $race_runner->Race);
-										?>	
-											<tr class='clickable-row' data-href="index.php?page=runner&runner=<?=$race_runner->Runner?>&race=<?=$race_runner->Race?>">
-												<td><?=$race_runner->Place?></td>
-												<td><?=$race_runner->Distance?></td>
-												<td><?=$race_runner->Bib?></td>
-												<td><?=$runner->FirstName." ".$runner->LastName?></td>
-												<td><?=$team->Name?></td>
-												<td><?=$elapsed?></td>
-												<td>
-													<?php
-														if($timestamp != null)
-														{
-															echo $timestamp->Timestamp;
-														}
-														else
-														{
-															echo "-";
-														}
-													?>
-												</td>
-												<td><?=$race_runner->Status?></td>				
-=======
-=======
 							<?php
 								if(is_logged() == 1)
 								{
@@ -243,7 +135,6 @@
 									<a class="bg-success text-white table-button" href="index.php?page=manage-runner-race&race=<?=$id?>">+</a>
 								</th>
 							<?php
->>>>>>> parent of 18d043c... get_number_laps function fixed.
 								}
 							?>
 						</tr>
@@ -263,19 +154,11 @@
 									?>	
 										<tr class='clickable-row' data-href="index.php?page=runner&runner=<?=$race_runner->Runner?>&race=<?=$race_runner->Race?>">
 											<td><?=$race_runner->Place?></td>
-<<<<<<< HEAD
-=======
-											<td><?=$race_runner->Distance?></td>
->>>>>>> parent of 18d043c... get_number_laps function fixed.
 											<td><?=$race_runner->Bib?></td>
 											<td><?=$runner->FirstName." ".$runner->LastName?></td>
 											<td><?=$team->Name?></td>
 											<td><?=$elapsed?></td>
 											<td>
-<<<<<<< HEAD
->>>>>>> parent of 4cf38f7... update
-=======
->>>>>>> parent of 18d043c... get_number_laps function fixed.
 												<?php
 													if($timestamp != null)
 													{

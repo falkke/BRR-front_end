@@ -547,69 +547,6 @@
 	{
 		global $db;
 		
-<<<<<<< HEAD
-<<<<<<< HEAD
-        $var = array(
-=======
-        $e = array(
->>>>>>> parent of 18d043c... get_number_laps function fixed.
-            'runner_id' => $runner_id,
-            'race_id' => $race_id,
-            'station_id' => $station_id
-        );
-        $sql = "SELECT COUNT(Timestamp) AS Count FROM timestamp WHERE Runner = :runner_id AND Race = :race_id AND Station = :station_id AND Timestamp < {$timestamp}";
-        $req = $db->prepare($sql);
-        $req->execute($e);
-		$result = $req->fetch()['Count'] + 1;
-		/*echo $result;
-        $e = array(
-            'runner_id' => $runner_id,
-            'race_id' => $race_id
-        );
-        $sql = "SELECT MAX(Timestamp) AS Max
-				FROM timestamp
-				WHERE Runner = :runner_id AND Race = :race_id";
-		$req = $db->prepare($sql);
-		$req->execute($e);
-		$max_timestamp = $req->fetch()['Max'];
-		echo " max :" . $max_timestamp;
-		echo " normal :" . $timestamp;
-		echo ($timestamp > $max_timestamp);
-		if($timestamp > $max_timestamp) {
-			echo "AU DESSUS DU MAX";
-			$e = array(
-				'runner_id' => $runner_id,
-				'race_id' => $race_id
-			);
-			$sql = "SELECT Max(Lap) AS Lap FROM timestamp WHERE Runner = :runner_id AND Race = :race_id";
-			$req = $db->prepare($sql);
-			$req->execute($e);
-			$lap = $req->fetch()['Lap'] + 1;
-			echo $lap;
-			$e = array(
-				'runner_id' => $runner_id,
-				'race_id' => $race_id,
-				'station_id' => $station_id,
-				'lap' => $lap
-			);
-			$sql = "SELECT Timestamp
-					FROM timestamp AS t
-					WHERE t.Runner = :runner_id AND t.Race = :race_id AND t.Station = :station_id AND t.Lap = :lap";
-			$req = $db->prepare($sql);
-			$req->execute($e);
-			$exist = $req->rowCount($sql);
-			if($exist)
-			{
-				$lap = $lap + 1;
-				echo $lap;
-			}
-			if($lap > $result) {
-				$result = $lap;
-			}
-		}
-<<<<<<< HEAD
-	
-=======
         $e = array(
             'runner_id' => $runner_id,
             'race_id' => $race_id,
@@ -622,10 +559,6 @@
 		
 		$result = $req->fetch()['Count'] + 1;
 
->>>>>>> parent of 4ca890a... Update main_functions.php
-=======
-		echo $result;*/
->>>>>>> parent of 18d043c... get_number_laps function fixed.
 		return $result;
 	}
 	
