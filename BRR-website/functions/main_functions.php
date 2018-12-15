@@ -553,6 +553,7 @@
 	{
 		global $db;
 		
+<<<<<<< HEAD
         $var = array(
             'runner_id' => $runner_id,
             'race_id' => $race_id
@@ -583,8 +584,45 @@
 			return $result->Lap;
 		}
 	
+=======
+        $e = array(
+            'runner_id' => $runner_id,
+            'race_id' => $race_id,
+            'station_id' => $station_id
+        );
+
+        $sql = "SELECT COUNT(Timestamp) AS Count FROM timestamp WHERE Runner = :runner_id AND Race = :race_id AND Station = :station_id AND Timestamp < {$timestamp}";
+        $req = $db->prepare($sql);
+        $req->execute($e);
+		
+		$result = $req->fetch()['Count'] + 1;
+
+>>>>>>> parent of 4ca890a... Update main_functions.php
 		return $result;
 	}
+	
+	
+	/*function set_laps($runner_id, $race_id) {
+		global $db;
+		
+		foreach(get_runner_timestamps($runner_id, $race_id) as $timestamp) {
+			$previous_lap = $timestamp->Lap;
+			$lap = get_number_laps($runner_id, $race_id, $timestamp->Timestamp, $timestamp->Station);
+			
+			if($previous_lap != $lap) {
+				$e = array(
+					'timestamp' => $timestamp->Timestamp,
+					'lap' => $lap
+				);
+			
+				$sql = "UPDATE timestamp SET Lap = :lap WHERE Timestamp = :timestamp";
+				$req = $db->prepare($sql);
+				$req->execute($e);
+			}
+			
+			set_places($race_id, $timestamp->Station, $lap);
+		}
+	}*/
 		
 	function set_places($race_id, $station_id, $lap) {
 		global $db;
