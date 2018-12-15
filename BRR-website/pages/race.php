@@ -82,6 +82,7 @@
 		
 	<div class="section-template">
 		<?php 
+<<<<<<< HEAD
 			if	((isset($_GET['race']) && !empty($_GET['race'])) && 
 				(isset($_GET['gender']) && !empty($_GET['gender'])) &&
 				(isset($_GET['distance']) && !empty($_GET['distance'])))
@@ -103,9 +104,27 @@
 				<div class="input-group">
 					<input class="form-control" type="text" style="text-align:right" placeholder="Search" name="search" id="search" aria-label="Search" <?php
 						if(isset($_POST['submit'])) {
+=======
+		if(exist_race_runners($instance, $search, "Running") || exist_race_runners($instance, $search, NULL)) {
+			?>
+				<table class="table table-bordered table-striped table-condensed">           
+					<thead>
+						<tr>
+							<th>Place</th>
+							<th>Bib</th>
+							<th>Name</th>
+							<th>Team</th>
+							<th>Elaspsed Time</th>
+							<th>Date & Time</th>
+							<th>Status</th>
+							<?php
+								if(is_logged() == 1)
+								{
+>>>>>>> parent of 4cf38f7... update
 							?>
 								value="<?= $_POST['search']?>"
 							<?php
+<<<<<<< HEAD
 						}
 					?>>    
 					<span class="input-group-btn">
@@ -173,6 +192,32 @@
 													?>
 												</td>
 												<td><?=$race_runner->Status?></td>				
+=======
+								}
+							?>
+						</tr>
+					</thead>
+					
+					<tbody>
+						<?php
+							foreach(get_race_runners_by_status($race->ID, $search, "Running") as $race_runner) {	
+								$class = get_race_runner_class($race_runner->Runner, $race_runner->Race) ;		
+							
+								if(($class->Gender == $_GET['gender']) && ($class->Distance == $_GET['distance'])) 
+								{
+									$runner = get_runner($race_runner->Runner);
+									$timestamp = get_last_timestamp($race_runner->Runner, $race_runner->Race);
+									$team = get_race_runner_team($race_runner->Runner, $race_runner->Race);
+									$elapsed = get_total_elapsed_time($race_runner->Runner, $race_runner->Race);
+									?>	
+										<tr class='clickable-row' data-href="index.php?page=runner&runner=<?=$race_runner->Runner?>&race=<?=$race_runner->Race?>">
+											<td><?=$race_runner->Place?></td>
+											<td><?=$race_runner->Bib?></td>
+											<td><?=$runner->FirstName." ".$runner->LastName?></td>
+											<td><?=$team->Name?></td>
+											<td><?=$elapsed?></td>
+											<td>
+>>>>>>> parent of 4cf38f7... update
 												<?php
 													if(is_logged() == 1)
 													{
