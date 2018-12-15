@@ -159,7 +159,18 @@
 											<td><?=$race_runner->Bib?></td>
 											<td><?=$runner->FirstName." ".$runner->LastName?></td>
 											<td><?=$team->Name?></td>
-											<td><?=$elapsed?></td>
+											<td>
+												<?php
+													if($elapsed != null)
+													{
+														echo $elapsed;
+													}
+													else
+													{
+														echo "-";
+													}
+												?>
+											</td>
 											<td>
 												<?php
 													if($timestamp != null)

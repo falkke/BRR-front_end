@@ -417,7 +417,6 @@
 			while($lap <= $max_lap)
 			{
 				set_places($race_id, $station, $lap);
-// update placeS in race_runner
 				$lap = $lap + 1;
 			} 
 		}
@@ -426,6 +425,8 @@
 			set_places($race_id, $station, $lap);
 // update place in race_runner
 		}
+		
+		set_final_places($runner_id, $race_id);
     }
 
 ?>

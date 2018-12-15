@@ -129,13 +129,10 @@ global $db;
 					(SELECT MAX(t.timestamp) FROM timestamp AS t WHERE t.Runner = rr.Runner AND t.Race = :race_id)
 					AND  t.Station = s.ID
 					UNION
-					SELECT ri.Race, ri.Class, ri.StartTime, rr.Runner, rr.Bib, rr.Status, rr.Club, rr.Place, rr.TotalTime, (((t.Lap - 1) * 10) + s.LengthFromStart) AS Distance, t.Timestamp
-					FROM race_runner AS rr, club AS c, runner AS r, race_instance AS ri, timestamp AS t, station AS s
+					SELECT ri.Race, ri.Class, ri.StartTime, rr.Runner, rr.Bib, '-' AS Status, rr.Club, '-' AS Place, rr.TotalTime, '-' AS Distance, '-' AS Timestamp
+					FROM race_runner AS rr, club AS c, runner AS r, race_instance AS ri
 					WHERE rr.Race = :race_id AND c.ID = rr.Club AND r.ID = rr.Runner AND ri.ID = rr.RaceInstance AND rr.Status is null
 					AND CONCAT(r.FirstName, ' ', r.LastName, ' ', c.Name, ' ', rr.Bib) LIKE '%{$keyword}%'
-					AND t.Runner = rr.Runner AND t.Race = ri.Race AND  t.Timestamp = 
-					(SELECT MAX(t.timestamp) FROM timestamp AS t WHERE t.Runner = rr.Runner AND t.Race = :race_id)
-					AND  t.Station = s.ID
 					ORDER BY Place ASC";
 		}
 		

@@ -193,10 +193,20 @@
 								<tr>
 									<td><?=$timestamp->Lap?></td>
 									<td><?=$station->Code?></td>
-									<td><?=(($timestamp->Lap - 1) * 10) + $station->LengthFromStart?></td>
+									<td>
+										<?php
+											if($station->Code == 99) {
+												echo "-";
+											}
+											
+											else {
+												echo (($timestamp->Lap - 1) * 10) + $station->LengthFromStart;
+											}
+										?>
+									</td>
 									<td>
 											<?php
-												if($timestamp->Station == 0) {
+												if($station->Code == 0 || $station->Code == 99) {
 													echo "-";
 												}
 												
