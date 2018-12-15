@@ -1,13 +1,4 @@
 <?php
-	if(	(isset($_GET['race-instance']) && !empty($_GET['race-instance']))
-	&&	(isset($_GET['remove']) && !empty($_GET['remove']) && $_GET['remove'] == 1)){
-		$race_instance_id = $_GET['race-instance'];
-		
-		delete_race_instance($race_instance_id);
-		
-		header('Location:index.php?page=manage&race='.$race->ID);
-	}
-	
 	if(	(isset($_GET['race-runner']) && !empty($_GET['race-runner']))
 	&&	(isset($_GET['remove']) && !empty($_GET['remove']) && $_GET['remove'] == 1)){
 		$runner_id = $_GET['race-runner'];
@@ -33,15 +24,11 @@
 
 	if(isset($_POST['add_runner'])) {
 		$runner_id = explode(" - ", $_POST['runner']);
-		$runner = get_runner($runner_id[0]);
 		$category_distance = $_POST['category'];
 		$team_id = explode(" - ", $_POST['team']);
 		$bib = $_POST['bib'];
-		$race_instance = get_race_instance($race->ID, $runner->Gender, $category_distance);
 		
-		if($race_instance != NULL){
-			add_race_runner($race->ID, $category_distance, $runner_id[0], $bib, $team_id[0], $race_instance->ID);
-		}
+		add_race_runner($race->ID, $category_distance, $runner_id[0], $bib, $team_id[0]);
 	}	
 	
 	if(isset($_POST['add_si_unit_runner'])) {
@@ -52,79 +39,9 @@
 			add_race_si_unit_runner($race->ID, $runner_id[0], $si_unit_id);
 		}
 	}
-	
-	if(isset($_POST['add_instance'])) {
-		$category_id = explode(" - ", $_POST['category']);
-		$category = get_category($category_id[0]);
-		$start_time = $_POST['start-time'];
-		
-		if(!does_race_instance_exist($race->ID, $category->Gender, $category->Distance)) {
-			add_race_instance($race->ID, $category_id[0], $start_time);
-		}
-	}
 
 	if(!empty($_GET['race']) && is_planned_race($_GET['race'])) {
 		?>
-			<form method="post" class="form-horizontal form-add-edit border mb-4">
-				<div class="form-group">
-					<div class="table-scroll-y-20">
-						<table class="table table-bordered table-striped table-condensed">           
-							<thead>
-								<tr>
-									<th>Gender</th>
-									<th>Distance</th>
-									<th>Start Time</th>
-									<th></th>
-								</tr>
-							</thead>
-							<tbody>
-								<?php
-									foreach(get_race_instances($race->ID) as $race_instance) {	
-										$race_category_id = $race_instance->Class;
-										$race_category = get_category($race_category_id);
-										?>	
-											<tr>
-												<td><?=$race_category->Gender?></td>
-												<td><?=$race_category->Distance?></td>
-												<td><?=$race_instance->StartTime?></td>
-												<td><a class="bg-danger text-white table-button" href=<?="index.php?page=manage&race=".$race->ID."&race-instance=".$race_instance->ID."&remove=1"?>>X</a></td>
-											</tr>						
-										<?php
-									}
-								?>
-							</tbody>
-						</table>
-					</div>
-				</div>
-
-				<div class="form-row">
-					<div class="col-md-3 mb-4">
-						<label for="category" class="control-label">Category</label>
-						<select name="category" class="form-control" required>
-							<?php
-								foreach(get_categories() as $category) {
-									?>	
-										<option><?=$category->ID." - ".$category->Gender." ".$category->Distance?></option>					
-									<?php
-								}
-							?>
-						</select>
-					</div>
-					
-					<div class="col-md-3 mb-4">
-						<label for="start-time" class="control-label">Start Time</label>
-						<input name='start-time' type='time' class="form-control" required>
-					</div>
-				
-					<div class="col-md-3 mb-4"></div>
-					
-					<div class="col-md-3 mb-4">
-						<div class="line"></div>
-						<button class="btn btn-default w-100" type="submit" name="add_instance">Add</button>
-					</div>	
-				</div>
-			</form>	
-		
 			<form method="post" class="form-horizontal form-add-edit border mb-4">
 				<div class="form-group">
 					<div class="table-scroll-y-20">
@@ -149,8 +66,7 @@
 												<td><?=$race_runner->Bib?></td>
 												<td><?=$runner->FirstName." ".$runner->LastName?></td>
 												<td><?=$team->Name?></td>
-												<td><?=$class->Gender." ".$class->Distance?></td>
-												<td><a class="bg-danger text-white table-button" href=<?="index.php?page=manage&race=".$race->ID."&race-runner=".$runner->ID."&remove=1"?>>X</a></td>
+												<td><?=$class->Gender." ".$class->Distance?></td><td><a class="bg-danger text-white table-button" href=<?="index.php?page=manage&race=".$race->ID."&race-runner=".$runner->ID."&remove=1"?>>X</a></td>
 											</tr>						
 										<?php
 									}
@@ -165,7 +81,10 @@
 						<label for="runner" class="control-label">Runner</label>
 						<select id="runner" name="runner" class="form-control" required>
 							<?php
-								foreach(get_race_not_runners($race->ID) as $race_runner) {
+								foreach(get_race_not_runners($race->ID) as $race_runner) {	
+									//$class = get_race_runner_class($race_runner->Runner, $race_runner->Race) ;		
+									//$runner = get_runner($race_runner->Runner);
+									//$team = get_race_runner_team($race_runner->Runner, $race_runner->Race);
 									?>	
 										<option><?=$race_runner->ID." - ".$race_runner->FirstName." ".$race_runner->LastName?></option>					
 									<?php
@@ -178,7 +97,7 @@
 						<label for="category" class="control-label">Category</label>
 						<select id="category" name="category" class="form-control" required>
 							<?php
-								foreach(get_instances_distances($race->ID) as $category) {
+								foreach(get_categories_distances() as $category) {
 									?>	
 										<option><?=$category?></option>					
 									<?php

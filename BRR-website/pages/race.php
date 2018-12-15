@@ -121,6 +121,7 @@
 					<thead>
 						<tr>
 							<th>Place</th>
+							<th>Distance</th>
 							<th>Bib</th>
 							<th>Name</th>
 							<th>Team</th>
@@ -154,6 +155,7 @@
 									?>	
 										<tr class='clickable-row' data-href="index.php?page=runner&runner=<?=$race_runner->Runner?>&race=<?=$race_runner->Race?>">
 											<td><?=$race_runner->Place?></td>
+											<td><?=$race_runner->Distance?></td>
 											<td><?=$race_runner->Bib?></td>
 											<td><?=$runner->FirstName." ".$runner->LastName?></td>
 											<td><?=$team->Name?></td>

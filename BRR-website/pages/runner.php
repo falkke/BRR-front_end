@@ -182,10 +182,10 @@
 			</thead>
 			<tbody>
 				<?php
-					foreach(get_runner_timestamps($runner_id, $race->ID) as $timestamp) {		
-						$station = get_station($timestamp->Station);
+					foreach(get_runner_timestamps($runner_id, $race->ID) as $timestamp) {
+						$station = get_station($timestamp->Station);	
 						if(is_logged() == 1 || $station->Code != 99)
-						{
+						{	
 							$behind = get_time_behind_at_timestamp($runner_id, $race->ID, $timestamp->Lap, $station->ID);
 							$elapsed = get_elapsed_time_at_timestamp($runner_id, $race->ID, $station->ID, $timestamp->Timestamp);
 						
@@ -235,7 +235,7 @@
 										}
 									?>
 								</tr>						
-							<?php
+						<?php
 						}
 					}
 				?>
