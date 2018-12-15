@@ -36,8 +36,8 @@
 	&& isset($_GET['sort_by']) && ($_GET['sort_by'] == "ASC" || $_GET['sort_by'] == "DESC")) {
 		$sort = "ORDER BY ".$_GET['sort_word']." ".$_GET['sort_by'];
 	}
-	else if(isset($_GET['sort_word']) || isset($_GET['sort_by']))
-	{
+	
+	else if(isset($_GET['sort_word']) || isset($_GET['sort_by'])) {
 		header('Location:index.php?page=dashboard&list=si-units');
 	}
 ?>
@@ -73,7 +73,7 @@
 			&& isset($_GET['si-unit'])) {	
 		edit_si_unit($_GET['si-unit'], "Returned");
 		delete_all_runner_si_unit($_GET['si-unit']);
-		header('Location:index.php?page=dashboard&list=si-units&si-unit-modified=1');
+		//header('Location:index.php?page=dashboard&list=si-units&si-unit-modified=1');
 	}
 ?>
 

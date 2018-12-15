@@ -30,7 +30,7 @@
 			header('Location:index.php?page=dashboard&list=si-units&si-unit-modified=1');
 		}*/
 		
-		else {
+		if(empty($_GET['si-unit'])) {
 			add_si_unit($si_unit_id, "Returned");
 			header('Location:index.php?page=dashboard&list=si-units&si-unit-added=1');
 		}
