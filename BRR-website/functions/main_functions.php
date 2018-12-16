@@ -1504,5 +1504,36 @@ global $db;
 
         return $results;
 	}
+	
+	function does_station_0_exist($runner_id, $instance_id) {
+		global $db;
+
+        $e = array(
+            'runner_id' => $runner_id,
+			'instance_id' => $instance_id
+        );
+
+        $sql = "
+			SELECT * 
+			FROM timestamp 
+			WHERE Runner = :runner_id AND Race = (
+				SELECT Race 
+				FROM race_instance
+				WHERE ID = :instance_id
+			)
+			AND Station = (
+				SELECT ID
+				FROM station 
+				WHERE Code = 0
+			)
+		";
+        $req = $db->prepare($sql);
+        $req->execute($e);
+		
+        $exist = $req->rowCount($sql);
+		
+        return($exist);
+		
+	}
 ?>
 

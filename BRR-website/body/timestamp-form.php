@@ -56,11 +56,11 @@
 		$new_datetime = $_POST['date'] . " " . $_POST['time'];
 		$station_id = explode(" - ", $_POST['station']);
 		
+		$race_runner = get_race_runner($runner_id, $race->ID);
+		
 		if(!empty($_GET['timestamp'])) {
 			if((!does_timestamp_exist($new_datetime, $runner_id)) || ($new_datetime == $timestamp_time)) {
 				edit_timestamp($timestamp_time, $runner_id, $race_id, $new_datetime, $station_id[0]);
-				
-				$race_runner = get_race_runner($runner_id, $race->ID);
 				
 				$last_timestamp = get_last_timestamp($runner_id, $race_runner->RaceInstance);
 				
@@ -86,10 +86,8 @@
 		}
 		
 		else {
-			if(!does_timestamp_exist($new_datetime, $runner_id)) {
+			if((!does_timestamp_exist($new_datetime, $runner_id)) && ($station_id[0] != 0 || !does_station_0_exist($runner_id, $race_runner->RaceInstance))) {
 				add_timestamp($runner_id, $race->ID, $new_datetime, $station_id[0]);
-				
-				$race_runner = get_race_runner($runner_id, $race->ID);
 				
 				$last_timestamp = get_last_timestamp($runner_id, $race_runner->RaceInstance);
 				
@@ -108,7 +106,11 @@
 					$error = "This timestamp can not be added to the system because the distance will exceed the distance of the race.";
 				}
 			}
-									
+			
+			else if($station_id[0] == 0) {
+				$error = "The timestamp can not be added.";
+			}
+				
 			else {
 				$error = "This timestamp already exists.";
 			}
