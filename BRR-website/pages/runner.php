@@ -16,7 +16,7 @@
 			}
 			
 			else {
-				if((get_station(get_timestamp($timestamp, $runner_id)->Station)->Code) != 0) {
+				if((get_station(get_timestamp($timestamp, $runner_id)->Station)->Code) != 0 || (get_number_timestamps($runner_id, get_race_runner($runner_id, $race_id)->RaceInstance) == 1)) {
 					delete_timestamp($runner_id, $race_id, $timestamp);
 					header('Location:index.php?page=runner&runner='.$runner_id.'&race='.$race_id.'&timestamp-deleted=1');
 				}
