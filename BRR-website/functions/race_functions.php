@@ -99,6 +99,70 @@
         return $results;
     }
 	
+	function is_current_race($race_id) {
+        global $db;
+		
+        $var = array(
+			'race_id' => $race_id
+        );
+				
+        $sql = "
+			SELECT *
+			FROM race r, race_instance ri 
+			WHERE r.ID = :race_id AND r.EndTime > CURDATE() AND r.Date <= CURDATE() AND ri.StartTime < CURTIME() AND ri.StartTime IN (
+				SELECT Min(StartTime) 
+				FROM race_instance 
+				WHERE Race = r.ID
+			)
+		";
+        $req = $db->prepare($sql);
+        $req->execute($var);
+		
+        $exist = $req->rowCount($sql);
+		
+        return($exist);
+    }
+	
+	function is_displayed($race_id) {
+		global $db;
+		
+        $var = array(
+			'race_id' => $race_id
+        );
+				
+        $sql = "
+			SELECT *
+			FROM race_display
+			WHERE Race = :race_id
+		";
+        $req = $db->prepare($sql);
+        $req->execute($var);
+		
+        $exist = $req->rowCount($sql);
+		
+        return($exist);
+	}	
+	
+	function display_race($race_id) {
+        global $db;
+		
+        $var = array(
+			'race_id' => $race_id
+        );
+		
+        $req = $db->query("DELETE FROM race_display");
+		
+        $sql = "INSERT INTO race_display (Race) VALUES (:race_id)";
+        $req = $db->prepare($sql);
+        $req->execute($var);
+	}
+	
+	function do_not_display_race() {
+        global $db;
+		
+        $req = $db->query("DELETE FROM race_display");
+	}
+	
 	// Function that adds a race in the database.
 	function add_race($race_name, $race_start_date, $race_end_datetime) {
         global $db;

@@ -30,7 +30,16 @@
 		
 		if($start_date <= $end_date) {
 			if(!empty($_GET['race'])) {
+				
 				edit_race($race_id, $name, $start_date, $end_date." ".$end_time);
+				
+				if(!is_displayed($race_id) && isset($_POST['display'])){
+					display_race($race_id);
+				}
+				
+				else if(is_displayed($race_id)) {
+					do_not_display_race();
+				}
 				
 				if($_SESSION['dashboard'] == 1) {
 					header('Location:index.php?page=dashboard&list=races&race-modified=1');
@@ -142,6 +151,24 @@
 				/>
             </div>
 			
+			<?php
+				if(!empty($_GET['race']) && is_current_race($race_id)) {
+					?>
+						<div class="form-group">
+							<label for="display" class="col-lg-3 d-inline-block control-label h-100">Display On Main Page : </label>
+							<input name="display" type='checkbox' class="col-lg-9 d-inline-block form-control h-100"
+								<?php
+									if(is_displayed($race_id)) {
+										?>
+											checked
+										<?php
+									}
+								?>
+							/>
+						</div>
+					<?php
+				}
+			?>
 			
 			<div class="form-group">
 				<div class="col-lg-3 d-inline-block"></div>
