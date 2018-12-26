@@ -574,7 +574,7 @@ global $db;
 			return 1;
 		}
 		
-		else if($result->Station >= $station_id) {
+		else if((get_station($result->Station)->Code) >= (get_station($station_id)->Code)) {
 			return $result->Lap + 1;
 		}
 

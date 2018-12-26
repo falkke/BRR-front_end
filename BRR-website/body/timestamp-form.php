@@ -3,44 +3,23 @@
         header('Location:index.php?page=home');
     }
 	
-	if(!isset($_GET['runner'])) {
+	if(	!isset($_GET['timestamp']) ||
+		!isset($_GET['race']) || 
+		!isset($_GET['runner']) || 
+		(empty($_GET['race']) && $_GET['race'] != 0) || 
+		(empty($_GET['runner']) && $_GET['runner'] != 0) || 
+		!does_race_exist($_GET['race']) ||
+		!does_runner_exist($_GET['runner'])) {
 		header('Location:index.php?page=runners');
 	}
 	
-	if(!empty($_GET['runner'])) {
-		$runner_id = $_GET['runner'];
+	$runner_id = $_GET['runner'];
+	$runner = get_runner($runner_id);
 		
-		if(does_runner_exist($runner_id)) {
-			$runner = get_runner($runner_id);
-		}
-		
-		else {
-			header("Location:index.php?page=runners");
-		}
-	}
+	$race_id = $_GET['race'];
+	$race = get_race($race_id);
 	
-	else {
-		header("Location:index.php?page=runners");
-	}
-		
-	if(!isset($_GET['race'])) {
-		header('Location:index.php?page=runners');
-	}
-	
-	if(!empty($_GET['race'])) {
-		$race_id = $_GET['race'];
-		
-		if(does_race_exist($race_id)) {
-			$race = get_race($race_id);
-		}
-		else {
-			header("Location:index.php?page=runners");
-		}
-	}
-	
-	if(!isset($_GET['timestamp'])) {
-		header('Location:index.php?page=runners');
-	}
+	$race_runner = get_race_runner($runner_id, $race_id);
 	
 	if(!empty($_GET['timestamp'])) {
 		$timestamp_time = $_GET['timestamp'];
@@ -48,12 +27,11 @@
 		if(does_timestamp_exist($timestamp_time, $runner_id)) {
 			$timestamp = get_timestamp($timestamp_time, $runner_id);
 		}
+		
 		else {
 			header("Location:index.php?page=runners");
 		}
 	}
-	
-	$race_runner = get_race_runner($runner_id, $race->ID);
 	
 	if(isset($_POST['submit'])) {
 		$new_datetime = $_POST['date'] . " " . $_POST['time'];
@@ -144,7 +122,7 @@
 		<!-- max='<?=$race->EndDate?>' -->
 		<form method="post" class="form-horizontal form-add-edit">
 			<div class="form-group">
-				<label for="date" class="col-lg-3 d-inline-block  control-label">Timestamp Date: </label>
+				<label for="date" class="col-lg-3 d-inline-block  control-label">Timestamp Date : </label>
 				<input id="date" name="date" type="date" min='<?=$race->Date?>' class="col-lg-9 d-inline-block form-control h-100" required autofocus 
 					<?php
 						if(!empty($_GET['timestamp'])) {
@@ -156,7 +134,7 @@
 				>
 			</div>
 			<div class="form-group">
-				<label for="time" class="col-lg-3 d-inline-block  control-label">Timestamp Time: </label>
+				<label for="time" class="col-lg-3 d-inline-block  control-label">Timestamp Time : </label>
 				<input id="time" name="time" type="time" min="00:00:00" max="23:59:59" step="1" class="col-lg-9 d-inline-block form-control h-100" required autofocus 
 					<?php
 						if(!empty($_GET['timestamp'])) {
@@ -169,15 +147,15 @@
 			</div>
 			<div class="form-group">
 				<label for="station" class="col-lg-3 d-inline-block  control-label">Station : </label>
-				<select id="station" name="station" class="col-lg-9 d-inline-block form-control h-100" required>
+				<select name="station" class="col-lg-9 d-inline-block form-control h-100" required>
 				<?php
+					$timestamps_number = get_number_timestamps($runner_id, $race_runner->RaceInstance);
+					$past_station = get_station($timestamp->Station);
+				
 					foreach(get_stations() as $station) {
-						$timestamps_number = get_number_timestamps($runner_id, $race_runner->RaceInstance);
-						$past_station = get_station($timestamp->Station);
-						
-						if(	($station->Code == 0 && ((empty($_GET['timestamp']) && !does_station_code_exist($runner_id, $race_runner->RaceInstance, 0)) || (!empty($_GET['timestamp']) && ($past_station->Code == 0 || $past_station->Code == 99)))) ||
-							($station->Code == 99 && ((empty($_GET['timestamp']) && !does_station_code_exist($runner_id, $race_runner->RaceInstance, 99)) || (!empty($_GET['timestamp']) && ($past_station->Code == 0 || $past_station->Code == 99)))) ||
-							($station->Code != 99 && $station->Code != 0 && $timestamps_number > 0)) {
+						if(	($station->Code == 35 && ((empty($_GET['timestamp']) && !does_station_code_exist($runner_id, $race_runner->RaceInstance, 35)) || (!empty($_GET['timestamp']) && ($past_station->Code == 35 || $past_station->Code == 99)))) ||
+							($station->Code == 99 && ((empty($_GET['timestamp']) && !does_station_code_exist($runner_id, $race_runner->RaceInstance, 99)) || (!empty($_GET['timestamp']) && ($past_station->Code == 35 || $past_station->Code == 99)))) ||
+							($station->Code != 99 && $station->Code != 35 && $timestamps_number > 0)) {
 							?>
 								<option
 									<?php

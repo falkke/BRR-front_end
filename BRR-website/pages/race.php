@@ -129,13 +129,12 @@
 							<th>Date & Time</th>
 							<th>Status</th>
 							<?php
-								if(is_logged() == 1)
-								{
-							?>
-								<th>
-									<a class="bg-success text-white table-button" href="index.php?page=manage-runner-race&race=<?=$id?>">+</a>
-								</th>
-							<?php
+								if(is_logged() == 1) {
+									?>
+										<th>
+											<a class="bg-success text-white table-button" href="index.php?page=manage-runner-race&race=<?=$id?>">+</a>
+										</th>
+									<?php
 								}
 							?>
 						</tr>
@@ -189,7 +188,7 @@
 												{
 											?>
 												<td class="no-change">
-													<a class="bg-primary text-white table-button" href="index.php?page=manage-runner-race">...</a>
+													<a class="bg-primary text-white table-button" href="index.php?page=manage&runner=<?=$race_runner->Runner?>">...</a>
 													<a class="bg-danger text-white table-button" href="index.php?page=home&runner=<?=$race_runner->Runner?>&race=<?=$race_runner->Race?>&remove=1">X</a>
 												</td>
 											<?php

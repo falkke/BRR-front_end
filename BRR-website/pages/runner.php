@@ -191,7 +191,7 @@
 										?>	
 											<tr>
 												<td><?=$timestamp->Lap?></td>
-												<td><?=$station->Code?></td>
+												<td><?=$station->Name?></td>
 												
 												<td>
 													<?php

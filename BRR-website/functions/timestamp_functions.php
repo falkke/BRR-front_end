@@ -335,11 +335,13 @@
 				
 		update_race_runner($runner_id, $race_id);
 		$i = $lap;
+		
 		while($i <= $max_lap)
 		{
 			set_places($race_id, $station, $i);
 			$i = $i + 1;
 		}
+		
 		set_final_places($runner_id, $race_id);
     }		
 	
