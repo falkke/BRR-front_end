@@ -34,13 +34,14 @@
 	if(isset($_POST['add_runner'])) {
 		$runner_id = explode(" - ", $_POST['runner']);
 		$runner = get_runner($runner_id[0]);
-		$category_distance = $_POST['category'];
+		$category = explode(" - ", $_POST['category']);
+		$category_distance = explode(" ", $category[1]);
 		$team_id = explode(" - ", $_POST['team']);
 		$bib = $_POST['bib'];
-		$race_instance = get_race_instance($race->ID, $runner->Gender, $category_distance);
+		$race_instance = get_race_instance($race->ID, $runner->Gender, $category_distance[1]);
 		
-		if($race_instance != NULL){
-			add_race_runner($race->ID, $category_distance, $runner_id[0], $bib, $team_id[0], $race_instance->ID);
+		if($race_instance != NULL && $runner->Gender == $category_distance[0]){
+			add_race_runner($race->ID, $category_distance[1], $runner_id[0], $bib, $team_id[0], $race_instance->ID);
 		}
 	}	
 	
@@ -178,9 +179,9 @@
 						<label for="category" class="control-label">Category</label>
 						<select id="category" name="category" class="form-control" required>
 							<?php
-								foreach(get_instances_distances($race->ID) as $category) {
+								foreach(get_instances($race->ID) as $category) {
 									?>	
-										<option><?=$category?></option>					
+										<option><?=$category->ID." - ".$category->Gender." ".$category->Distance?></option>					
 									<?php
 								}
 							?>

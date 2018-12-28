@@ -152,7 +152,7 @@
             </div>
 			
 			<?php
-				if(!empty($_GET['race']) && is_current_race($race_id)) {
+				if(!empty($_GET['race']) && (is_current_race($race_id) || is_planned_race($race_id))) {
 					?>
 						<div class="form-group">
 							<label for="display" class="col-lg-3 d-inline-block control-label h-100">Display On Main Page : </label>

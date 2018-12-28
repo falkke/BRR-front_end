@@ -40,7 +40,7 @@
 
 		<!-- Main navigation menu : -->
 		
-		<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+		<nav class="navbar navbar-expand-md navbar-dark bg-success fixed-top">
 			<a class="navbar-brand main-title" href="index.php?page=home">Black River Run</a>
 
 			<div class="collapse navbar-collapse" id="navbarsExampleDefault">

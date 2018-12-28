@@ -1505,6 +1505,27 @@ global $db;
         return $results;
 	}
 	
+	function get_instances($race_id) {
+		global $db;
+
+        $e = array(
+            'race_id' => $race_id
+        );
+
+        $sql = "SELECT c.ID AS ID, c.Distance AS Distance, c.Gender AS Gender FROM race_instance ri, class c WHERE ri.Race = :race_id AND ri.Class = c.ID";
+        $req = $db->prepare($sql);
+        $req->execute($e);
+		
+		$results = array();
+		
+        while($rows = $req->fetchObject())
+		{
+            $results[] = $rows;
+        }
+
+        return $results;
+	}
+	
 	function does_station_code_exist($runner_id, $instance_id, $code) {
 		global $db;
 

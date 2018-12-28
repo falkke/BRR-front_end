@@ -123,6 +123,7 @@
         return($exist);
     }
 	
+	
 	function is_displayed($race_id) {
 		global $db;
 		
@@ -141,7 +142,17 @@
         $exist = $req->rowCount($sql);
 		
         return($exist);
-	}	
+	}
+
+	function get_display_race() {
+		global $db;
+		
+        $req = $db->query("SELECT * FROM race_display");
+	
+        $result = $req->fetchObject();
+		
+        return $result;
+	}		
 	
 	function display_race($race_id) {
         global $db;

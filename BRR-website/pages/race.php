@@ -451,12 +451,9 @@
 			if(is_logged() == 1)
 			{
 		?>	
-			<!--
-				<a class="bg-primary text-white table-button" href="index.php?page=manage-race&race=<?= $id ?>">...</a>
-				<a class="bg-danger text-white table-button" onclick="DeleteRaceAlert(<?= $id ?>);" href="#">X</a>
-			-->
-				<a class="bg-primary text-white table-button" onclick="Download(<?= $id ?>);" href="#">↓</a>
-				<a class="bg-primary text-white table-button" onclick="Upload(<?= $id ?>);" href="#">↑</a>
+
+			<a class="bg-primary text-white table-button" href="index.php?page=manage-race&race=<?= $id ?>">...</a>
+			<a class="bg-danger text-white table-button" onclick="DeleteRaceAlert(<?= $id ?>);" href="#">X</a>
 		<?php 
 			} 
 		} 
