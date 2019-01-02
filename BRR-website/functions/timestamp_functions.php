@@ -40,7 +40,7 @@
 		else if ($status == "Running" || $status == "DNF") {
 			$sql = 	"SELECT rr1.RaceInstance AS RaceInstance, rr1.Runner AS Runner, rr1.Place AS Place, t1.Timestamp AS Timestamp, (((t1.Lap - 1) * 10) + s1.LengthFromStart) AS Distance
 					FROM race_runner AS rr1, timestamp AS t1, race_instance AS ri, station AS s1
-					WHERE ri.ID = :race_instance AND rr1.RaceInstance = ri.Race AND rr1.Status = :status
+					WHERE ri.ID = :race_instance AND rr1.RaceInstance = ri.ID AND rr1.Status = :status
 					AND t1.Race = ri.Race AND rr1.Runner = t1.Runner
 					AND t1.Timestamp =
 						(SELECT MAX(t.Timestamp) AS Timestamp
@@ -54,12 +54,13 @@
         $req = $db->prepare($sql);
         $req->execute($r);
 		
+		$i = 0;
 		$results = array();
 		while($rows = $req->fetchObject()) 
 		{
+			$i = $i + 1;
             $results[] = $rows;
         }
-		
 		return $results;
 	}
 	
@@ -67,7 +68,6 @@
 	{
 		global $db;
 		$i = 0;
-		
 		$r = array(
 			'race_id' => $race_id,
 			'runner_id' => $runner_id
@@ -108,7 +108,6 @@
 			}
 			foreach(get_runner_by_instance($race_instance->ID, "Running") as $race_runner) {
 				$i = $i + 1;
-				//echo "Runner = " . $race_runner->Runner . ";Timestamp = " . $race_runner->Timestamp . ";Distance = " . $race_runner->Distance . '<br>';
 				$r = array(
 					'place' => $i,
 					'race_instance_id' => $race_instance->ID,
@@ -202,6 +201,10 @@
         $req->execute($r);
 		$timestamp_number = $req->rowCount($sql);
 		
+		if($timestamp_number == 0) {
+			return(null);
+		}
+			
 		// has the runner DNF / DNS
 		if($exist_stop == 1 && $timestamp_number == 1) {
 			return("DNS");
@@ -341,7 +344,6 @@
 			set_places($race_id, $station, $i);
 			$i = $i + 1;
 		}
-		
 		set_final_places($runner_id, $race_id);
     }		
 	
@@ -427,7 +429,6 @@
 			set_places($race_id, $station, $lap);
 // update place in race_runner
 		}
-		
 		set_final_places($runner_id, $race_id);
     }
 
