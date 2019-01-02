@@ -5,4 +5,5 @@
 	require 'functions/runner_functions.php';
 	require 'functions/main_functions.php';
 	require 'functions/timestamp_functions.php';
+	require 'functions/track_functions.php';
 ?>
