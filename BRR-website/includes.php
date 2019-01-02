@@ -6,4 +6,5 @@
 	require 'functions/main_functions.php';
 	require 'functions/timestamp_functions.php';
 	require 'functions/track_functions.php';
+	require 'functions/summary_functions.php';
 ?>
