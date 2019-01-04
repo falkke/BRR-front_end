@@ -1,5 +1,5 @@
 <?php
-	$search = $_SESSION['bbr']['search-runner'];
+	$search = "";
 	$sort = "";
 	
 	if(isset($_POST['submit'])) {
