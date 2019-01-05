@@ -28,6 +28,14 @@
 				<thead>
 					<tr>
 						<th>Bib</th>
+						<?php
+							if(is_logged() == 1)
+							{
+						?>
+								<th>SI-Unit</th>
+						<?php
+							}
+						?>
 						<th>Name</th>
 						<th>Team</th>
 						<th>Starting Time</th>
@@ -38,10 +46,26 @@
 					<?php
 						foreach(participant_list($class->ID, $race->ID) as $race_runner) {
 							$runner = get_runner($race_runner->Runner);
+							$runner_unit = get_runner_unit($race_runner->Runner, $race_runner->Race);
 							$team = get_race_runner_team($race_runner->Runner, $race_runner->Race);
 					?>	
 							<tr class='clickable-row' data-href="index.php?page=runner&runner=<?=$race_runner->Runner?>&race=<?=$race_runner->Race?>">
-								<td><?=$race_runner->Bib?></td>
+								<td><?=$race_runner->Bib?></td>		
+								<?php
+									if(is_logged() == 1)
+									{
+										if($runner_unit != null) {		
+								?>
+											<td><?=$runner_unit->SI_unit?></td>
+									<?php
+										}
+										else {
+									?>
+											<td> - </td>
+								<?php
+										}
+									}
+								?>
 								<td><?=$runner->FirstName." ".$runner->LastName?></td>
 								<td><?=$team->Name?></td>
 								<td><?=$race_runner->StartTime?></td>

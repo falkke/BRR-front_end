@@ -282,6 +282,7 @@
 								if(is_logged() == 1) {
 									?>
 										<td class="no-change">
+											<a class="bg-info text-white table-button" href="pages/export.php?race=<?=$race->ID?>">↓</a>
 											<a class="bg-primary text-white table-button" href="index.php?page=manage&race=<?=$race->ID?>">...</a>
 											<a class="bg-danger text-white table-button" onclick="DeleteAlert(<?=$_SESSION['dashboard']?>, 'race', <?= $race->ID ?>);" href="#">X</a>
 										</td>

@@ -63,9 +63,62 @@
 			add_race_instance($race->ID, $category_id[0], $start_time);
 		}
 	}
+	
+	if(isset($_POST['import_file'])) {
+		if($_FILES['file']['tmp_name'] != "") {
+			if(($handle = fopen($_FILES['file']['tmp_name'], "r")) !== FALSE) {
+				$data = [];
+				$row = 0;
+				while (($data[$row] = fgetcsv($handle, 1000, ";")) !== FALSE) {
+					$row = $row + 1;
+				}
+				$import_error = [];
+				$import_error = verify_import($data, $row);
+				if($import_error[0] == 0 && $import_error[1] == 0) {
+					echo "<p class='alert alert-success' role='alert'>The import has been succefully done.</p>";
+					import_data($data, $row, $race->ID);
+				}
+				else if($import_error[0] != 0 && $import_error[1] == 0) {
+					echo "<p class='alert alert-danger' role='alert'>The import has not been done due to incorect file data. 
+						(line ".$import_error[0].")</p>";	
+				}
+				else {
+					echo "<p class='alert alert-danger' role='alert'>The import has not been done due to incorect file data. 
+						(line ".$import_error[0].", column ".$import_error[1].")<br>";	
+					if($import_error[1] == 1) {
+						echo "NR-lapp must be a number.";	
+					}
+					else if($import_error[1] == 2) {
+						echo "SI-NR identifier must be a number.";	
+					}
+					else if($import_error[1] == 3) {
+						echo "Klass must follow this format 'GENDER DISTANCE Miles'<br>";
+						echo "With GENDER = Man, Woman, Herrar, Damer ";
+						echo "and DISTANCE = 20, 50, 100.";
+					}
+					else if($import_error[1] == 4) {
+						echo "Starttid must follow this format 'HH:MM:SS'";	
+					}
+					else if($import_error[1] == 5) {
+						echo "Namn must follow this format 'FIRSTNAME LASTNAME'";	
+					}
+					else if($import_error[1] == 7) {
+						echo "Personnummer must follow this format 'YYMMDD'";	
+					}
+					echo "</p>";
+				}
+				fclose($handle);
+			}
+		}
+	}
 
 	if(!empty($_GET['race']) && is_planned_race($_GET['race'])) {
 		?>
+			<form method="post" class="form-horizontal form-add-edit" enctype="multipart/form-data">
+				<input id="file" name="file" type="file" class="col-lg-6 d-inline-block form-control h-100">
+				<button class="bg-primary text-white table-button" type="submit" name="import_file">↑</button>
+			</form>
+		
 			<form method="post" class="form-horizontal form-add-edit border mb-4">
 				<div class="form-group">
 					<div class="table-scroll-y-20">

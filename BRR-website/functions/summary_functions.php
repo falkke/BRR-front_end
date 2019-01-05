@@ -1,6 +1,23 @@
 <?php
 	/* SUMMARY FUNCTIONS */
 	
+	function get_runner_unit($runner_id, $race_id)
+	{
+		global $db;
+
+        $e = array(
+            'race_id' => $race_id,
+            'runner_id' => $runner_id
+        );
+        $sql = "SELECT * FROM runner_units WHERE Runner = :runner_id AND Race = :race_id";
+        $req = $db->prepare($sql);
+        $req->execute($e);
+		
+        $result = $req->fetchObject();
+		
+        return $result;
+	}
+	
 	function get_classes()
 	{
 		global $db;
