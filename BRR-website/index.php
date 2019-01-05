@@ -43,8 +43,12 @@
 		<nav class="navbar navbar-expand-md navbar-dark bg-success fixed-top">
 			<a class="navbar-brand main-title" href="index.php?page=home">Black River Run</a>
 
-			<div class="collapse navbar-collapse" id="navbarsExampleDefault">
-				<ul class="navbar-nav mr-auto">
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-id" aria-controls="navbar-id" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			
+			<div class="collapse navbar-collapse in" id="navbar-id">
+				<ul class="navbar-nav ghest-nav mr-auto">
 					<li class="nav-item 
 						<?php
 							if($page == "home") {
@@ -97,7 +101,7 @@
 				<?php 
 					if(is_logged() == 1) {
 						?>
-							<ul class="navbar-nav my-2 my-lg-0">
+							<ul class="navbar-nav admin-nav my-2 my-lg-0">
 								<li class="nav-item
 									<?php
 										if($page == "dashboard") {
@@ -129,6 +133,7 @@
 						<?php 
 					}
 				?>
+				
 			</div>
 		</nav>
 
