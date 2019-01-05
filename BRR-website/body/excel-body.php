@@ -1,12 +1,4 @@
 <?php
-	$search = "";
-	$sort = "";
-	
-	if(isset($_POST['submit'])) {
-		$search = htmlspecialchars(trim($_POST['search']));
-		$_SESSION['bbr']['search-runner'] = $search;
-	}
-		
 	if(isset($_GET['race']) && !empty($_GET['race'])) 
 	{
 		$id = $_GET['race'];
@@ -23,18 +15,46 @@
 	if(!isset($_GET['race'])) {
 		$race = get_active_race();
 	}
+	
+	if(isset($_POST['submit'])) {
+		if($_FILES['import_file']['tmp_name'] != "") {
+			if(($handle = fopen($_FILES['import_file']['tmp_name'], "r")) !== FALSE) {
+				$data = [];
+				$row = 0;
+				while (($data[$row] = fgetcsv($handle, 1000, ";")) !== FALSE) {
+					$row = $row + 1;
+				}
+				$import_error = [];
+				$import_error = verify_import($data, $row);
+				if($import_error[0] == 0 && $import_error[1] == 0) {
+					echo "<p class='alert alert-success' role='alert'>The import has been succefully done.</p>";
+					import_data($data, $row, $race->ID);
+				}
+				else if($import_error[0] != 0 && $import_error[1] == 0) {
+					echo "<p class='alert alert-danger' role='alert'>The import has not been done due to incorect file data. 
+						(line ".$import_error[0].")</p>";	
+				}
+				else {
+					echo "<p class='alert alert-danger' role='alert'>The import has not been done due to incorect file data. 
+						(line ".$import_error[0].", column ".$import_error[1].")";	
+					if() {
+						echo "";	
+					}
+					echo "</p>";
+				}
+				fclose($handle);
+			}
+		}
+	}
 ?>
 
 <a class="link-title" href="index.php?page=race&race=<?=$race->ID?>?>"><h2 class="page-title followed-title"><?= $race->Name ?></h2></a>
 
 <h3 class="text-left"> Export as .csv file</h3>
 <a class="bg-primary text-white table-button" href="pages/export.php?race=<?=$race->ID?>">↓</a>
-<?php
-	//export();
-?>
-<!--
-	<button class="col-lg-3	pull-right btn btn-default" type="submit" name="submit">Submit</button>
--->
 	
 <h3 class="text-left"> Import a .csv file</h3>
----TO-DO---
+<form method="post" class="form-horizontal form-add-edit" enctype="multipart/form-data">
+	<input id="import_file" name="import_file" type="file" class="col-lg-6 d-inline-block form-control h-100">
+	<button class="bg-primary text-white table-button" type="submit" name="submit">↑</button>
+</form>
