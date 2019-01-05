@@ -36,9 +36,26 @@
 				}
 				else {
 					echo "<p class='alert alert-danger' role='alert'>The import has not been done due to incorect file data. 
-						(line ".$import_error[0].", column ".$import_error[1].")";	
-					if() {
-						echo "";	
+						(line ".$import_error[0].", column ".$import_error[1].")<br>";	
+					if($import_error[1] == 1) {
+						echo "NR-lapp must be a number.";	
+					}
+					else if($import_error[1] == 2) {
+						echo "SI-NR identifier must be a number.";	
+					}
+					else if($import_error[1] == 3) {
+						echo "Klass must follow this format 'GENDER DISTANCE Miles'<br>";
+						echo "With GENDER = Man, Woman, Herrar, Damer ";
+						echo "and DISTANCE = 20, 50, 100.";
+					}
+					else if($import_error[1] == 4) {
+						echo "Starttid must follow this format 'HH:MM:SS'";	
+					}
+					else if($import_error[1] == 5) {
+						echo "Namn must follow this format 'FIRSTNAME LASTNAME'";	
+					}
+					else if($import_error[1] == 7) {
+						echo "Personnummer must follow this format 'YYMMDD'";	
 					}
 					echo "</p>";
 				}
