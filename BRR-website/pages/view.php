@@ -58,7 +58,6 @@
 		(isset($_GET['distance']) && !empty($_GET['distance'])))
 	{
 ?>
-
 		<a class="link-title" href="index.php?page=race&race=<?=$race->ID?>&gender=<?=$gender?>&distance=<?=$distance?>"><h3 class="text-left"><?=$gender?> - <?=$distance?> Miles</h3></a>
 			
 		<?php
@@ -205,7 +204,7 @@
 		}
 		else {
 			?>
-			<p class="alert alert-danger" role="alert">The selected view type does not exist. (latest or resting are valid)</p>
+				<p class="alert alert-danger" role="alert">The selected view type does not exist. (latest or resting are valid)</p>
 			<?php
 		}
 	}

@@ -91,6 +91,16 @@
 				<h2 class="page-title followed-title"><?= $race->Name ?></h2>
 				<h3 class="page-subtitle"><?= "Results " . $gender . " - " . $distance ?></h3>
 				
+				<?php
+					if(is_logged() == 1) {
+						?>	
+							<a class="bg-primary text-white table-button" href="index.php?page=view&race=<?=$id?>&gender=<?=$gender?>&distance=<?=$_GET['distance']?>&view=latest">•</a>
+							<a class="bg-primary text-white table-button" href="index.php?page=view&race=<?=$id?>&gender=<?=$gender?>&distance=<?=$_GET['distance']?>&view=resting">•</a>
+						<?php 
+					} 
+				?>	
+						
+				
 				<form method="post" class="form-inline my-2">
 					<div class="input-group">
 						<input class="form-control" type="text" style="text-align:right" placeholder="Search" name="search" id="search" aria-label="Search" <?php
