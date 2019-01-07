@@ -39,109 +39,108 @@
 	<body>
 
 		<!-- Main navigation menu : -->
-<?php
-	if($page != "view") {
-?>
-		<nav class="navbar navbar-expand-md navbar-dark bg-success fixed-top">
-			<a class="navbar-brand main-title" href="index.php?page=home">Black River Run</a>
+		<?php
+			if($page != "view") {
+				?>
+					<nav class="navbar navbar-expand-md navbar-dark bg-success fixed-top">
+						<a class="navbar-brand main-title" href="index.php?page=home">Black River Run</a>
 
-			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-id" aria-controls="navbar-id" aria-expanded="false" aria-label="Toggle navigation">
-				<span class="navbar-toggler-icon"></span>
-			</button>
-			
-			<div class="collapse navbar-collapse in" id="navbar-id">
-				<ul class="navbar-nav ghest-nav mr-auto">
-					<li class="nav-item 
-						<?php
-							if($page == "home") {
-								?>
-									active
-								<?php
-							}
-						?>
-					">
-						<a class="nav-link" href="index.php?page=home">Home</a>
-					</li>
-										
-					<li class="nav-item 
-						<?php
-							if($page == "races") {
-								?>
-									active
-								<?php
-							}
-						?>
-					">
-						<a class="nav-link" href="index.php?page=races">Races</a>
-					</li>
-										
-					<li class="nav-item 
-						<?php
-							if($page == "runners") {
-								?>
-									active
-								<?php
-							}
-						?>
-					">
-						<a class="nav-link" href="index.php?page=runners">Runners</a>
-					</li>
-										
-					<li class="nav-item 
-						<?php
-							if($page == "teams") {
-								?>
-									active
-								<?php
-							}
-						?>
-					">
-						<a class="nav-link" href="index.php?page=teams">Teams</a>
-					</li>
-				</ul>
-				
-				<?php 
-					if(is_logged() == 1) {
-						?>
-							<ul class="navbar-nav admin-nav my-2 my-lg-0">
-								<li class="nav-item
+						<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-id" aria-controls="navbar-id" aria-expanded="false" aria-label="Toggle navigation">
+							<span class="navbar-toggler-icon"></span>
+						</button>
+						
+						<div class="collapse navbar-collapse out" id="navbar-id">
+							<ul class="navbar-nav ghest-nav mr-auto">
+								<li class="nav-item 
 									<?php
-										if($page == "dashboard") {
+										if($page == "home") {
 											?>
 												active
 											<?php
 										}
 									?>
 								">
-									<a class="nav-link" href="index.php?page=dashboard">Dashboard</a>
+									<a class="nav-link" href="index.php?page=home">Home</a>
 								</li>
-								
-								<li class="nav-item
+													
+								<li class="nav-item 
 									<?php
-										if($page == "settings") {
+										if($page == "races") {
 											?>
 												active
 											<?php
 										}
 									?>
 								">
-									<a class="nav-link" href="index.php?page=settings">Settings</a>
+									<a class="nav-link" href="index.php?page=races">Races</a>
 								</li>
-								
-								<li class="nav-item">
-									<a class="nav-link" href="index.php?page=logout">Logout</a>
+													
+								<li class="nav-item 
+									<?php
+										if($page == "runners") {
+											?>
+												active
+											<?php
+										}
+									?>
+								">
+									<a class="nav-link" href="index.php?page=runners">Runners</a>
+								</li>
+													
+								<li class="nav-item 
+									<?php
+										if($page == "teams") {
+											?>
+												active
+											<?php
+										}
+									?>
+								">
+									<a class="nav-link" href="index.php?page=teams">Teams</a>
 								</li>
 							</ul>
-						<?php 
-					}
-				?>
-				
-			</div>
-		</nav>
-		
-<?php
-	}
-?>
+							
+							<?php 
+								if(is_logged() == 1) {
+									?>
+										<ul class="navbar-nav admin-nav my-2 my-lg-0">
+											<li class="nav-item
+												<?php
+													if($page == "dashboard") {
+														?>
+															active
+														<?php
+													}
+												?>
+											">
+												<a class="nav-link" href="index.php?page=dashboard">Dashboard</a>
+											</li>
+											
+											<li class="nav-item
+												<?php
+													if($page == "settings") {
+														?>
+															active
+														<?php
+													}
+												?>
+											">
+												<a class="nav-link" href="index.php?page=settings">Settings</a>
+											</li>
+											
+											<li class="nav-item">
+												<a class="nav-link" href="index.php?page=logout">Logout</a>
+											</li>
+										</ul>
+									<?php 
+								}
+							?>
+							
+						</div>
+					</nav>
+				<?php
+			}
+		?>
 
 		<!-- Require the content of the page. -->
 		

@@ -1,11 +1,5 @@
 <?php
 	$_SESSION['dashboard'] = 0;
+	
+	require 'body/summary-body.php';
 ?>
-
-<main role="main" class="container">
-	<div class="starter-template">
-		<?php
-			require 'body/summary-body.php';
-		?>
-	</div>
-</main>	
