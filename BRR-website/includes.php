@@ -9,4 +9,5 @@
 	require 'functions/summary_functions.php';
 	require 'functions/export_functions.php';
 	require 'functions/import_functions.php';
+	require 'functions/view_functions.php';
 ?>

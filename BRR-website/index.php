@@ -39,7 +39,9 @@
 	<body>
 
 		<!-- Main navigation menu : -->
-		
+<?php
+	if($page != "view") {
+?>
 		<nav class="navbar navbar-expand-md navbar-dark bg-success fixed-top">
 			<a class="navbar-brand main-title" href="index.php?page=home">Black River Run</a>
 
@@ -136,6 +138,10 @@
 				
 			</div>
 		</nav>
+		
+<?php
+	}
+?>
 
 		<!-- Require the content of the page. -->
 		
