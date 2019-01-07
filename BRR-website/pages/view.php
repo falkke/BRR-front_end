@@ -58,13 +58,9 @@
 		(isset($_GET['distance']) && !empty($_GET['distance'])))
 	{
 ?>
-		<h3>
-			<tr style="width:100%">
-				<th><?= $gender . " - " . $distance . " miles"?></th>
-				<th><a style="float:right" href="index.php?page=race&race=<?=$race->ID ?>gender=<?=$gender?>&distance=<?=$distance?>">Return</a></th>
-			</tr>
-		</h3>
-		
+
+		<a class="link-title" href="index.php?page=race&race=<?=$race->ID?>&gender=<?=$gender?>&distance=<?=$distance?>"><h3 class="text-left"><?=$gender?> - <?=$distance?> Miles</h3></a>
+			
 		<?php
 		if($view != null && $view != "") {
 		?>
@@ -205,7 +201,7 @@
 				?>
 				</tbody>
 			</table>
-			<?php
+		<?php
 		}
 		else {
 			?>
