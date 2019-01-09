@@ -32,7 +32,7 @@
             'race_id' => $race_id
         );
 		
-        $sql = "SELECT rr.Bib AS Bib, rr.Race AS Race, rr.Runner AS Runner, ri.StartTime AS StartTime, rr.Class AS Class
+        $sql = "SELECT rr.Bib AS Bib, ri.Race AS Race, rr.Runner AS Runner, ri.StartTime AS StartTime, ri.Class AS Class
 				FROM race_runner AS rr, race_instance AS ri
 				WHERE ri.Race = :race_id AND ri.ID = rr.RaceInstance
 				ORDER BY Bib";

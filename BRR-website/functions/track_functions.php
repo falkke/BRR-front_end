@@ -12,21 +12,21 @@
 		);
 		
 		if($area == "run") {
-			$sql = "SELECT rr.Race, rr.Runner, rr.Bib, rr.Club, rr.TotalTime, (((t.Lap - 1) * 10) + s.LengthFromStart) AS Distance, t.Timestamp, t.Station
-					FROM race_runner AS rr, club AS c, runner AS r, timestamp AS t, station AS s
-					WHERE rr.Race = :race_id AND c.ID = rr.Club AND r.ID = rr.Runner AND rr.Status = :status
+			$sql = "SELECT ri.Race, rr.Runner, rr.Bib, rr.Club, rr.TotalTime, (((t.Lap - 1) * 10) + s.LengthFromStart) AS Distance, t.Timestamp, t.Station
+					FROM race_runner AS rr, race_instance AS ri, club AS c, runner AS r, timestamp AS t, station AS s
+					WHERE ri.Race = :race_id AND rr.RaceInstance = ri.ID AND c.ID = rr.Club AND r.ID = rr.Runner AND rr.Status = :status
 					AND CONCAT(r.FirstName, ' ', r.LastName, ' ', c.Name, ' ', rr.Bib) LIKE '%{$keyword}%'
-					AND t.Runner = rr.Runner AND t.Race = rr.Race AND  t.Timestamp = 
+					AND t.Runner = rr.Runner AND t.Race = ri.Race AND  t.Timestamp = 
 					(SELECT MAX(t.timestamp) FROM timestamp AS t WHERE t.Runner = rr.Runner AND t.Race = :race_id)
 					AND t.Station = s.ID AND s.ID <> :station_id";
 		}
 		
 		else {
-			$sql = "SELECT rr.Race, rr.Runner, rr.Bib, rr.Club, rr.TotalTime, (((t.Lap - 1) * 10) + s.LengthFromStart) AS Distance, t.Timestamp, t.Station
-					FROM race_runner AS rr, club AS c, runner AS r, timestamp AS t, station AS s
-					WHERE rr.Race = :race_id AND c.ID = rr.Club AND r.ID = rr.Runner AND rr.Status = :status
+			$sql = "SELECT ri.Race, rr.Runner, rr.Bib, rr.Club, rr.TotalTime, (((t.Lap - 1) * 10) + s.LengthFromStart) AS Distance, t.Timestamp, t.Station
+					FROM race_runner AS rr, race_instance AS ri, club AS c, runner AS r, timestamp AS t, station AS s
+					WHERE ri.Race = :race_id AND rr.RaceInstance = ri.ID AND c.ID = rr.Club AND r.ID = rr.Runner AND rr.Status = :status
 					AND CONCAT(r.FirstName, ' ', r.LastName, ' ', c.Name, ' ', rr.Bib) LIKE '%{$keyword}%'
-					AND t.Runner = rr.Runner AND t.Race = rr.Race AND  t.Timestamp = 
+					AND t.Runner = rr.Runner AND t.Race = ri.Race AND  t.Timestamp = 
 					(SELECT MAX(t.timestamp) FROM timestamp AS t WHERE t.Runner = rr.Runner AND t.Race = :race_id)
 					AND t.Station = s.ID AND s.ID = :station_id";
 		}	
@@ -50,21 +50,21 @@
         );
 		
 		if($area == "run") {
-			$sql = "SELECT rr.Race, rr.Runner, rr.Bib, rr.Club, rr.TotalTime, (((t.Lap - 1) * 10) + s.LengthFromStart) AS Distance, t.Timestamp, t.Station
-					FROM race_runner AS rr, club AS c, runner AS r, timestamp AS t, station AS s
-					WHERE rr.Race = :race_id AND c.ID = rr.Club AND r.ID = rr.Runner AND rr.Status = :status
+			$sql = "SELECT ri.Race, rr.Runner, rr.Bib, rr.Club, rr.TotalTime, (((t.Lap - 1) * 10) + s.LengthFromStart) AS Distance, t.Timestamp, t.Station, ri.ID AS RaceInstance
+					FROM race_runner AS rr, race_instance AS ri, club AS c, runner AS r, timestamp AS t, station AS s
+					WHERE ri.Race = :race_id AND rr.RaceInstance = ri.ID AND c.ID = rr.Club AND r.ID = rr.Runner AND rr.Status = :status
 					AND CONCAT(r.FirstName, ' ', r.LastName, ' ', c.Name, ' ', rr.Bib) LIKE '%{$keyword}%'
-					AND t.Runner = rr.Runner AND t.Race = rr.Race AND  t.Timestamp = 
+					AND t.Runner = rr.Runner AND t.Race = ri.Race AND  t.Timestamp = 
 					(SELECT MAX(t.timestamp) FROM timestamp AS t WHERE t.Runner = rr.Runner AND t.Race = :race_id)
 					AND t.Station = s.ID AND s.ID <> :station_id";
 		}
 		
 		else {
-			$sql = "SELECT rr.Race, rr.Runner, rr.Bib, rr.Club, rr.TotalTime, (((t.Lap - 1) * 10) + s.LengthFromStart) AS Distance, t.Timestamp, t.Station
-					FROM race_runner AS rr, club AS c, runner AS r, timestamp AS t, station AS s
-					WHERE rr.Race = :race_id AND c.ID = rr.Club AND r.ID = rr.Runner AND rr.Status = :status
+			$sql = "SELECT ri.Race, rr.Runner, rr.Bib, rr.Club, rr.TotalTime, (((t.Lap - 1) * 10) + s.LengthFromStart) AS Distance, t.Timestamp, t.Station, ri.ID AS RaceInstance
+					FROM race_runner AS rr, race_instance AS ri, club AS c, runner AS r, timestamp AS t, station AS s
+					WHERE ri.Race = :race_id AND rr.RaceInstance = ri.ID AND c.ID = rr.Club AND r.ID = rr.Runner AND rr.Status = :status
 					AND CONCAT(r.FirstName, ' ', r.LastName, ' ', c.Name, ' ', rr.Bib) LIKE '%{$keyword}%'
-					AND t.Runner = rr.Runner AND t.Race = rr.Race AND  t.Timestamp = 
+					AND t.Runner = rr.Runner AND t.Race = ri.Race AND  t.Timestamp = 
 					(SELECT MAX(t.timestamp) FROM timestamp AS t WHERE t.Runner = rr.Runner AND t.Race = :race_id)
 					AND t.Station = s.ID AND s.ID = :station_id";
 		}

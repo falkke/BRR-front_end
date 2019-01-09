@@ -40,16 +40,6 @@
 				<tr>
 					<th>Race</th>
 					<th>Member</th>
-					<?php
-						if(is_logged() == 1)
-						{
-					?>
-						<th>
-							<a class="bg-success text-white table-button" href="index.php?page=manage-team">+</a>
-						</th>
-					<?php
-						}
-					?>
 				</tr>
 			</thead>
 			<tbody>

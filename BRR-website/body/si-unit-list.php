@@ -249,7 +249,7 @@
 						<td><?=$si_unit->Holder?></td>
 						
 						<td class="no-change">
-							<a class="bg-primary text-white table-button" href="index.php?page=dashboard&list=si-units&si-unit=<?=$si_unit->ID?>&si-unit-modified=0"><- </a>
+							<a title="Return SI-unit" class="bg-primary text-white table-button" href="index.php?page=dashboard&list=si-units&si-unit=<?=$si_unit->ID?>&si-unit-modified=0">&#9745</a>
 							<a class="bg-danger text-white table-button" onclick="DeleteAlert(1, 'si-unit', <?=$si_unit->ID?>);" href="#">X</a>
 						</td>
 					</tr>

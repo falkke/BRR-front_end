@@ -72,7 +72,7 @@
             'instance_id' => $instance_id
         );
 		
-        $sql = "SELECT rr.Bib AS Bib, rr.Race AS Race, rr.Runner AS Runner, ri.StartTime AS StartTime
+        $sql = "SELECT rr.Bib AS Bib, ri.Race AS Race, rr.Runner AS Runner, ri.StartTime AS StartTime
 				FROM race_runner AS rr, race_instance AS ri
 				WHERE ri.ID = :instance_id AND ri.ID = rr.RaceInstance";
         $req = $db->prepare($sql);
@@ -102,7 +102,7 @@
             'instance_id' => $instance_id
         );
 		
-        $sql = "SELECT rr.Bib AS Bib, rr.Race AS Race, rr.Runner AS Runner, ri.StartTime AS StartTime
+        $sql = "SELECT rr.Bib AS Bib, ri.Race AS Race, rr.Runner AS Runner, ri.StartTime AS StartTime
 				FROM race_runner AS rr, race_instance AS ri
 				WHERE ri.ID = :instance_id AND ri.ID = rr.RaceInstance
 				ORDER BY Bib";

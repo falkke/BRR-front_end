@@ -9,10 +9,10 @@
 
 		$sql = 	"
 			SELECT rr.Runner AS Runner, t.Timestamp AS Timestamp, t.Station AS Station
-			FROM timestamp t, race_runner rr, race_instance ri
+			FROM timestamp t, race_runner rr
 			WHERE rr.RaceInstance = :instance_id AND rr.Runner = :runner_id AND t.Runner = rr.Runner AND t.Timestamp = (
 				SELECT MAX(Timestamp) 
-				FROM timestamp t2, race_runner rr2, race_instance ri2
+				FROM timestamp t2, race_runner rr2
 				WHERE t2.Runner = :runner_id AND rr2.RaceInstance = :instance_id AND rr2.Runner = :runner_id AND t2.Runner = rr2.Runner 
 			)
 		";
@@ -38,14 +38,14 @@
 			$sql = "SELECT * FROM race_runner WHERE RaceInstance = :race_instance AND Status = :status";
 		}
 		else if ($status == "Running" || $status == "DNF") {
-			$sql = 	"SELECT rr1.RaceInstance AS RaceInstance, rr1.Runner AS Runner, rr1.Place AS Place, t1.Timestamp AS Timestamp, (((t1.Lap - 1) * 10) + s1.LengthFromStart) AS Distance
-					FROM race_runner AS rr1, timestamp AS t1, race_instance AS ri, station AS s1
-					WHERE ri.ID = :race_instance AND rr1.RaceInstance = ri.ID AND rr1.Status = :status
-					AND t1.Race = ri.Race AND rr1.Runner = t1.Runner
+			$sql = 	"SELECT ri1.ID AS RaceInstance, rr1.Runner AS Runner, rr1.Place AS Place, t1.Timestamp AS Timestamp, (((t1.Lap - 1) * 10) + s1.LengthFromStart) AS Distance
+					FROM race_runner AS rr1, timestamp AS t1, race_instance AS ri1, station AS s1
+					WHERE ri1.ID = :race_instance AND rr1.RaceInstance = ri1.ID AND rr1.Status = :status
+					AND t1.Race = ri1.Race AND rr1.Runner = t1.Runner
 					AND t1.Timestamp =
 						(SELECT MAX(t.Timestamp) AS Timestamp
-						FROM timestamp AS t, race_runner AS rr, station AS s 
-						WHERE rr.RaceInstance = :race_instance AND t.Race = rr.Race AND s.Code <> 99 AND t.Station = s.ID 
+						FROM timestamp AS t, race_runner AS rr, station AS s, race_instance AS ri 
+						WHERE ri.ID = :race_instance AND rr.RaceInstance = ri.ID AND t.Race = ri.Race AND s.Code <> 99 AND t.Station = s.ID 
 						AND rr.Runner = t.Runner AND rr.Status = :status AND rr.Runner = rr1.Runner
 						GROUP BY rr.Runner)
 					AND s1.ID = t1.Station
@@ -258,7 +258,7 @@
         );
 		$sql = "SELECT ri.ID, ri.Race, ri.Class
 				FROM race_instance AS ri, race_runner AS rr
-				WHERE rr.Runner = :runner_id AND rr.Race = :race_id
+				WHERE rr.Runner = :runner_id AND ri.Race = :race_id
 				AND rr.RaceInstance = ri.ID";
 		$req = $db->prepare($sql);
         $req->execute($r);
@@ -274,14 +274,13 @@
 		
 		$r = array(
 			'runner_id' => $runner_id,
-			'race_id' => $race_id,
 			'race_instance_id' => $race_instance->ID,
 			'totaltime' => $totaltime,
 			'status' => $status
 		);
 		
 		$sql = "UPDATE race_runner SET Status = :status ,TotalTime = :totaltime
-				WHERE RaceInstance = :race_instance_id AND Runner = :runner_id AND Race = :race_id";
+				WHERE RaceInstance = :race_instance_id AND Runner = :runner_id";
         $req = $db->prepare($sql);
         $req->execute($r);
 	}

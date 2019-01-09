@@ -69,7 +69,6 @@
 							if(($class->Gender == $class_runner->Gender) && ($class->Distance == $class_runner->Distance)) {
 								$runner = get_runner($race_runner->Runner);
 								$timestamp = get_last_timestamp($race_runner->Runner, $race_runner->Race);
-								$behind = get_time_behind($race_runner);
 								$team = get_race_runner_team($race_runner->Runner, $race_runner->Race);
 								$elapsed = get_total_elapsed_time($race_runner->Runner, $race_runner->Race);
 								?>	
@@ -98,9 +97,7 @@
 							if(($class->Gender == $class_runner->Gender) && ($class->Distance == $class_runner->Distance)) {
 								$runner = get_runner($race_runner->Runner);
 								$timestamp = get_last_timestamp($race_runner->Runner, $race_runner->Race);
-								$behind = get_time_behind($race_runner);
 								$team = get_race_runner_team($race_runner->Runner, $race_runner->Race);
-								$elapsed = get_total_elapsed_time($race_runner->Runner, $race_runner->Race);
 								?>	
 									<tr class='clickable-row' data-href="index.php?page=runner&runner=<?=$race_runner->Runner?>&race=<?=$race_runner->Race?>">
 										<td> - </td>
@@ -118,9 +115,7 @@
 							if(($class->Gender == $class_runner->Gender) && ($class->Distance == $class_runner->Distance)) {
 								$runner = get_runner($race_runner->Runner);
 								$timestamp = get_last_timestamp($race_runner->Runner, $race_runner->Race);
-								$behind = get_time_behind($race_runner);
 								$team = get_race_runner_team($race_runner->Runner, $race_runner->Race);
-								$elapsed = get_total_elapsed_time($race_runner->Runner, $race_runner->Race);
 								?>	
 									<tr class='clickable-row' data-href="index.php?page=runner&runner=<?=$race_runner->Runner?>&race=<?=$race_runner->Race?>">
 										<td> - </td>

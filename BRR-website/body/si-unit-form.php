@@ -25,11 +25,6 @@
 		$status = "";
 		$si_unit_id = $_POST['id'];
 		
-		/*if(!empty($_GET['si-unit'])) {
-			edit_si_unit($si_unit_id, $status);
-			header('Location:index.php?page=dashboard&list=si-units&si-unit-modified=1');
-		}*/
-		
 		if(empty($_GET['si-unit'])) {
 			add_si_unit($si_unit_id, "Returned");
 			header('Location:index.php?page=dashboard&list=si-units&si-unit-added=1');

@@ -332,7 +332,6 @@
 											if(($class->Gender == $_GET['gender']) && ($class->Distance == $_GET['distance'])) {
 												$runner = get_runner($race_runner->Runner);
 												$timestamp = get_last_timestamp($race_runner->Runner, $race_runner->Race);
-												$behind = get_time_behind($race_runner);
 												$team = get_race_runner_team($race_runner->Runner, $race_runner->Race);
 												$elapsed = get_total_elapsed_time($race_runner->Runner, $race_runner->Race);
 												?>	

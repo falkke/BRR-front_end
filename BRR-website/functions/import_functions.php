@@ -348,14 +348,16 @@
 			'race_id' => $race_instance->Race
         );
 
-        $sql = "SELECT * FROM race_runner WHERE Runner = :runner_id AND Race = :race_id";
+        $sql = "SELECT * 
+				FROM race_runner AS rr, race_instance AS ri 
+				WHERE rr.Runner = :runner_id AND ri.Race = :race_id AND rr.RaceInstance = ri.ID";
         $req = $db->prepare($sql);
         $req->execute($e);
 
         $exist = $req->rowCount($sql);
 		
         if(!($exist)) {
-			add_race_runner($race_instance->Race, $class->Distance, $runner_id, $bib, $club_id, $race_instance_id);
+			add_race_runner($runner_id, $bib, $club_id, $race_instance_id);
 		}
 	}
 ?>

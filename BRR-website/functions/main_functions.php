@@ -29,7 +29,9 @@
             'race_id' => $race_id
         );
 
-        $sql = "SELECT * FROM race_runner WHERE Runner = :runner_id AND Race = :race_id";
+        $sql = "SELECT rr.* 
+				FROM race_runner AS rr, race_instance AS ri
+				WHERE rr.Runner = :runner_id AND ri.Race = :race_id AND rr.RaceInstance = ri.ID";
         $req = $db->prepare($sql);
         $req->execute($e);
 
@@ -49,12 +51,12 @@
 			);
 			$sql = "SELECT ri.Race, ri.Class, ri.StartTime, rr.Runner, rr.Bib, rr.Status, rr.Club, rr.Place, rr.TotalTime
 					FROM race_runner AS rr, club AS c, runner AS r, race_instance AS ri
-					WHERE rr.Race = :race_id AND c.ID = rr.Club AND r.ID = rr.Runner AND ri.Class = :category AND ri.ID = rr.RaceInstance AND rr.Status = :status
+					WHERE ri.Race = :race_id AND rr.RaceInstance = ri.ID AND c.ID = rr.Club AND r.ID = rr.Runner AND ri.Class = :category AND rr.Status = :status
 					AND CONCAT(r.FirstName, ' ', r.LastName, ' ', c.Name, ' ', rr.Bib) LIKE '%{$keyword}%'
 					UNION
 					SELECT ri.Race, ri.Class, ri.StartTime, rr.Runner, rr.Bib, rr.Status, '' AS Club, rr.Place, rr.TotalTime
 					FROM race_runner AS rr, runner AS r, race_instance AS ri
-					WHERE rr.Race = :race_id AND r.ID = rr.Runner AND ri.Class = :category AND ri.ID = rr.RaceInstance AND rr.Status = :status
+					WHERE ri.Race = :race_id AND rr.RaceInstance = ri.ID AND r.ID = rr.Runner AND ri.Class = :category AND rr.Status = :status AND rr.Club is null
 					AND CONCAT(r.FirstName, ' ', r.LastName, ' ', rr.Bib) LIKE '%{$keyword}%'";
 		}
 		else
@@ -66,8 +68,13 @@
 			
 			$sql = "SELECT ri.Race, ri.Class, ri.StartTime, rr.Runner, rr.Bib, rr.Status, rr.Club, rr.Place, rr.TotalTime
 					FROM race_runner AS rr, club AS c, runner AS r, race_instance AS ri
-					WHERE rr.Race = :race_id AND c.ID = rr.Club AND r.ID = rr.Runner AND ri.Class = :category AND ri.ID = rr.RaceInstance AND rr.Status is null
-					AND CONCAT(r.FirstName, ' ', r.LastName, ' ', c.Name, ' ', rr.Bib) LIKE '%{$keyword}%'";
+					WHERE ri.Race = :race_id AND rr.RaceInstance = ri.ID AND c.ID = rr.Club AND r.ID = rr.Runner AND ri.Class = :category AND rr.Status is null
+					AND CONCAT(r.FirstName, ' ', r.LastName, ' ', c.Name, ' ', rr.Bib) LIKE '%{$keyword}%'
+					UNION
+					SELECT ri.Race, ri.Class, ri.StartTime, rr.Runner, rr.Bib, rr.Status, '' AS Club, rr.Place, rr.TotalTime
+					FROM race_runner AS rr, club AS c, runner AS r, race_instance AS ri
+					WHERE ri.Race = :race_id AND rr.RaceInstance = ri.ID AND c.ID = rr.Club AND r.ID = rr.Runner AND ri.Class = :category AND rr.Status is null AND rr.Club is null
+					AND CONCAT(r.FirstName, ' ', r.LastName, ' ', rr.Bib) LIKE '%{$keyword}%'";
 		}
 		
         $req = $db->prepare($sql);
@@ -87,8 +94,8 @@
 			
 		$sql = "
 			SELECT rr.* 
-			FROM race_runner AS rr, club AS c, runner AS r 
-			WHERE rr.Race = :race_id AND c.ID = rr.Club AND r.ID = rr.Runner AND CONCAT(r.FirstName, ' ', r.LastName, ' ', c.Name, ' ', rr.Bib) LIKE '%{$keyword}%' 
+			FROM race_runner AS rr, club AS c, runner AS r, race_instance AS ri 
+			WHERE ri.Race = :race_id AND rr.RaceInstance = ri.ID AND c.ID = rr.Club AND r.ID = rr.Runner AND CONCAT(r.FirstName, ' ', r.LastName, ' ', c.Name, ' ', rr.Bib) LIKE '%{$keyword}%' 
 			ORDER BY rr.Place ASC
 		";
 							
@@ -107,7 +114,7 @@
 	
 	
 	function get_race_runners_by_status($race_id, $keyword, $status) {
-global $db;
+	global $db;
 		
         $e = array(
             'race_id' => $race_id,
@@ -118,7 +125,7 @@ global $db;
 		{
 			$sql = "SELECT ri.Race, ri.Class, ri.StartTime, rr.Runner, rr.Bib, rr.Status, rr.Club, rr.Place, rr.TotalTime, (((t.Lap - 1) * 10) + s.LengthFromStart) AS Distance, t.Timestamp
 					FROM race_runner AS rr, club AS c, runner AS r, race_instance AS ri, timestamp AS t, station AS s
-					WHERE rr.Race = :race_id AND c.ID = rr.Club AND r.ID = rr.Runner AND ri.ID = rr.RaceInstance AND rr.Status = :status
+					WHERE ri.Race = :race_id AND rr.RaceInstance = ri.ID AND c.ID = rr.Club AND r.ID = rr.Runner AND ri.ID = rr.RaceInstance AND rr.Status = :status
 					AND CONCAT(r.FirstName, ' ', r.LastName, ' ', c.Name, ' ', rr.Bib) LIKE '%{$keyword}%'
 					AND t.Runner = rr.Runner AND t.Race = ri.Race AND  t.Timestamp = 
 					(SELECT MAX(t.timestamp) FROM timestamp AS t, station AS s WHERE t.Runner = rr.Runner AND t.Race = :race_id AND s.Code <> 99 AND t.Station = s.ID)
@@ -126,7 +133,7 @@ global $db;
 					UNION
 					SELECT ri.Race, ri.Class, ri.StartTime, rr.Runner, rr.Bib, rr.Status, '' AS Club, rr.Place, rr.TotalTime, (((t.Lap - 1) * 10) + s.LengthFromStart) AS Distance, t.Timestamp
 					FROM race_runner AS rr, runner AS r, race_instance AS ri, timestamp AS t, station AS s
-					WHERE rr.Race = :race_id AND r.ID = rr.Runner AND ri.ID = rr.RaceInstance AND rr.Status = :status AND rr.Club IS NULL
+					WHERE ri.Race = :race_id AND rr.RaceInstance = ri.ID AND r.ID = rr.Runner AND ri.ID = rr.RaceInstance AND rr.Status = :status AND rr.Club IS NULL
 					AND CONCAT(r.FirstName, ' ', r.LastName, ' ', rr.Bib) LIKE '%{$keyword}%'
 					AND t.Runner = rr.Runner AND t.Race = ri.Race AND  t.Timestamp = 
 					(SELECT MAX(t.timestamp) FROM timestamp AS t, station AS s WHERE t.Runner = rr.Runner AND t.Race = :race_id AND s.Code <> 99 AND t.Station = s.ID)
@@ -137,7 +144,7 @@ global $db;
 		{
 			$sql = "SELECT ri.Race, ri.Class, ri.StartTime, rr.Runner, rr.Bib, rr.Status, rr.Club, rr.Place, rr.TotalTime, (((t.Lap - 1) * 10) + s.LengthFromStart) AS Distance, t.Timestamp
 					FROM race_runner AS rr, club AS c, runner AS r, race_instance AS ri, timestamp AS t, station AS s
-					WHERE rr.Race = :race_id AND c.ID = rr.Club AND r.ID = rr.Runner AND ri.ID = rr.RaceInstance AND rr.Status = :status
+					WHERE ri.Race = :race_id AND rr.RaceInstance = ri.ID AND c.ID = rr.Club AND r.ID = rr.Runner AND ri.ID = rr.RaceInstance AND rr.Status = :status
 					AND CONCAT(r.FirstName, ' ', r.LastName, ' ', c.Name, ' ', rr.Bib) LIKE '%{$keyword}%'
 					AND t.Runner = rr.Runner AND t.Race = ri.Race AND  t.Timestamp = 
 					(SELECT MAX(t.timestamp) FROM timestamp AS t WHERE t.Runner = rr.Runner AND t.Race = :race_id)
@@ -145,12 +152,12 @@ global $db;
 					UNION
 					SELECT ri.Race, ri.Class, ri.StartTime, rr.Runner, rr.Bib, '-' AS Status, rr.Club, '-' AS Place, rr.TotalTime, '-' AS Distance, '-' AS Timestamp
 					FROM race_runner AS rr, club AS c, runner AS r, race_instance AS ri
-					WHERE rr.Race = :race_id AND c.ID = rr.Club AND r.ID = rr.Runner AND ri.ID = rr.RaceInstance AND rr.Status is null
+					WHERE ri.Race = :race_id AND rr.RaceInstance = ri.ID AND c.ID = rr.Club AND r.ID = rr.Runner AND ri.ID = rr.RaceInstance AND rr.Status is null
 					AND CONCAT(r.FirstName, ' ', r.LastName, ' ', c.Name, ' ', rr.Bib) LIKE '%{$keyword}%'
 					UNION
 					SELECT ri.Race, ri.Class, ri.StartTime, rr.Runner, rr.Bib, rr.Status, '' AS Club, rr.Place, rr.TotalTime, (((t.Lap - 1) * 10) + s.LengthFromStart) AS Distance, t.Timestamp
 					FROM race_runner AS rr, runner AS r, race_instance AS ri, timestamp AS t, station AS s
-					WHERE rr.Race = :race_id AND r.ID = rr.Runner AND ri.ID = rr.RaceInstance AND rr.Status = :status AND rr.Club IS NULL
+					WHERE ri.Race = :race_id AND rr.RaceInstance = ri.ID AND r.ID = rr.Runner AND ri.ID = rr.RaceInstance AND rr.Status = :status AND rr.Club IS NULL
 					AND CONCAT(r.FirstName, ' ', r.LastName, ' ', rr.Bib) LIKE '%{$keyword}%'
 					AND t.Runner = rr.Runner AND t.Race = ri.Race AND  t.Timestamp = 
 					(SELECT MAX(t.timestamp) FROM timestamp AS t WHERE t.Runner = rr.Runner AND t.Race = :race_id)
@@ -158,7 +165,7 @@ global $db;
 					UNION
 					SELECT ri.Race, ri.Class, ri.StartTime, rr.Runner, rr.Bib, '-' AS Status, '' AS Club, '-' AS Place, rr.TotalTime, '-' AS Distance, '-' AS Timestamp
 					FROM race_runner AS rr, runner AS r, race_instance AS ri
-					WHERE rr.Race = :race_id AND r.ID = rr.Runner AND ri.ID = rr.RaceInstance AND rr.Status is null AND rr.Club IS NULL
+					WHERE ri.Race = :race_id AND rr.RaceInstance = ri.ID AND r.ID = rr.Runner AND ri.ID = rr.RaceInstance AND rr.Status is null AND rr.Club IS NULL
 					AND CONCAT(r.FirstName, ' ', r.LastName, ' ', rr.Bib) LIKE '%{$keyword}%'
 					ORDER BY Place ASC";
 		}
@@ -167,12 +174,12 @@ global $db;
 		{
 			$sql = "SELECT ri.Race, ri.Class, ri.StartTime, rr.Runner, rr.Bib, rr.Status, rr.Club, rr.Place, rr.TotalTime
 					FROM race_runner AS rr, club AS c, runner AS r, race_instance AS ri
-					WHERE rr.Race = :race_id AND c.ID = rr.Club AND r.ID = rr.Runner AND ri.ID = rr.RaceInstance AND rr.Status = :status
+					WHERE ri.Race = :race_id AND rr.RaceInstance = ri.ID AND c.ID = rr.Club AND r.ID = rr.Runner AND ri.ID = rr.RaceInstance AND rr.Status = :status
 					AND CONCAT(r.FirstName, ' ', r.LastName, ' ', c.Name, ' ', rr.Bib) LIKE '%{$keyword}%'
 					UNION
 					SELECT ri.Race, ri.Class, ri.StartTime, rr.Runner, rr.Bib, rr.Status, '' AS Club, rr.Place, rr.TotalTime
 					FROM race_runner AS rr, runner AS r, race_instance AS ri
-					WHERE rr.Race = :race_id AND r.ID = rr.Runner AND ri.ID = rr.RaceInstance AND rr.Status = :status AND rr.Club IS NULL
+					WHERE ri.Race = :race_id AND rr.RaceInstance = ri.ID AND r.ID = rr.Runner AND ri.ID = rr.RaceInstance AND rr.Status = :status AND rr.Club IS NULL
 					AND CONCAT(r.FirstName, ' ', r.LastName, ' ', rr.Bib) LIKE '%{$keyword}%'
 					ORDER BY Place ASC";
 		}
@@ -190,40 +197,17 @@ global $db;
 		return $results;
 	}
 	
-	function add_race_runner($race_id, $category_distance, $runner_id, $bib, $team_id, $race_instance_id) {
+	function add_race_runner($runner_id, $bib, $team_id, $race_instance_id) {
         global $db;
 		
-		$e = array(
-            'runner_id' => $runner_id
-        );
-
-        $sql = "SELECT Gender FROM runner WHERE ID = :runner_id";
-        $req = $db->prepare($sql);
-        $req->execute($e);
-
-		$category_gender = $req->fetch()['Gender'];
-		
-		$e = array(
-            'category_distance' => $category_distance,
-			'category_gender' => $category_gender
-        );
-
-        $sql = "SELECT ID FROM class WHERE Distance = :category_distance AND Gender = :category_gender";
-        $req = $db->prepare($sql);
-        $req->execute($e);
-
-		$category_id = $req->fetch()['ID'];
-		
         $e = array(
-                'race_id' => $race_id,
-                'category_id' => $category_id,
                 'runner_id' => $runner_id,
                 'bib' => $bib,
                 'team_id' => $team_id,
                 'race_instance_id' => $race_instance_id
         );
 		
-        $sql = "INSERT INTO race_runner(RaceInstance, Race, Class, Runner, Bib, Club) VALUES(:race_instance_id, :race_id, :category_id, :runner_id, :bib, :team_id)";
+        $sql = "INSERT INTO race_runner(RaceInstance, Runner, Bib, Club) VALUES(:race_instance_id, :runner_id, :bib, :team_id)";
         $req = $db->prepare($sql);
         $req->execute($e);
     }	
@@ -257,7 +241,12 @@ global $db;
             'race_id' => $race_id
         );
 
-		$sql = "SELECT * FROM runner WHERE ID NOT IN (SELECT Runner FROM race_runner WHERE Race = :race_id)";
+		$sql = "SELECT * 
+				FROM runner 
+				WHERE ID NOT IN 
+						(SELECT rr.Runner 
+						FROM race_runner AS rr, race_instance AS ri
+						WHERE ri.Race = :race_id AND rr.RaceInstance = ri.ID)";
         $req = $db->prepare($sql);
         $req->execute($e);
 		
@@ -340,7 +329,9 @@ global $db;
             'race_id' => $race_id
         );
 
-        $sql = "SELECT * FROM race_runner WHERE Runner = :runner_id AND Race = :race_id";
+        $sql = "SELECT ri.Class AS Class
+				FROM race_runner AS rr, race_instance AS ri
+				WHERE ri.Race = :race_id AND rr.RaceInstance = ri.ID AND Runner = :runner_id";
         $req = $db->prepare($sql);
         $req->execute($e);
 		
@@ -368,7 +359,9 @@ global $db;
             'race_id' => $race_id
         );
 
-        $sql = "SELECT * FROM race_runner WHERE Runner = :runner_id AND Race = :race_id";
+        $sql = "SELECT rr.Club AS Club FROM 
+				race_runner AS rr, race_instance AS ri
+				WHERE ri.Race = :race_id AND rr.RaceInstance = ri.ID AND Runner = :runner_id";
         $req = $db->prepare($sql);
         $req->execute($e);
 		
@@ -381,8 +374,6 @@ global $db;
         $sql = "SELECT * FROM club WHERE ID = :team_id";
         $req = $db->prepare($sql);
         $req->execute($e);
-
-		//$result = $req->fetchObject();
 
 		if($req->rowCount($sql) != 0) {
 			$result = $req->fetchObject();
@@ -467,8 +458,21 @@ global $db;
             'race_id' => $race_id,
             'runner_id' => $runner_id
         );
+				
+        $sql = "SELECT ri.ID AS ID
+				FROM race_runner AS rr, race_instance AS ri 
+				WHERE ri.Race = :race_id AND rr.RaceInstance = ri.ID AND rr.Runner = :runner_id";
+        $req = $db->prepare($sql);
+        $req->execute($r);
 		
-        $sql = "DELETE FROM race_runner WHERE Race = :race_id AND Runner = :runner_id";
+		$instance_id = $req->fetch()['ID'];
+		
+        $r = array(
+            'race_instance_id' => $race_instance_id,
+            'runner_id' => $runner_id
+        );
+		
+        $sql = "DELETE FROM race_runner WHERE RaceInstance = :race_instance_id AND Runner = :runner_id";
         $req = $db->prepare($sql);
         $req->execute($r);
     }
@@ -565,26 +569,6 @@ global $db;
 		return $results;
 	}
 	
-	/*function get_last_timestamp($runner_id, $race_id)
-	{
-		global $db;
-		
-        $e = array(
-            'runner_id' => $runner_id,
-            'race_id' => $race_id
-        );
-
-        $sql = "SELECT * FROM timestamp WHERE Timestamp = (SELECT MAX(Timestamp) FROM timestamp WHERE Runner = :runner_id AND Race = :race_id)";
-        $req = $db->prepare($sql);
-        $req->execute($e);
-		
-		$results = array();
-		
-		$result = $req->fetchObject();
-
-		return $result;
-	}*/
-	
 	function get_number_laps($runner_id, $race_id, $timestamp, $station_id)
 	{
 		global $db;
@@ -658,12 +642,24 @@ global $db;
 		global $db;
 		
         $e = array(
+            'race_id' => $race_runner->Race,
+            'class_id' => $race_runner->Class
+        );
+		
+        $sql = "SELECT * FROM race_instance WHERE Race = :race_id AND Class = :class_id";
+        $req = $db->prepare($sql);
+        $req->execute($e);
+		
+		$instance_id = $req->fetch()['ID'];
+		
+        $e = array(
             'runner_id' => $race_runner->Runner,
-            'class_id' => $race_runner->Class,
-            'race_id' => $race_runner->Race
+            'instance_id' => $instance_id
         );
 
-        $sql = "SELECT TIMEDIFF(r1.TotalTime, r2.TotalTime) AS TimeBehind FROM race_runner AS r1, race_runner AS r2 WHERE r1.Runner = :runner_id AND r1.Race = :race_id AND r1.Class = :class_id AND r2.Place = 1 AND r2.Race = :race_id AND r2.Class = :class_id";
+        $sql = "SELECT TIMEDIFF(r1.TotalTime, r2.TotalTime) AS TimeBehind 
+				FROM race_instance AS ri, race_runner AS r1, race_runner AS r2 
+				WHERE r1.Runner = :runner_id AND ri.ID = :instance_id AND r1.RaceInstance = ri.ID AND r2.Place = 1 AND r2.RaceInstance = ri.ID";
         $req = $db->prepare($sql);
         $req->execute($e);
 		
@@ -702,8 +698,13 @@ global $db;
             'runner_id' => $runner_id,
             'race_id' => $race_id
         );
-		$sql = "SELECT TIMEDIFF(t1.timestamp, t2.timestamp) AS TimeBehind FROM timestamp AS t1, timestamp AS t2 WHERE t1.Runner = :runner_id AND t1.Race = :race_id AND t2.Runner = :runner_id AND t2.Race = :race_id AND t2.station = 0 AND t1.Timestamp =
-				(SELECT MAX(t3.timestamp) FROM timestamp AS t3, station AS s WHERE t3.Runner = :runner_id AND t3.Race = :race_id AND s.Code <> 99 AND t3.Station = s.ID)";
+		$sql = "SELECT TIMEDIFF(t1.timestamp, t2.timestamp) AS TimeBehind 
+				FROM timestamp AS t1, timestamp AS t2 
+				WHERE t1.Runner = :runner_id AND t1.Race = :race_id AND t2.Runner = :runner_id AND t2.Race = :race_id AND t2.station = 0 
+				AND t1.Timestamp =
+					(SELECT MAX(t3.timestamp) 
+					FROM timestamp AS t3, station AS s 
+					WHERE t3.Runner = :runner_id AND t3.Race = :race_id AND s.Code <> 99 AND t3.Station = s.ID)";
         $req = $db->prepare($sql);
         $req->execute($e);
 		
@@ -809,7 +810,12 @@ global $db;
             'team_id' => $team_id
         );
 
-		$sql = "SELECT * FROM runner WHERE CONCAT(FirstName, ' ', LastName) LIKE '%{$keyword}%' AND ID IN (SELECT Runner FROM race_runner WHERE Race = :race_id AND Club = :team_id)";
+		$sql = "SELECT * 
+				FROM runner 
+				WHERE CONCAT(FirstName, ' ', LastName) LIKE '%{$keyword}%' AND ID IN 
+						(SELECT rr.Runner 
+						FROM race_runner AS rr, race_instance AS ri
+						WHERE ri.Race = :race_id AND rr.RaceInstance = ri.ID AND rr.Club = :team_id)";
         $req = $db->prepare($sql);
         $req->execute($e);
 
@@ -830,7 +836,12 @@ global $db;
             'team_id' => $team_id
         );
 		
-		$sql = "SELECT * FROM race WHERE ID IN (SELECT Race FROM race_runner WHERE Club = :team_id)";
+		$sql = "SELECT * 
+				FROM race 
+				WHERE ID IN 
+					(SELECT ri.Race 
+					FROM race_runner AS rr, race_instance AS ri 
+					WHERE rr.Club = :team_id AND rr.RaceInstance = ri.ID)";
         $req = $db->prepare($sql);
         $req->execute($e);
 
@@ -1489,22 +1500,6 @@ global $db;
 		}
     }
 	
-	/*function does_race_instance_exist($race_instance_id) {
-        global $db;
-
-        $e = array(
-            'race_instance_id' => $race_instance_id
-        );
-
-        $sql = "SELECT * FROM race_instance WHERE ID = :race_instance_id";
-        $req = $db->prepare($sql);
-        $req->execute($e);
-
-        $exist = $req->rowCount($sql);
-		
-        return($exist);
-    }*/
-	
 	function does_race_instance_exist($race_id, $gender, $distance) {
         global $db;
 
@@ -1514,7 +1509,7 @@ global $db;
             'distance' => $distance
         );
 
-        $sql = "SELECT c.ID FROM race_instance ri, class c WHERE ri.Race = :race_id AND ri.Class = c.ID AND c.Gender = :gender AND c.Distance = :distance";
+        $sql = "SELECT ri.ID FROM race_instance ri, class c WHERE ri.Race = :race_id AND ri.Class = c.ID AND c.Gender = :gender AND c.Distance = :distance";
         $req = $db->prepare($sql);
         $req->execute($e);
 

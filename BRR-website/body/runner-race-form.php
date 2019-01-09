@@ -41,7 +41,7 @@
 		$race_instance = get_race_instance($race->ID, $runner->Gender, $category_distance[1]);
 		
 		if($race_instance != NULL && $runner->Gender == $category_distance[0]){
-			add_race_runner($race->ID, $category_distance[1], $runner_id[0], $bib, $team_id[0], $race_instance->ID);
+			add_race_runner($runner_id[0], $bib, $team_id[0], $race_instance->ID);
 		}
 	}	
 	

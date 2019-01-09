@@ -226,7 +226,9 @@
             'race_id' => $race_id
         );
 		
-        $sql = "SELECT * FROM race_runner WHERE Race = :race_id";
+        $sql = "SELECT * 
+				FROM race_runner AS rr, race_instance AS ri
+				WHERE ri.Race = :race_id AND rr.RaceInstance = ri.ID";
         $req = $db->prepare($sql);
         $req->execute($var);
 		
