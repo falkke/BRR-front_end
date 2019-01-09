@@ -92,12 +92,24 @@
             'race_id' => $race_id
         );
 			
-		$sql = "
-			SELECT rr.* 
-			FROM race_runner AS rr, club AS c, runner AS r, race_instance AS ri 
-			WHERE ri.Race = :race_id AND rr.RaceInstance = ri.ID AND c.ID = rr.Club AND r.ID = rr.Runner AND CONCAT(r.FirstName, ' ', r.LastName, ' ', c.Name, ' ', rr.Bib) LIKE '%{$keyword}%' 
-			ORDER BY rr.Place ASC
-		";
+		if($keyword != "") {
+			$sql = "
+				SELECT rr.* 
+				FROM race_runner AS rr, club AS c, runner AS r, race_instance AS ri 
+				WHERE ri.Race = :race_id AND rr.RaceInstance = ri.ID AND c.ID = rr.Club AND r.ID = rr.Runner AND CONCAT(r.FirstName, ' ', r.LastName, ' ', c.Name, ' ', rr.Bib) LIKE '%{$keyword}%' 
+				ORDER BY rr.Place ASC
+			";
+		}
+		
+		else {
+			
+			$sql = "
+				SELECT rr.* 
+				FROM race_runner AS rr, race_instance AS ri 
+				WHERE ri.Race = :race_id AND rr.RaceInstance = ri.ID
+				ORDER BY rr.Place ASC
+			";
+		}
 							
         $req = $db->prepare($sql);
         $req->execute($e);
@@ -111,7 +123,6 @@
 		
 		return $results;
 	}
-	
 	
 	function get_race_runners_by_status($race_id, $keyword, $status) {
 	global $db;
@@ -208,6 +219,20 @@
         );
 		
         $sql = "INSERT INTO race_runner(RaceInstance, Runner, Bib, Club) VALUES(:race_instance_id, :runner_id, :bib, :team_id)";
+        $req = $db->prepare($sql);
+        $req->execute($e);
+    }	
+	
+	function add_race_runner_no_team($runner_id, $bib, $race_instance_id) {
+        global $db;
+		
+        $e = array(
+                'runner_id' => $runner_id,
+                'bib' => $bib,
+                'race_instance_id' => $race_instance_id
+        );
+		
+        $sql = "INSERT INTO race_runner(RaceInstance, Runner, Club, Bib) VALUES(:race_instance_id, :runner_id, NULL, :bib)";
         $req = $db->prepare($sql);
         $req->execute($e);
     }	
@@ -1400,14 +1425,14 @@
 	
 	/* RACE INSTANCE FUNCTIONS */
 		
-	function get_race_instances($race_instance_id) {
+	function get_race_instances($race_id) {
         global $db;
 
         $var = array(
-			'race_instance_id' => $race_instance_id
+			'race_id' => $race_id
         );
 		
-        $sql = "SELECT * FROM race_instance WHERE Race = :race_instance_id";
+        $sql = "SELECT * FROM race_instance WHERE Race = :race_id";
         $req = $db->prepare($sql);
         $req->execute($var);
 		

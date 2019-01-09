@@ -1,28 +1,6 @@
-<?php
-	if(isset($_GET['race']) && !empty($_GET['race'])) 
-	{
-		$id = $_GET['race'];
-		
-		if(does_race_exist($id)) {
-			$race = get_race($id);
-		}
-		
-		else {
-			header("Location:index.php?page=home");
-		}
-	}
-	
-	if(!isset($_GET['race'])) {
-		$race = get_active_race();
-	}
-	
-	$search = "";
-?>
-
 <div>
-	<h3 class="page-subtitle">Race Results</h3>
 	<a class="link-title" href="index.php?page=race&race=<?=$race->ID?>"><h3 class="page-title followed-title"><?=$race->Name?></h3></a>
-	<h3 class="page-subtitle"><?= $race->Date ?></h3>
+	<h3 class="page-subtitle">Race Results</h3>
 </div>	
 	
 <?php				

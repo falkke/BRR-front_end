@@ -41,7 +41,13 @@
 		$race_instance = get_race_instance($race->ID, $runner->Gender, $category_distance[1]);
 		
 		if($race_instance != NULL && $runner->Gender == $category_distance[0]){
-			add_race_runner($runner_id[0], $bib, $team_id[0], $race_instance->ID);
+			if($team_id[0] != "") {
+				add_race_runner($runner_id[0], $bib, $team_id[0], $race_instance->ID);
+			}
+			
+			else {
+				add_race_runner_no_team($runner_id[0], $bib, $race_instance->ID);
+			}
 		}
 	}	
 	
@@ -195,9 +201,9 @@
 							<tbody>
 								<?php
 									foreach(get_race_runners($race->ID, '') as $race_runner) {	
-										$class = get_race_runner_class($race_runner->Runner, $race_runner->Race) ;		
+										$class = get_race_runner_class($race_runner->Runner, $race->ID) ;		
 										$runner = get_runner($race_runner->Runner);
-										$team = get_race_runner_team($race_runner->Runner, $race_runner->Race);
+										$team = get_race_runner_team($race_runner->Runner, $race->ID);
 										?>	
 											<tr>
 												<td><?=$race_runner->Bib?></td>
@@ -232,6 +238,7 @@
 						<label for="category" class="control-label">Category</label>
 						<select id="category" name="category" class="form-control" required>
 							<?php
+							
 								foreach(get_instances($race->ID) as $category) {
 									?>	
 										<option><?=$category->ID." - ".$category->Gender." ".$category->Distance?></option>					
@@ -243,7 +250,8 @@
 					
 					<div class="col-md-3 mb-4">
 						<label for="team" class="control-label">Team</label>
-						<select id="team" name="team" class="form-control" required>
+						<select id="team" name="team" class="form-control">
+							<option selected value> - </option>
 							<?php
 								foreach(get_teams() as $team) {
 									?>	
