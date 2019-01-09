@@ -442,15 +442,8 @@
 					<h3 class="page-subtitle"><?= $race->Date ?></h3>
 					
 					<p class="lead">Please, choose a category in the side menu to see the results.</p>
-					<?php 
-						if(is_logged() == 1) {
-							?>	
-
-								<a class="bg-primary text-white table-button" href="index.php?page=manage-race&race=<?= $id ?>">...</a>
-								<a class="bg-danger text-white table-button" onclick="DeleteRaceAlert(<?= $id ?>);" href="#">X</a>
-							<?php 
-						} 
-						
+					<a title="Race Results" class="bg-primary text-white table-button" href="index.php?page=results&race=<?=$id?>">&#9872</a>
+					<?php	
 						require "summary.php";
 					
 						if(is_logged()) {

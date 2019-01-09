@@ -19,9 +19,12 @@
 	$search = "";
 ?>
 
-<h2 class="page-title followed-title">Race Results</h2>
-<h3 class="page-title followed-title"><?=$race->Name?></h3>
-				
+<div>
+	<h3 class="page-subtitle">Race Results</h3>
+	<a class="link-title" href="index.php?page=race&race=<?=$race->ID?>"><h3 class="page-title followed-title"><?=$race->Name?></h3></a>
+	<h3 class="page-subtitle"><?= $race->Date ?></h3>
+</div>	
+	
 <?php				
 	foreach(get_classes() as $class) {
 		if(exist_participant($class->ID, $race->ID)) {
