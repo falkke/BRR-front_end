@@ -10,7 +10,8 @@
 			'distance' => $distance
         );
 
-        $sql = "SELECT ri.ID AS ID, ri.Race AS Race, ri.Class AS Class, ri.StartTime AS StartTime FROM race_instance AS ri, class AS c 
+        $sql = "SELECT ri.ID AS ID, ri.Race AS Race, ri.Class AS Class, ri.StartTime AS StartTime 
+				FROM race_instance AS ri, class AS c 
 				WHERE c.Gender = :gender AND c.Distance = :distance AND ri.Class = c.ID AND ri.Race = :race_id";
         $req = $db->prepare($sql);
         $req->execute($e);
@@ -384,7 +385,7 @@ global $db;
             'race_id' => $race_id
         );
 
-        $sql = "SELECT DISTINCT Gender FROM class WHERE ID IN (SELECT DISTINCT Class FROM race_runner WHERE Race = :race_id)";
+        $sql = "SELECT DISTINCT Gender FROM class WHERE ID IN (SELECT DISTINCT Class FROM race_instance WHERE Race = :race_id)";
         $req = $db->prepare($sql);
         $req->execute($e);
 		
@@ -407,7 +408,7 @@ global $db;
             'class_gender' => $class_gender
         );
 
-        $sql = "SELECT DISTINCT Distance FROM class WHERE Gender = :class_gender AND ID IN (SELECT DISTINCT Class FROM race_runner WHERE Race = :race_id)";
+        $sql = "SELECT DISTINCT Distance FROM class WHERE Gender = :class_gender AND ID IN (SELECT DISTINCT Class FROM race_instance WHERE Race = :race_id)";
         $req = $db->prepare($sql);
         $req->execute($e);
 		
