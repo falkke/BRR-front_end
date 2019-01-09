@@ -1622,5 +1622,48 @@ global $db;
         return($result);
 		
 	}
+	
+	// OTHER
+	
+	function not_empty_race_gender($race_id, $class_gender) {
+		global $db;
+
+        $e = array(
+            'race_id' => $race_id,
+            'class_gender' => $class_gender
+			
+        );
+
+        $sql = "SELECT rr.Runner
+				FROM race_runner AS rr, race_instance AS ri, class AS c
+				WHERE c.Gender = :class_gender AND ri.Class = c.ID AND rr.RaceInstance = ri.ID AND ri.Race = :race_id";
+        $req = $db->prepare($sql);
+        $req->execute($e);
+
+        $exist = $req->rowCount($sql);
+		
+        return($exist);
+	}
+	
+	function not_empty_race_gender_distances($race_id, $class_gender, $class_gender_distance) {
+		global $db;
+
+        $e = array(
+            'race_id' => $race_id,
+            'class_gender' => $class_gender,
+			'class_gender_distance' => $class_gender_distance
+			
+        );
+
+        $sql = "SELECT rr.Runner
+				FROM race_runner AS rr, race_instance AS ri, class AS c
+				WHERE c.Gender = :class_gender AND c.Distance = :class_gender_distance AND ri.Class = c.ID AND rr.RaceInstance = ri.ID AND ri.Race = :race_id";
+        $req = $db->prepare($sql);
+        $req->execute($e);
+
+        $exist = $req->rowCount($sql);
+		
+        return($exist);
+	}
 ?>
 

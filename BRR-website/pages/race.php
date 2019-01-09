@@ -60,6 +60,7 @@
 				<ul id="menu-content" class="menu-content collapse out">
 				<?php
 					foreach(get_race_class_genders($id) as $class_gender) {
+						if(not_empty_race_gender($id, $class_gender)) {
 						?>							
 							<li data-toggle="collapse" data-target="#<?=$class_gender ?>" class="collapsed">
 								<a href="#"><?=$class_gender ?></a>
@@ -67,14 +68,17 @@
 							<ul class="sub-menu collapse" id="<?=$class_gender ?>">
 								<?php
 									foreach(get_race_class_gender_distances($id, $class_gender) as $class_gender_distance) {
+										if(not_empty_race_gender_distances($id, $class_gender, $class_gender_distance)) {
 										?>	
 											<li><a href="index.php?page=race&race=<?= $id ?>&gender=<?=$class_gender ?>&distance=<?=$class_gender_distance ?>"><?=$class_gender_distance ?> miles</a></li>				
 										<?php
+										}
 									}
 								?>	
 							</ul>
 					
 						<?php
+						}
 					}
 				?>
 				</ul>
@@ -88,14 +92,14 @@
 				(isset($_GET['gender']) && !empty($_GET['gender'])) &&
 				(isset($_GET['distance']) && !empty($_GET['distance']))) {
 				?>	
-				<h2 class="page-title followed-title"><?= $race->Name ?></h2>
+				<a class="link-title" href="index.php?page=race&race=<?=$race->ID?>"><h2 class="page-title followed-title"><?= $race->Name ?></h2></a>
 				<h3 class="page-subtitle"><?= "Results " . $gender . " - " . $distance ?></h3>
 				
 				<?php
 					if(is_logged() == 1) {
 						?>	
-							<a title="Early view in the race" class="bg-primary text-white table-button" href="index.php?page=view&race=<?=$id?>&gender=<?=$gender?>&distance=<?=$_GET['distance']?>&view=latest">•</a>
-							<a title="Late view in the race" class="bg-primary text-white table-button" href="index.php?page=view&race=<?=$id?>&gender=<?=$gender?>&distance=<?=$_GET['distance']?>&view=resting">•</a>
+							<a title="Early view in the race" class="bg-primary text-white table-button" href="index.php?page=view&race=<?=$id?>&gender=<?=$gender?>&distance=<?=$_GET['distance']?>&view=resting">&#9658</a>
+							<a title="Late view in the race" class="bg-primary text-white table-button" href="index.php?page=view&race=<?=$id?>&gender=<?=$gender?>&distance=<?=$_GET['distance']?>&view=latest">&#9658|</a>
 						<?php 
 					} 
 				?>	
