@@ -94,8 +94,8 @@
 				<?php
 					if(is_logged() == 1) {
 						?>	
-							<a class="bg-primary text-white table-button" href="index.php?page=view&race=<?=$id?>&gender=<?=$gender?>&distance=<?=$_GET['distance']?>&view=latest">•</a>
-							<a class="bg-primary text-white table-button" href="index.php?page=view&race=<?=$id?>&gender=<?=$gender?>&distance=<?=$_GET['distance']?>&view=resting">•</a>
+							<a title="Early view in the race" class="bg-primary text-white table-button" href="index.php?page=view&race=<?=$id?>&gender=<?=$gender?>&distance=<?=$_GET['distance']?>&view=latest">•</a>
+							<a title="Late view in the race" class="bg-primary text-white table-button" href="index.php?page=view&race=<?=$id?>&gender=<?=$gender?>&distance=<?=$_GET['distance']?>&view=resting">•</a>
 						<?php 
 					} 
 				?>	
