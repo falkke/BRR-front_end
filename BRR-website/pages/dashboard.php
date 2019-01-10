@@ -117,7 +117,7 @@
 			}
 			
 			
-			else if(isset($_GET['planned-race']) || isset($_GET['past-race'])) {
+			else if(isset($_GET['planned-race']) || isset($_GET['past-race']) || isset($_GET['current-race'])) {
 				require 'body/race-form.php';
 			}
 		?>

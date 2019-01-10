@@ -81,10 +81,18 @@
         global $db;
 		
         $req = $db->query("
-			SELECT r.ID AS ID, r.Name AS Name, r.Date AS Date, r.EndTime AS EndTime
+			SELECT DISTINCT r.ID AS ID, r.Name AS Name, r.Date AS Date, r.EndTime AS EndTime
 			FROM race r, race_instance ri 
 			WHERE r.ID = ri.Race AND r.EndTime > CURDATE() AND r.Date <= CURDATE() AND ri.StartTime < CURTIME() AND ri.StartTime IN (
 				SELECT Min(StartTime) 
+				FROM race_instance 
+				WHERE Race = r.ID
+			)
+			UNION
+			SELECT DISTINCT r.ID AS ID, r.Name AS Name, r.Date AS Date, r.EndTime AS EndTime
+			FROM race r
+			WHERE r.EndTime > CURDATE() AND r.Date <= CURDATE() AND r.ID NOT IN (
+				SELECT Race
 				FROM race_instance 
 				WHERE Race = r.ID
 			)

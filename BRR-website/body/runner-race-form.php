@@ -118,7 +118,7 @@
 		}
 	}
 
-	if(!empty($_GET['race']) && is_planned_race($_GET['race'])) {
+	if(!empty($_GET['race']) && (is_planned_race($_GET['race']) || is_current_race($_GET['race']))) {
 		?>
 			<form method="post" class="form-horizontal form-add-edit" enctype="multipart/form-data">
 				<input id="file" name="file" type="file" class="col-lg-6 d-inline-block form-control h-100">
