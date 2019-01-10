@@ -57,7 +57,6 @@
 		if(get_last_race_runner($runner_id)) {
 			$race_runner = get_last_race_runner($runner_id);
 			$race = get_race($race_runner->Race);
-			echo "race = ".$race_runner->Race;
 			$class = get_race_runner_class($runner_id, $race_runner->Race);
 			$club = get_race_runner_team($runner_id, $race_runner->Race);
 		}

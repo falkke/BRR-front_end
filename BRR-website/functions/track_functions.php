@@ -8,7 +8,7 @@
 		$e = array(
 			'race_id' => $race_id,
 			'status' => "Running",
-			'station_id' => "b827eba42979"
+			'station_id' => "b827ebdcbd98"
 		);
 		
 		if($area == "run") {
@@ -46,7 +46,7 @@
         $e = array(
             'race_id' => $race_id,
             'status' => "Running",
-			'station_id' => "b827eba42979"
+			'station_id' => "b827ebdcbd98"
         );
 		
 		if($area == "run") {
