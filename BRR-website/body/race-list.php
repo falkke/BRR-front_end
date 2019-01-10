@@ -2,7 +2,7 @@
 	require 'functions/session.php';
 
 	if(	(isset($_GET['race']) && !empty($_GET['race']))
-	&&	(isset($_GET['remove']) && !empty($_GET['remove']))){
+	&&	(isset($_GET['remove']) && !empty($_GET['remove']))) {
 		$race_id = $_GET['race'];
 		$remove = $_GET['remove'];
 		
