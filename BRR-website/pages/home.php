@@ -1,8 +1,9 @@
 <?php
-	$race = get_display_race();
+	$displayed_race = get_display_race();
 	
-	if($race != null) {
-		$race_id = $race->Race;
+	if($displayed_race != null) {
+		$race_id = $displayed_race->Race;
+		$race = get_race($race_id);
 		
 		?>
 			<main role="main" class="container no-gutters">
@@ -37,6 +38,12 @@
 				</div>
 					
 				<div class="section-template">
+					<h2 class="page-title followed-title">Black River Run - Home Page</h2>
+					<h3 class="page-subtitle"><?= $race->Name." - ".$race->Date ?></h3>
+					
+					<p class="lead">Please, choose a category in the side menu to see the results.</p>
+					<a title="Race Results" class="bg-primary text-white table-button" href="index.php?page=results&race=<?=$race->ID?>">&#9872</a>
+				
 					<?php
 						require "summary.php";
 					

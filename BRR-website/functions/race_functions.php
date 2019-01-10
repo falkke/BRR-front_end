@@ -115,10 +115,18 @@
         );
 				
         $sql = "
-			SELECT *
+			SELECT r.*
 			FROM race r, race_instance ri 
 			WHERE r.ID = :race_id AND r.EndTime > CURDATE() AND r.Date <= CURDATE() AND ri.StartTime < CURTIME() AND ri.StartTime IN (
 				SELECT Min(StartTime) 
+				FROM race_instance 
+				WHERE Race = r.ID
+			)
+			UNION		
+			SELECT *
+			FROM race r
+			WHERE r.EndTime > CURDATE() AND r.Date <= CURDATE() AND r.ID NOT IN (
+				SELECT Race
 				FROM race_instance 
 				WHERE Race = r.ID
 			)
