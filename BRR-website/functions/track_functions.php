@@ -16,8 +16,8 @@
 					FROM race_runner AS rr, race_instance AS ri, club AS c, runner AS r, timestamp AS t, station AS s
 					WHERE ri.Race = :race_id AND rr.RaceInstance = ri.ID AND c.ID = rr.Club AND r.ID = rr.Runner AND rr.Status = :status
 					AND CONCAT(r.FirstName, ' ', r.LastName, ' ', c.Name, ' ', rr.Bib) LIKE '%{$keyword}%'
-					AND t.Runner = rr.Runner AND t.Race = ri.Race AND  t.Timestamp = 
-					(SELECT MAX(t.timestamp) FROM timestamp AS t WHERE t.Runner = rr.Runner AND t.Race = :race_id)
+					AND t.Runner = rr.Runner AND t.RaceInstance = ri.ID AND  t.Timestamp = 
+					(SELECT MAX(t.timestamp) FROM timestamp AS t, race_instance AS ri WHERE ri.Race = :race_id AND t.Runner = rr.Runner AND t.RaceInstance = ri.ID)
 					AND t.Station = s.ID AND s.ID <> :station_id";
 		}
 		
@@ -26,8 +26,8 @@
 					FROM race_runner AS rr, race_instance AS ri, club AS c, runner AS r, timestamp AS t, station AS s
 					WHERE ri.Race = :race_id AND rr.RaceInstance = ri.ID AND c.ID = rr.Club AND r.ID = rr.Runner AND rr.Status = :status
 					AND CONCAT(r.FirstName, ' ', r.LastName, ' ', c.Name, ' ', rr.Bib) LIKE '%{$keyword}%'
-					AND t.Runner = rr.Runner AND t.Race = ri.Race AND  t.Timestamp = 
-					(SELECT MAX(t.timestamp) FROM timestamp AS t WHERE t.Runner = rr.Runner AND t.Race = :race_id)
+					AND t.Runner = rr.Runner AND t.RaceInstance = ri.ID AND  t.Timestamp = 
+					(SELECT MAX(t.timestamp) FROM timestamp AS t, race_instance AS ri WHERE ri.Race = :race_id AND t.Runner = rr.Runner AND t.RaceInstance = ri.ID)
 					AND t.Station = s.ID AND s.ID = :station_id";
 		}	
 		
@@ -54,8 +54,8 @@
 					FROM race_runner AS rr, race_instance AS ri, club AS c, runner AS r, timestamp AS t, station AS s
 					WHERE ri.Race = :race_id AND rr.RaceInstance = ri.ID AND c.ID = rr.Club AND r.ID = rr.Runner AND rr.Status = :status
 					AND CONCAT(r.FirstName, ' ', r.LastName, ' ', c.Name, ' ', rr.Bib) LIKE '%{$keyword}%'
-					AND t.Runner = rr.Runner AND t.Race = ri.Race AND  t.Timestamp = 
-					(SELECT MAX(t.timestamp) FROM timestamp AS t WHERE t.Runner = rr.Runner AND t.Race = :race_id)
+					AND t.Runner = rr.Runner AND t.RaceInstance = ri.ID AND  t.Timestamp = 
+					(SELECT MAX(t.timestamp) FROM timestamp AS t, race_instance AS ri WHERE ri.Race = :race_id AND t.Runner = rr.Runner AND t.RaceInstance = ri.ID)
 					AND t.Station = s.ID AND s.ID <> :station_id";
 		}
 		
@@ -64,8 +64,8 @@
 					FROM race_runner AS rr, race_instance AS ri, club AS c, runner AS r, timestamp AS t, station AS s
 					WHERE ri.Race = :race_id AND rr.RaceInstance = ri.ID AND c.ID = rr.Club AND r.ID = rr.Runner AND rr.Status = :status
 					AND CONCAT(r.FirstName, ' ', r.LastName, ' ', c.Name, ' ', rr.Bib) LIKE '%{$keyword}%'
-					AND t.Runner = rr.Runner AND t.Race = ri.Race AND  t.Timestamp = 
-					(SELECT MAX(t.timestamp) FROM timestamp AS t WHERE t.Runner = rr.Runner AND t.Race = :race_id)
+					AND t.Runner = rr.Runner AND t.RaceInstance = ri.ID AND  t.Timestamp = 
+					(SELECT MAX(t.timestamp) FROM timestamp AS t, race_instance AS ri WHERE ri.Race = :race_id AND t.Runner = rr.Runner AND t.RaceInstance = ri.ID)
 					AND t.Station = s.ID AND s.ID = :station_id";
 		}
 							

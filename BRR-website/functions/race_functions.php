@@ -250,7 +250,9 @@
 		
 		$empty_race_runner = $req->rowCount($sql);
 		
-        $sql = "SELECT * FROM timestamp WHERE Race = :race_id";
+        $sql = "SELECT * 
+				FROM timestamp AS t, race_instance AS ri
+				WHERE ri.Race = :race_id AND t.RaceInstance = ri.ID";
         $req = $db->prepare($sql);
         $req->execute($var);
 		

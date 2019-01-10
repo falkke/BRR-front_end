@@ -140,16 +140,16 @@
 					FROM race_runner AS rr, club AS c, runner AS r, race_instance AS ri, timestamp AS t, station AS s
 					WHERE ri.Race = :race_id AND rr.RaceInstance = ri.ID AND c.ID = rr.Club AND r.ID = rr.Runner AND ri.ID = rr.RaceInstance AND rr.Status = :status
 					AND CONCAT(r.FirstName, ' ', r.LastName, ' ', c.Name, ' ', rr.Bib) LIKE '%{$keyword}%'
-					AND t.Runner = rr.Runner AND t.Race = ri.Race AND  t.Timestamp = 
-					(SELECT MAX(t.timestamp) FROM timestamp AS t, station AS s WHERE t.Runner = rr.Runner AND t.Race = :race_id AND s.Code <> 99 AND t.Station = s.ID)
+					AND t.Runner = rr.Runner AND t.RaceInstance = ri.ID AND  t.Timestamp = 
+					(SELECT MAX(t.timestamp) FROM timestamp AS t, station AS s WHERE t.Runner = rr.Runner AND t.RaceInstance = ri.ID AND s.Code <> 99 AND t.Station = s.ID)
 					AND  t.Station = s.ID
 					UNION
 					SELECT ri.Race, ri.Class, ri.StartTime, rr.Runner, rr.Bib, rr.Status, '' AS Club, rr.Place, rr.TotalTime, (((t.Lap - 1) * 10) + s.LengthFromStart) AS Distance, t.Timestamp
 					FROM race_runner AS rr, runner AS r, race_instance AS ri, timestamp AS t, station AS s
 					WHERE ri.Race = :race_id AND rr.RaceInstance = ri.ID AND r.ID = rr.Runner AND ri.ID = rr.RaceInstance AND rr.Status = :status AND rr.Club IS NULL
 					AND CONCAT(r.FirstName, ' ', r.LastName, ' ', rr.Bib) LIKE '%{$keyword}%'
-					AND t.Runner = rr.Runner AND t.Race = ri.Race AND  t.Timestamp = 
-					(SELECT MAX(t.timestamp) FROM timestamp AS t, station AS s WHERE t.Runner = rr.Runner AND t.Race = :race_id AND s.Code <> 99 AND t.Station = s.ID)
+					AND t.Runner = rr.Runner AND t.RaceInstance = ri.ID AND  t.Timestamp = 
+					(SELECT MAX(t.timestamp) FROM timestamp AS t, station AS s WHERE t.Runner = rr.Runner AND t.RaceInstance = ri.ID AND s.Code <> 99 AND t.Station = s.ID)
 					AND  t.Station = s.ID
 					ORDER BY Place ASC";
 		}
@@ -159,8 +159,8 @@
 					FROM race_runner AS rr, club AS c, runner AS r, race_instance AS ri, timestamp AS t, station AS s
 					WHERE ri.Race = :race_id AND rr.RaceInstance = ri.ID AND c.ID = rr.Club AND r.ID = rr.Runner AND ri.ID = rr.RaceInstance AND rr.Status = :status
 					AND CONCAT(r.FirstName, ' ', r.LastName, ' ', c.Name, ' ', rr.Bib) LIKE '%{$keyword}%'
-					AND t.Runner = rr.Runner AND t.Race = ri.Race AND  t.Timestamp = 
-					(SELECT MAX(t.timestamp) FROM timestamp AS t WHERE t.Runner = rr.Runner AND t.Race = :race_id)
+					AND t.Runner = rr.Runner AND t.RaceInstance = ri.ID AND  t.Timestamp = 
+					(SELECT MAX(t.timestamp) FROM timestamp AS t WHERE t.Runner = rr.Runner AND t.RaceInstance = ri.ID)
 					AND  t.Station = s.ID
 					UNION
 					SELECT ri.Race, ri.Class, ri.StartTime, rr.Runner, rr.Bib, '-' AS Status, rr.Club, '-' AS Place, rr.TotalTime, '-' AS Distance, '-' AS Timestamp
@@ -172,8 +172,8 @@
 					FROM race_runner AS rr, runner AS r, race_instance AS ri, timestamp AS t, station AS s
 					WHERE ri.Race = :race_id AND rr.RaceInstance = ri.ID AND r.ID = rr.Runner AND ri.ID = rr.RaceInstance AND rr.Status = :status AND rr.Club IS NULL
 					AND CONCAT(r.FirstName, ' ', r.LastName, ' ', rr.Bib) LIKE '%{$keyword}%'
-					AND t.Runner = rr.Runner AND t.Race = ri.Race AND  t.Timestamp = 
-					(SELECT MAX(t.timestamp) FROM timestamp AS t WHERE t.Runner = rr.Runner AND t.Race = :race_id)
+					AND t.Runner = rr.Runner AND t.RaceInstance = ri.ID AND  t.Timestamp = 
+					(SELECT MAX(t.timestamp) FROM timestamp AS t WHERE t.Runner = rr.Runner AND t.RaceInstance = ri.ID)
 					AND  t.Station = s.ID
 					UNION
 					SELECT ri.Race, ri.Class, ri.StartTime, rr.Runner, rr.Bib, '-' AS Status, '' AS Club, '-' AS Place, rr.TotalTime, '-' AS Distance, '-' AS Timestamp
@@ -552,16 +552,16 @@
 	
 	/* TIMESTAMP FUNCTIONS */
 	
-	function get_runner_timestamps($runner_id, $race_id) 
+	function get_runner_timestamps($runner_id, $instance_id) 
 	{
 		global $db;
 		
         $e = array(
             'runner_id' => $runner_id,
-            'race_id' => $race_id
+            'instance_id' => $instance_id
         );
 
-        $sql = "SELECT * FROM timestamp WHERE Runner = :runner_id AND Race = :race_id ORDER BY Timestamp DESC";
+        $sql = "SELECT * FROM timestamp WHERE Runner = :runner_id AND RaceInstance = :instance_id ORDER BY Timestamp DESC";
         $req = $db->prepare($sql);
         $req->execute($e);
 		
@@ -575,17 +575,17 @@
 		return $results;
 	}	
 	
-	function get_timestamps($race_id, $station_id, $lap) 
+	function get_timestamps($instance_id, $station_id, $lap) 
 	{
 		global $db;
 		
         $e = array(
-            'race_id' => $race_id,
+            'instance_id' => $instance_id,
             'station_id' => $station_id,
             'lap' => $lap
         );
 
-        $sql = "SELECT * FROM timestamp WHERE Race = :race_id AND Station = :station_id AND Lap = :lap";
+        $sql = "SELECT * FROM timestamp WHERE RaceInstance = :instance_id AND Station = :station_id AND Lap = :lap";
         $req = $db->prepare($sql);
         $req->execute($e);
 		
@@ -599,23 +599,23 @@
 		return $results;
 	}
 	
-	function get_number_laps($runner_id, $race_id, $timestamp, $station_id)
+	function get_number_laps($runner_id, $instance_id, $timestamp, $station_id)
 	{
 		global $db;
 	
 		$var = array(
 			'runner_id' => $runner_id,
-			'race_id' => $race_id,
+			'instance_id' => $instance_id,
 			'timestamp' => $timestamp
 		);
 			
 		$sql = "
 			SELECT * 
 			FROM timestamp 
-			WHERE Runner = :runner_id AND Race = :race_id AND Timestamp IN (
+			WHERE Runner = :runner_id AND RaceInstance = :instance_id AND Timestamp IN (
 				SELECT MAX(Timestamp) AS Max 
 				FROM timestamp 
-				WHERE Runner = :runner_id AND Race = :race_id AND Timestamp < :timestamp
+				WHERE Runner = :runner_id AND RaceInstance = :instance_id AND Timestamp < :timestamp
 			)
 		";
 		
@@ -636,32 +636,32 @@
 		}
 	}
 		
-	function set_places($race_id, $station_id, $lap) {
+	function set_places($instance_id, $station_id, $lap) {
 		global $db;
 		
-		foreach(get_timestamps($race_id, $station_id, $lap) as $timestamp) {
+		foreach(get_timestamps($instance_id, $station_id, $lap) as $timestamp) {
 			$e = array(
-				'race_id' => $race_id,
+				'instance_id' => $instance_id,
 				'station_id' => $station_id,
 				'lap' => $lap,
 				'timestamp' => $timestamp->Timestamp
 			);
 			
-			$sql = "SELECT COUNT(Timestamp) AS Count FROM timestamp WHERE Race = :race_id AND Station = :station_id AND Lap = :lap AND Timestamp < :timestamp";
+			$sql = "SELECT COUNT(Timestamp) AS Count FROM timestamp WHERE RaceInstance = :instance_id AND Station = :station_id AND Lap = :lap AND Timestamp < :timestamp";
 			$req = $db->prepare($sql);
 			$req->execute($e);
 			
 			$place = $req->fetch()['Count'] + 1;
 			
 			$e = array(
-				'race_id' => $race_id,
+				'instance_id' => $instance_id,
 				'station_id' => $station_id,
 				'lap' => $lap,
 				'timestamp' => $timestamp->Timestamp,
 				'place' => $place
 			);
 			
-			$sql = "UPDATE timestamp SET Place = :place WHERE Race = :race_id AND Station = :station_id AND Lap = :lap AND  Timestamp = :timestamp";
+			$sql = "UPDATE timestamp SET Place = :place WHERE RaceInstance = :instance_id AND Station = :station_id AND Lap = :lap AND  Timestamp = :timestamp";
 			$req = $db->prepare($sql);
 			$req->execute($e);
 		}
@@ -698,7 +698,7 @@
 		return $result;		
 	}
 	
-	function get_time_behind_at_timestamp($runner_id, $race_id, $lap, $station_id)
+	function get_time_behind_at_timestamp($runner_id, $instance_id, $lap, $station_id)
 	{
 		global $db;
 		
@@ -706,12 +706,12 @@
             'nb_lap' => $lap,
             'station_id' => $station_id,
             'runner_id' => $runner_id,
-            'race_id' => $race_id
+            'instance_id' => $instance_id
         );
 		$sql = "SELECT TIMEDIFF(t1.timestamp, t2.timestamp) AS TimeBehind 
 				FROM timestamp AS t1, timestamp AS t2 
-				WHERE t1.Runner = :runner_id AND t1.Race = :race_id AND t1.lap = :nb_lap AND t1.station = :station_id 
-				AND t2.Place = 1 AND t2.Race = :race_id AND t2.lap = :nb_lap AND t2.station = :station_id";
+				WHERE t1.Runner = :runner_id AND t1.RaceInstance = :instance_id AND t1.lap = :nb_lap AND t1.station = :station_id 
+				AND t2.Place = 1 AND t2.RaceInstance = :instance_id AND t2.lap = :nb_lap AND t2.station = :station_id";
         $req = $db->prepare($sql);
         $req->execute($e);
 		
@@ -720,21 +720,21 @@
 		return $result;		
 	}
 
-	function get_total_elapsed_time($runner_id, $race_id)
+	function get_total_elapsed_time($runner_id, $race_instance)
 	{
 		global $db;
 		
         $e = array(
             'runner_id' => $runner_id,
-            'race_id' => $race_id
+            'race_instance' => $race_instance
         );
 		$sql = "SELECT TIMEDIFF(t1.timestamp, t2.timestamp) AS TimeBehind 
 				FROM timestamp AS t1, timestamp AS t2 
-				WHERE t1.Runner = :runner_id AND t1.Race = :race_id AND t2.Runner = :runner_id AND t2.Race = :race_id AND t2.station = 0 
+				WHERE t1.Runner = :runner_id AND t1.RaceInstance = :race_instance AND t2.Runner = :runner_id AND t2.RaceInstance = :race_instance AND t2.station = 0 
 				AND t1.Timestamp =
 					(SELECT MAX(t3.timestamp) 
 					FROM timestamp AS t3, station AS s 
-					WHERE t3.Runner = :runner_id AND t3.Race = :race_id AND s.Code <> 99 AND t3.Station = s.ID)";
+					WHERE t3.Runner = :runner_id AND t3.RaceInstance = :race_instance AND s.Code <> 99 AND t3.Station = s.ID)";
         $req = $db->prepare($sql);
         $req->execute($e);
 		
@@ -744,17 +744,20 @@
 	}	
 
 	
-	function get_elapsed_time_at_timestamp($runner_id, $race_id, $station_id, $timestamp)
+	function get_elapsed_time_at_timestamp($runner_id, $instance_id, $station_id, $timestamp)
 	{
 		global $db;
 		
         $e = array(
             'station_id' => $station_id,
             'runner_id' => $runner_id,
-            'race_id' => $race_id,
+            'instance_id' => $instance_id,
 			'timestamp' => $timestamp
         );
-		$sql = "SELECT TIMEDIFF(t1.timestamp, t2.timestamp) AS TimeBehind FROM timestamp AS t1, timestamp AS t2 WHERE t1.Runner = :runner_id AND t1.Race = :race_id AND t1.Timestamp = :timestamp AND t1.station = :station_id AND t2.Runner = :runner_id AND t2.Race = :race_id AND t2.station = 0";
+		$sql = "SELECT TIMEDIFF(t1.timestamp, t2.timestamp) AS TimeBehind 
+				FROM timestamp AS t1, timestamp AS t2 
+				WHERE t1.Runner = :runner_id AND t1.RaceInstance = :instance_id AND t1.Timestamp = :timestamp AND t1.station = :station_id 
+				AND t2.Runner = :runner_id AND t2.RaceInstance = :instance_id AND t2.station = 0";
         $req = $db->prepare($sql);
         $req->execute($e);
 		
@@ -1449,6 +1452,23 @@
         }
 
         return $results;
+	}
+	
+	function get_race_instance_by_id_and_class($race_id, $class_id) {
+        global $db;
+
+        $var = array(
+			'race_id' => $race_id,
+			'class_id' => $class_id
+        );
+		
+        $sql = "SELECT * FROM race_instance WHERE Race = :race_id AND Class = :class_id";
+        $req = $db->prepare($sql);
+        $req->execute($var);
+		
+        $result = $req->fetchObject();
+		
+        return $result;
 	}
 	
 	function get_race_instance_by_id($race_instance_id) {

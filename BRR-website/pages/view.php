@@ -79,7 +79,7 @@
 				<tbody>
 					<?php
 					if($view == "latest") {
-						foreach(get_latest_timestamps($race->ID) as $race_runner) {	
+						foreach(get_latest_timestamps($instance->ID) as $race_runner) {	
 							$class = get_race_runner_class($race_runner->Runner, $race_runner->Race) ;		
 						
 							if(($class->Gender == $_GET['gender']) && ($class->Distance == $_GET['distance']) && $race_runner->Status != "DNS") 
@@ -140,7 +140,7 @@
 						}
 					}
 					else if($view == "resting") {
-						foreach(get_resting_timestamps($race->ID) as $race_runner) {	
+						foreach(get_resting_timestamps($instance->ID) as $race_runner) {	
 						$class = get_race_runner_class($race_runner->Runner, $race_runner->Race) ;		
 						
 							if(($class->Gender == $_GET['gender']) && ($class->Distance == $_GET['distance']) && $race_runner->Status != "DNS"

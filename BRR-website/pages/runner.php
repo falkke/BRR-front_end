@@ -11,12 +11,12 @@
 		$delete_runner_error = "";
 		
 		if($remove == 1) {
-			if(!does_timestamp_exist($timestamp, $runner_id, $race_id)) {
+			if(!does_timestamp_exist($timestamp, $runner_id)) {
 				$delete_timestamp_error = "This timestamp does not exist.";
 			}
 			else {
-				if((get_station(get_timestamp($timestamp, $runner_id)->Station)->Code) != 0 || (get_number_timestamps($runner_id, get_race_runner($runner_id, $race_id)->RaceInstance) == 1)) {
-					delete_timestamp($runner_id, $race_id, $timestamp);
+				if((get_station(get_timestamp($timestamp, $runner_id)->Station)->Code) != 0 || (get_number_timestamps($runner_id, get_race_runner($runner_id, $race->ID)->RaceInstance) == 1)) {
+					delete_timestamp($runner_id, get_instance_from_runner_race($runner_id, $race_id)->ID, $timestamp);
 					header('Location:index.php?page=runner&runner='.$runner_id.'&race='.$race_id.'&timestamp-deleted=1');
 				}
 				else {
@@ -176,12 +176,12 @@
 					
 						<tbody>
 							<?php
-								foreach(get_runner_timestamps($runner_id, $race->ID) as $timestamp) {		
+								foreach(get_runner_timestamps($runner_id, get_instance_from_runner_race($runner_id, $race->ID)->ID) as $timestamp) {		
 									$station = get_station($timestamp->Station);
 									
 									if(is_logged() == 1 || $station->Code != 99) {
-										$behind = get_time_behind_at_timestamp($runner_id, $race->ID, $timestamp->Lap, $station->ID);
-										$elapsed = get_elapsed_time_at_timestamp($runner_id, $race->ID, $station->ID, $timestamp->Timestamp);
+										$behind = get_time_behind_at_timestamp($runner_id, get_instance_from_runner_race($runner_id, $race->ID)->ID, $timestamp->Lap, $station->ID);
+										$elapsed = get_elapsed_time_at_timestamp($runner_id, get_race_runner($runner_id, $race->ID)->RaceInstance, $station->ID, $timestamp->Timestamp);
 									
 										?>	
 											<tr>

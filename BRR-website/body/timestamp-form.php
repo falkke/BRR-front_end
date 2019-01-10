@@ -39,11 +39,11 @@
 		
 		if(!empty($_GET['timestamp'])) {
 			if((!does_timestamp_exist($new_datetime, $runner_id)) || ($new_datetime == $timestamp_time)) {
-				edit_timestamp($timestamp_time, $runner_id, $race_id, $new_datetime, $station_id[0]);
+				edit_timestamp($timestamp_time, $runner_id, get_instance_from_runner_race($runner_id, $race_id)->ID, $new_datetime, $station_id[0]);
 				
 				$last_timestamp = get_last_timestamp($runner_id, $race_runner->RaceInstance);
 				
-				$lap = get_number_laps($runner_id, $race_id, $last_timestamp->Timestamp, $last_timestamp->Station);
+				$lap = get_number_laps($runner_id, get_instance_from_runner_race($runner_id, $race_id)->ID, $last_timestamp->Timestamp, $last_timestamp->Station);
 				
 				$race_instance = get_race_instance_by_id($race_runner->RaceInstance);
 				$race_category = get_category($race_instance->Class);
@@ -54,7 +54,7 @@
 				}
 				
 				else {
-					edit_timestamp($new_datetime, $runner_id, $race_id, $timestamp_time, $station_id[0]);
+					edit_timestamp($new_datetime, $runner_id, get_instance_from_runner_race($runner_id, $race_id)->ID, $timestamp_time, $station_id[0]);
 					$error = "This timestamp can not be added to the system because the distance will exceed the distance of the race.";
 				}
 			}
@@ -66,11 +66,11 @@
 		
 		else {
 			if(!does_timestamp_exist($new_datetime, $runner_id)) {
-				add_timestamp($runner_id, $race->ID, $new_datetime, $station_id[0]);
+				add_timestamp($runner_id, get_instance_from_runner_race($runner_id, $race_id)->ID, $new_datetime, $station_id[0]);
 				
 				$last_timestamp = get_last_timestamp($runner_id, $race_runner->RaceInstance);
 				
-				$lap = get_number_laps($runner_id, $race_id, $last_timestamp->Timestamp, $last_timestamp->Station);
+				$lap = get_number_laps($runner_id, get_instance_from_runner_race($runner_id, $race_id)->ID, $last_timestamp->Timestamp, $last_timestamp->Station);
 				
 				$race_instance = get_race_instance_by_id($race_runner->RaceInstance);
 				$race_category = get_category($race_instance->Class);
