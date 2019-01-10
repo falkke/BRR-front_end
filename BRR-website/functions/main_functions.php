@@ -29,7 +29,9 @@
             'race_id' => $race_id
         );
 
-        $sql = "SELECT rr.* 
+		
+        $sql = "SELECT ri.ID AS RaceInstance, ri.Race AS Race, ri.Class AS CLass, ri.StartTime AS StartTime, 
+				rr.Runner AS Runner, rr.Bib AS Bib, rr.Club AS Club, rr.Status AS Status, rr.TotalTime AS TotalTime, rr.Place AS Place
 				FROM race_runner AS rr, race_instance AS ri
 				WHERE rr.Runner = :runner_id AND ri.Race = :race_id AND rr.RaceInstance = ri.ID";
         $req = $db->prepare($sql);
@@ -314,7 +316,10 @@
             'runner_id' => $runner_id
         );
 
-        $sql = "SELECT * FROM race_runner WHERE Runner = :runner_id";
+        $sql = "SELECT ri.ID AS RaceInstance, ri.Race AS Race, ri.Class AS CLass, ri.StartTime AS StartTime, 
+				rr.Runner AS Runner, rr.Bib AS Bib, rr.Club AS Club, rr.Status AS Status, rr.TotalTime AS TotalTime, rr.Place AS Place
+				FROM race_runner AS rr, race_instance AS ri
+				WHERE rr.Runner = :runner_id AND rr.RaceInstance = ri.ID";
         $req = $db->prepare($sql);
         $req->execute($e);
 
@@ -356,7 +361,7 @@
 
         $sql = "SELECT ri.Class AS Class
 				FROM race_runner AS rr, race_instance AS ri
-				WHERE ri.Race = :race_id AND rr.RaceInstance = ri.ID AND Runner = :runner_id";
+				WHERE ri.Race = :race_id AND rr.RaceInstance = ri.ID AND rr.Runner = :runner_id";
         $req = $db->prepare($sql);
         $req->execute($e);
 		

@@ -14,13 +14,11 @@
 			if(!does_timestamp_exist($timestamp, $runner_id, $race_id)) {
 				$delete_timestamp_error = "This timestamp does not exist.";
 			}
-			
 			else {
 				if((get_station(get_timestamp($timestamp, $runner_id)->Station)->Code) != 0 || (get_number_timestamps($runner_id, get_race_runner($runner_id, $race_id)->RaceInstance) == 1)) {
 					delete_timestamp($runner_id, $race_id, $timestamp);
 					header('Location:index.php?page=runner&runner='.$runner_id.'&race='.$race_id.'&timestamp-deleted=1');
 				}
-				
 				else {
 					$delete_timestamp_error = "This timestamp can not be removed.";
 				}
@@ -34,12 +32,10 @@
 		if(does_runner_exist($runner_id)) {
 			$runner = get_runner($runner_id);
 		}
-		
 		else {
 			header("Location:index.php?page=home");
 		}
 	}
-	
 	else {
 		header("Location:index.php?page=home");
 	}
@@ -53,16 +49,15 @@
 			$class = get_race_runner_class($runner_id, $race->ID);
 			$club = get_race_runner_team($runner_id, $race->ID);
 		}
-		
 		else {
 			header("Location:index.php?page=runner&runner=".$runner_id);
 		}
 	}
-
 	else {
 		if(get_last_race_runner($runner_id)) {
 			$race_runner = get_last_race_runner($runner_id);
 			$race = get_race($race_runner->Race);
+			echo "race = ".$race_runner->Race;
 			$class = get_race_runner_class($runner_id, $race_runner->Race);
 			$club = get_race_runner_team($runner_id, $race_runner->Race);
 		}
