@@ -1080,19 +1080,13 @@
                 'station_id' => $station_id
         );
 		
-        $sql = "SELECT * FROM race_station WHERE Station = :station_id";
-        $req = $db->prepare($sql);
-        $req->execute($r);
-		
-		$empty_race_station = $req->rowCount($sql);
-		
         $sql = "SELECT * FROM timestamp WHERE Station = :station_id";
         $req = $db->prepare($sql);
         $req->execute($r);
 		
 		$empty_timestamp = $req->rowCount($sql);
 		
-		if(($empty_race_station + $empty_timestamp) == 0) {
+		if(($empty_timestamp) == 0) {
 			return 1;
 		}
 		

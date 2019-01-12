@@ -264,19 +264,13 @@
 		
 		$empty_runner_unit = $req->rowCount($sql);
 		
-        $sql = "SELECT * FROM race_station WHERE Race = :race_id";
-        $req = $db->prepare($sql);
-        $req->execute($var);
-		
-		$empty_race_station = $req->rowCount($sql);
-		
         $sql = "SELECT * FROM race_instance WHERE Race = :race_id";
         $req = $db->prepare($sql);
         $req->execute($var);
 		
 		$empty_race_instance = $req->rowCount($sql);
 		
-		if(($empty_race_runner + $empty_timestamp + $empty_runner_unit + $empty_race_station + $empty_race_instance) == 0) {
+		if(($empty_race_runner + $empty_timestamp + $empty_runner_unit + $empty_race_instance) == 0) {
 			return 1;
 		}
 		
