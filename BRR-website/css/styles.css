@@ -306,10 +306,12 @@ html, body {
 	}
 	
 	.starter-template, .section-template {
-		width: 				100% !important;
 		margin : 			0 !important;
-		padding : 			0 5 !important;
+		padding:			3rem 1rem !important;
+		width : 100%;
 	}
+	
+	
 	
 	.nav-side-menu {
 		position: 			relative !important;
@@ -362,9 +364,18 @@ html, body {
 }
 
 @media screen and (max-width:400px) {
+	.starter-template {
+		padding: 3rem 0.5rem;
+	}
+
+	.section-template {	
+		padding: 3rem 0.5rem;
+	}
 	
 	th, td {
 		font-size: 			6px;
+		margin: 			0 !important;
+		padding: 			2px !important;
 	}
 	
 	* {
