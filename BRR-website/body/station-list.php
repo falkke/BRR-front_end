@@ -1,29 +1,5 @@
 <?php
 	require 'functions/session.php';
-	
-	if(	(isset($_GET['station']) && !empty($_GET['station']))
-	&&	(isset($_GET['remove']) && !empty($_GET['remove']))){
-		$station_id = $_GET['station'];
-		$remove = $_GET['remove'];
-		
-		$delete_station_error = "";
-		
-		if($remove == 1) {
-			if(!does_station_exist($station_id)) {
-				$delete_station_error = "This station does not exist.";
-			}
-			
-			else if(!is_station_empty($station_id)) {
-				$delete_station_error = "This station can not be deleted because it has some data.";
-			}
-			
-			else {
-				delete_station($station_id);
-				header('Location:index.php?page=dashboard&list=stations&station-deleted=1');
-			}
-		}
-	}
-
 
 	$search = $_SESSION['bbr']['search-station'];
 	$sort = "";
@@ -287,7 +263,7 @@
 						
 						<td class="no-change">
 							<a class="bg-primary text-white table-button" href="index.php?page=manage&station=<?=$station->ID?>">...</a>
-							<a class="bg-danger text-white table-button" onclick="DeleteAlert(1, 'station', <?=$station->ID ?>);" href="#">X</a>
+							<a class="bg-danger text-white table-button" onclick="DeleteAlert(1, 'station', '<?=$station->ID?>');" href="#">X</a>
 						</td>
 					</tr>
 				<?php

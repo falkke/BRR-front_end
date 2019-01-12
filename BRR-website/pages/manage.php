@@ -1,6 +1,4 @@
 <?php
-	$_SESSION['dashboard'] = 0;
-	
 	if(is_logged() == 0) {
         header('Location:index.php?page=home');
     }

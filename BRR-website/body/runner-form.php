@@ -29,10 +29,10 @@
 		$first_name = htmlspecialchars(trim($_POST['first_name']));
 		$last_name = htmlspecialchars(trim($_POST['last_name']));
 		$birth_date = $_POST['birth_date'];
-		$gender = $_POST['gender'];
 		
 		if(!empty($_GET['runner'])) {
-			edit_runner($runner_id, $first_name, $last_name, $birth_date, $gender);
+			$runner = get_runner($runner_id);
+			edit_runner($runner_id, $first_name, $last_name, $birth_date, $runner->Gender);
 			
 			if($_SESSION['dashboard'] == 1) {
 				header('Location:index.php?page=dashboard&list=runners&runner-modified=1');

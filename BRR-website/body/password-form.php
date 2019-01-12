@@ -7,7 +7,7 @@
 		$password1 = htmlspecialchars(trim($_POST['password1']));
 		$password2 = htmlspecialchars(trim($_POST['password2']));
 		
-		if(user_exist($username, $password) == 1) {
+		if(does_admin_exist($username, $password) == 1) {
 			if($password1 == $password2) {
 				$new_password = password_hash($password1, PASSWORD_BCRYPT);
 				edit_admin($username, $new_password);

@@ -495,7 +495,7 @@
         $req = $db->prepare($sql);
         $req->execute($r);
 		
-		$instance_id = $req->fetch()['ID'];
+		$race_instance_id = $req->fetch()['ID'];
 		
         $r = array(
             'race_instance_id' => $race_instance_id,
@@ -1032,31 +1032,32 @@
         return $result;
     }
 		
-	function add_station($name, $code, $length_from_start) {
+	function add_station($id, $name, $code, $length_from_start) {
         global $db;
 		
         $r = array(
+				'id' => $id,
                 'name' => $name,
                 'code' => $code,
                 'length_from_start' => $length_from_start
         );
 		
-        $sql = "INSERT INTO station(Name, Code, LengthFromStart, LastID) VALUES(:name, :code, :length_from_start, 0)";
+        $sql = "INSERT INTO station(ID, Name, Code, LengthFromStart, LastID) VALUES(:id, :name, :code, :length_from_start, 0)";
         $req = $db->prepare($sql);
         $req->execute($r);
     }		
 	
-	function edit_station($station_id, $name, $code, $length_from_start) {
+	function edit_station($id, $name, $code, $length_from_start) {
         global $db;
 		
         $r = array(
-                'station_id' => $station_id,
+                'id' => $id,
                 'name' => $name,
                 'code' => $code,
                 'length_from_start' => $length_from_start
         );
 		
-        $sql = "UPDATE station SET Name = :name, Code = :code, LengthFromStart = :length_from_start WHERE ID = :station_id";
+        $sql = "UPDATE station SET Name = :name, Code = :code, LengthFromStart = :length_from_start WHERE ID = :id";
         $req = $db->prepare($sql);
         $req->execute($r);
     }
@@ -1163,10 +1164,8 @@
 	
 	function get_categories() {
         global $db;
-			
-        $sql = "SELECT * FROM class";
-        $req = $db->prepare($sql);
-        $req->execute($r);
+
+        $req = $db->query("SELECT * FROM class");
 		
 		$results = array();
 		
@@ -1703,6 +1702,21 @@
         $exist = $req->rowCount($sql);
 		
         return($exist);
+	}
+	
+	function get_race_from_instance($race_instance_id) {
+		global $db;
+
+        $e = array(
+            'race_instance_id' => $race_instance_id
+        );
+        $sql = "SELECT * FROM race_instance WHERE ID = :race_instance_id";
+        $req = $db->prepare($sql);
+        $req->execute($e);
+		
+        $result = $req->fetchObject();
+		
+        return $result;
 	}
 ?>
 

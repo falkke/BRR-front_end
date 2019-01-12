@@ -1,29 +1,6 @@
 <?php
 	require 'functions/session.php';
-	
-	if(	(isset($_GET['category']) && !empty($_GET['category']))
-	&&	(isset($_GET['remove']) && !empty($_GET['remove']))){
-		$category_id = $_GET['category'];
-		$remove = $_GET['remove'];
-		
-		$delete_category_error = "";
-		
-		if($remove == 1) {
-			if(!does_category_exist($category_id)) {
-				$delete_category_error = "This category does not exist.";
-			}
-			
-			else if(!is_category_empty($category_id)) {
-				$delete_category_error = "This category can not be deleted because it has some data.";
-			}
-			
-			else {
-				delete_category($category_id);
-				header('Location:index.php?page=dashboard&list=categories&category-deleted=1');
-			}
-		}
-	}
-	
+
 	$search = $_SESSION['bbr']['search-category'];
 	$sort = "";
 	

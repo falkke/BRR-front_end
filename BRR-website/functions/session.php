@@ -1,4 +1,4 @@
-<?php 
+<?php
 	if	((!isset($_SESSION['bbr']['search-race']))
 	|| 	(!isset($_SESSION['bbr']['search-runner']))
 	|| 	(!isset($_SESSION['bbr']['search-team']))

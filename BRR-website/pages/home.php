@@ -15,21 +15,25 @@
 							<ul id="menu-content" class="menu-content collapse out">
 								<?php
 									foreach(get_race_class_genders($race_id) as $class_gender) {
+										if(not_empty_race_gender($race_id, $class_gender)) {
 										?>							
 											<li data-toggle="collapse" data-target="#<?=$class_gender ?>" class="collapsed">
 												<a href="#"><?=$class_gender ?></a>
 											</li>
-											
 											<ul class="sub-menu collapse" id="<?=$class_gender ?>">
 												<?php
 													foreach(get_race_class_gender_distances($race_id, $class_gender) as $class_gender_distance) {
+														if(not_empty_race_gender_distances($race_id, $class_gender, $class_gender_distance)) {
 														?>	
 															<li><a href="index.php?page=race&race=<?= $race_id ?>&gender=<?=$class_gender ?>&distance=<?=$class_gender_distance ?>"><?=$class_gender_distance ?> miles</a></li>				
 														<?php
+														}
 													}
 												?>	
 											</ul>
+									
 										<?php
+										}
 									}
 								?>
 							</ul>

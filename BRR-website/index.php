@@ -44,7 +44,7 @@
 		<?php
 			if($page != "view") {
 				?>
-					<nav class="navbar navbar-expand-md navbar-dark bg-success fixed-top">
+					<nav class="navbar navbar-expand-md navbar-dark fixed-top">
 						<a class="navbar-brand main-title" href="index.php?page=home">Black River Run</a>
 
 						<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-id" aria-controls="navbar-id" aria-expanded="false" aria-label="Toggle navigation">

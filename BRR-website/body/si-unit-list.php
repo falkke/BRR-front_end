@@ -1,29 +1,6 @@
 <?php
 	require 'functions/session.php';
 	
-	if(	(isset($_GET['si-unit']) && !empty($_GET['si-unit']))
-	&&	(isset($_GET['remove']) && !empty($_GET['remove']))){
-		$si_unit_id = $_GET['si-unit'];
-		$remove = $_GET['remove'];
-		
-		$delete_si_unit_error = "";
-		
-		if($remove == 1) {
-			if(!does_si_unit_exist($si_unit_id)) {
-				$delete_si_unit_error = "This SI-unit does not exist.";
-			}
-			
-			else if(!is_si_unit_empty($si_unit_id)) {
-				$delete_si_unit_error = "This SI-unit can not be deleted because it has some data.";
-			}
-			
-			else {
-				delete_si_unit($si_unit_id);
-				header('Location:index.php?page=dashboard&list=si-units&si-unit-deleted=1');
-			}
-		}
-	}
-
 	$search = $_SESSION['bbr']['search-si-unit'];
 	$sort = "";
 	

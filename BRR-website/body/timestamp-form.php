@@ -154,7 +154,7 @@
 				
 					foreach(get_stations() as $station) {
 						if(	($station->Code == 99 && ((empty($_GET['timestamp']) && !does_station_code_exist($runner_id, $race_runner->RaceInstance, 99)) || (!empty($_GET['timestamp']) && ($past_station->Code == 99)))) ||
-							($station->Code != 99 && $timestamps_number > 0)) {
+							($station->Code != 99 && $timestamps_number >= 0)) {
 							?>
 								<option
 									<?php

@@ -62,6 +62,7 @@ html, body {
 
 .navbar {
 	position: fixed;
+	background-color: #2a7f4d;
 	top: 0px;
 	height: 50px;
 }
@@ -80,15 +81,6 @@ html, body {
 	position: absolute;
 	right : 0;
 	width: 80%;
-}
-
-.table-scroll-y {
-	position: fixed;
-	display: block;
-	height: 70%;
-	min-width: 78%;
-	overflow-y: auto;
-	-ms-overflow-style: -ms-autohiding-scrollbar;
 }
 
 .table-scroll-y-20 {

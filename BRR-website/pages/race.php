@@ -95,15 +95,8 @@
 				<a class="link-title" href="index.php?page=race&race=<?=$race->ID?>"><h2 class="page-title followed-title"><?= $race->Name ?></h2></a>
 				<h3 class="page-subtitle"><?= "Results " . $gender . " - " . $distance ?></h3>
 				
-				<?php
-					if(is_logged() == 1) {
-						?>	
-							<a title="Early view in the race" class="bg-primary text-white table-button" href="index.php?page=view&race=<?=$id?>&gender=<?=$gender?>&distance=<?=$_GET['distance']?>&view=resting">&#9658</a>
-							<a title="Late view in the race" class="bg-primary text-white table-button" href="index.php?page=view&race=<?=$id?>&gender=<?=$gender?>&distance=<?=$_GET['distance']?>&view=latest">&#9658|</a>
-						<?php 
-					} 
-				?>	
-						
+				<a title="Early view in the race" class="bg-primary text-white table-button" href="index.php?page=view&race=<?=$id?>&gender=<?=$gender?>&distance=<?=$_GET['distance']?>&view=resting">&#9658</a>
+				<a title="Late view in the race" class="bg-primary text-white table-button" href="index.php?page=view&race=<?=$id?>&gender=<?=$gender?>&distance=<?=$_GET['distance']?>&view=latest">&#9658|</a>
 				
 				<form method="post" class="form-inline my-2">
 					<div class="input-group">

@@ -1,36 +1,6 @@
 <?php
 	require 'functions/session.php';
-	
-	if(	(isset($_GET['runner']) && !empty($_GET['runner']))
-	&&	(isset($_GET['remove']) && !empty($_GET['remove']))){
-		$runner_id = $_GET['runner'];
-		$remove = $_GET['remove'];
-		
-		$delete_runner_error = "";
-		
-		if($remove == 1) {
-			if(!does_runner_exist($runner_id)) {
-				$delete_runner_error = "This runner does not exist.";
-			}
-			
-			else if(!is_runner_empty($runner_id)) {
-				$delete_runner_error = "This runner can not be deleted because he/she has some data.";
-			}
-			
-			else {
-				delete_runner($runner_id);
-				
-				if($_SESSION['dashboard'] == 1) {
-					header('Location:index.php?page=dashboard&list=runners&runner-deleted=1');
-				}
-				
-				else {
-					header('Location:index.php?page=runners&runner-deleted=1');
-				}
-			}
-		}
-	}
-	
+
 	$search = $_SESSION['bbr']['search-runner'];
 	$sort = "";
 	
@@ -98,252 +68,238 @@
 	</div>
 </form>
 
-<?php				
-	if($_SESSION['dashboard'] == 1) {
-		?>	
-			<div class="table-scroll-y">
-		<?php
-	}
-?>
-	<table class="table table-bordered table-striped table-condensed">           
-		<thead>
-			<tr>
-				<?php
-					if(is_logged() == 1)
-					{
-						?>
-							<th>
-								<a class="sort" href="index.php?page=<?=$_GET['page']?>
-									<?php
-										if(isset($_GET['list'])) {
-											?>
-												&list=<?=$_GET['list']?>
-											<?php
-										}
-									?>
-										&sort_word=ID
+<table class="table table-bordered table-striped table-condensed">           
+	<thead>
+		<tr>
+			<?php
+				if(is_logged() == 1)
+				{
+					?>
+						<th>
+							<a class="sort" href="index.php?page=<?=$_GET['page']?>
+								<?php
+									if(isset($_GET['list'])) {
+										?>
+											&list=<?=$_GET['list']?>
+										<?php
+									}
+								?>
+									&sort_word=ID
+								<?php
+									if(isset($_GET['sort_word']) && $_GET['sort_word'] == "ID" &&
+										isset($_GET['sort_by']) && $_GET['sort_by'] == "ASC") {
+										?>
+											&sort_by=DESC
+										<?php
+									}
+									
+									else {
+										?>
+											&sort_by=ASC
+										<?php
+									}
+								?>
+							">
+								ID
+								<font class="sort-arrow">
 									<?php
 										if(isset($_GET['sort_word']) && $_GET['sort_word'] == "ID" &&
 											isset($_GET['sort_by']) && $_GET['sort_by'] == "ASC") {
-											?>
-												&sort_by=DESC
-											<?php
+									?>
+											 v
+									<?php
 										}
-										
-										else {
-											?>
-												&sort_by=ASC
-											<?php
+										else if(isset($_GET['sort_word']) && $_GET['sort_word'] == "ID" &&
+											isset($_GET['sort_by']) && $_GET['sort_by'] == "DESC") {
+									?>
+											 ^
+									<?php
 										}
 									?>
-								">
-									ID
-									<font class="sort-arrow">
-										<?php
-											if(isset($_GET['sort_word']) && $_GET['sort_word'] == "ID" &&
-												isset($_GET['sort_by']) && $_GET['sort_by'] == "ASC") {
-										?>
-												 v
-										<?php
-											}
-											else if(isset($_GET['sort_word']) && $_GET['sort_word'] == "ID" &&
-												isset($_GET['sort_by']) && $_GET['sort_by'] == "DESC") {
-										?>
-												 ^
-										<?php
-											}
-										?>
-									</font>
-								</a>
-							</th>
-						<?php
-					}
-				?>
-				
-				<th>
-					<a class="sort" href="index.php?page=<?=$_GET['page']?>
-						<?php
-							if(isset($_GET['list'])) {
-								?>
-									&list=<?=$_GET['list']?>
-								<?php
-							}
-						?>
-							&sort_word=LastName
+								</font>
+							</a>
+						</th>
+					<?php
+				}
+			?>
+			
+			<th>
+				<a class="sort" href="index.php?page=<?=$_GET['page']?>
+					<?php
+						if(isset($_GET['list'])) {
+							?>
+								&list=<?=$_GET['list']?>
+							<?php
+						}
+					?>
+						&sort_word=LastName
+					<?php
+						if(isset($_GET['sort_word']) && $_GET['sort_word'] == "LastName" &&
+							isset($_GET['sort_by']) && $_GET['sort_by'] == "ASC") {
+							?>
+								&sort_by=DESC
+							<?php
+						}
+						
+						else {
+							?>
+								&sort_by=ASC
+							<?php
+						}
+					?>
+				">
+					Name
+					<font class="sort-arrow">
 						<?php
 							if(isset($_GET['sort_word']) && $_GET['sort_word'] == "LastName" &&
 								isset($_GET['sort_by']) && $_GET['sort_by'] == "ASC") {
-								?>
-									&sort_by=DESC
-								<?php
-							}
-							
-							else {
-								?>
-									&sort_by=ASC
-								<?php
-							}
 						?>
-					">
-						Name
-						<font class="sort-arrow">
-							<?php
-								if(isset($_GET['sort_word']) && $_GET['sort_word'] == "LastName" &&
-									isset($_GET['sort_by']) && $_GET['sort_by'] == "ASC") {
-							?>
-									 v
-							<?php
-								}
-								else if(isset($_GET['sort_word']) && $_GET['sort_word'] == "LastName" &&
-									isset($_GET['sort_by']) && $_GET['sort_by'] == "DESC") {
-							?>
-									 ^
-							<?php
-								}
-							?>
-						</font>
-					</a>
-				</th>
-				
-				<th>
-					<a class="sort" href="index.php?page=<?=$_GET['page']?>
+								 v
 						<?php
-							if(isset($_GET['list'])) {
-								?>
-									&list=<?=$_GET['list']?>
-								<?php
+							}
+							else if(isset($_GET['sort_word']) && $_GET['sort_word'] == "LastName" &&
+								isset($_GET['sort_by']) && $_GET['sort_by'] == "DESC") {
+						?>
+								 ^
+						<?php
 							}
 						?>
-							&sort_word=DateOfBirth
+					</font>
+				</a>
+			</th>
+			
+			<th>
+				<a class="sort" href="index.php?page=<?=$_GET['page']?>
+					<?php
+						if(isset($_GET['list'])) {
+							?>
+								&list=<?=$_GET['list']?>
+							<?php
+						}
+					?>
+						&sort_word=DateOfBirth
+					<?php
+						if(isset($_GET['sort_word']) && $_GET['sort_word'] == "DateOfBirth" &&
+							isset($_GET['sort_by']) && $_GET['sort_by'] == "ASC") {
+					?>
+						&sort_by=DESC
+					<?php
+						}
+					
+						else {
+							?>
+								&sort_by=ASC
+							<?php
+						}
+					?>
+				">
+					Date Of Birth
+					<font class="sort-arrow">
 						<?php
 							if(isset($_GET['sort_word']) && $_GET['sort_word'] == "DateOfBirth" &&
 								isset($_GET['sort_by']) && $_GET['sort_by'] == "ASC") {
 						?>
-							&sort_by=DESC
+								 v
 						<?php
 							}
+							else if(isset($_GET['sort_word']) && $_GET['sort_word'] == "DateOfBirth" &&
+								isset($_GET['sort_by']) && $_GET['sort_by'] == "DESC") {
+						?>
+								 ^
+						<?php
+							}
+						?>
+					</font>
+				</a>
+			</th>
+			<th>
+				<a class="sort" href="index.php?page=<?=$_GET['page']?>
+					<?php
+						if(isset($_GET['list'])) {
+							?>
+								&list=<?=$_GET['list']?>
+							<?php
+						}
+					?>
+						&sort_word=Gender
+					<?php
+						if(isset($_GET['sort_word']) && $_GET['sort_word'] == "Gender" &&
+							isset($_GET['sort_by']) && $_GET['sort_by'] == "ASC") {
+							?>
+								&sort_by=DESC
+							<?php
+						}
 						
-							else {
-								?>
-									&sort_by=ASC
-								<?php
-							}
-						?>
-					">
-						Date Of Birth
-						<font class="sort-arrow">
-							<?php
-								if(isset($_GET['sort_word']) && $_GET['sort_word'] == "DateOfBirth" &&
-									isset($_GET['sort_by']) && $_GET['sort_by'] == "ASC") {
+						else {
 							?>
-									 v
+								&sort_by=ASC
 							<?php
-								}
-								else if(isset($_GET['sort_word']) && $_GET['sort_word'] == "DateOfBirth" &&
-									isset($_GET['sort_by']) && $_GET['sort_by'] == "DESC") {
-							?>
-									 ^
-							<?php
-								}
-							?>
-						</font>
-					</a>
-				</th>
-				<th>
-					<a class="sort" href="index.php?page=<?=$_GET['page']?>
-						<?php
-							if(isset($_GET['list'])) {
-								?>
-									&list=<?=$_GET['list']?>
-								<?php
-							}
-						?>
-							&sort_word=Gender
+						}
+					?>
+				">
+					Gender
+					<font class="sort-arrow">
 						<?php
 							if(isset($_GET['sort_word']) && $_GET['sort_word'] == "Gender" &&
 								isset($_GET['sort_by']) && $_GET['sort_by'] == "ASC") {
-								?>
-									&sort_by=DESC
-								<?php
-							}
-							
-							else {
-								?>
-									&sort_by=ASC
-								<?php
-							}
 						?>
-					">
-						Gender
-						<font class="sort-arrow">
-							<?php
-								if(isset($_GET['sort_word']) && $_GET['sort_word'] == "Gender" &&
-									isset($_GET['sort_by']) && $_GET['sort_by'] == "ASC") {
-							?>
-									 v
-							<?php
-								}
-								else if(isset($_GET['sort_word']) && $_GET['sort_word'] == "Gender" &&
-									isset($_GET['sort_by']) && $_GET['sort_by'] == "DESC") {
-							?>
-									 ^
-							<?php
-								}
-							?>
-						</font>
-					</a>
-				</th>
-				
-				<?php
-					if(is_logged() == 1)
-					{
-						?>
-							<th>
-								<a class="bg-success text-white table-button" href="index.php?page=manage&runner">+</a>
-							</th>
+								 v
 						<?php
-					}
-				?>
-			</tr>
-		</thead>
-		
-		<tbody>
+							}
+							else if(isset($_GET['sort_word']) && $_GET['sort_word'] == "Gender" &&
+								isset($_GET['sort_by']) && $_GET['sort_by'] == "DESC") {
+						?>
+								 ^
+						<?php
+							}
+						?>
+					</font>
+				</a>
+			</th>
+			
 			<?php
-				foreach(search_runner($search, $sort) as $runner) {		
-					?>	
-						<tr class='clickable-row' data-href="index.php?page=runner&runner=<?=$runner->ID ?>">
-							<?php
-								if(is_logged() == 1) {
-									?>
-										<td><?=$runner->ID?></td>
-									<?php
-								}
-							?>
-							
-							<td><?=$runner->FirstName ?> <?=$runner->LastName ?></td>
-							<td><?=$runner->DateOfBirth ?></td>
-							<td><?=$runner->Gender ?></td>
-							
-							<?php
-								if(is_logged() == 1) {
-									?>
-										<td class='no-change'>
-											<a class="bg-primary text-white table-button" href="index.php?page=manage&runner=<?=$runner->ID?>">...</a>
-											<a class="bg-danger text-white table-button" onclick="DeleteAlert(<?=$_SESSION['dashboard']?>, 'runner', <?= $runner->ID ?>);" href="#">X</a>
-										</td>
-									<?php
-								}
-							?>
-						</tr>
+				if(is_logged() == 1)
+				{
+					?>
+						<th>
+							<a class="bg-success text-white table-button" href="index.php?page=manage&runner">+</a>
+						</th>
 					<?php
 				}
-			?>					
-		</tbody>
-	</table>
-<?php				
-	if($_SESSION['dashboard'] == 1) {
-		?>	
-			</div>
+			?>
+		</tr>
+	</thead>
+	
+	<tbody>
 		<?php
-	}
-?>
+			foreach(search_runner($search, $sort) as $runner) {		
+				?>	
+					<tr class='clickable-row' data-href="index.php?page=runner&runner=<?=$runner->ID ?>">
+						<?php
+							if(is_logged() == 1) {
+								?>
+									<td><?=$runner->ID?></td>
+								<?php
+							}
+						?>
+						
+						<td><?=$runner->FirstName ?> <?=$runner->LastName ?></td>
+						<td><?=$runner->DateOfBirth ?></td>
+						<td><?=$runner->Gender ?></td>
+						
+						<?php
+							if(is_logged() == 1) {
+								?>
+									<td class='no-change'>
+										<a class="bg-primary text-white table-button" href="index.php?page=manage&runner=<?=$runner->ID?>">...</a>
+										<a class="bg-danger text-white table-button" onclick="DeleteAlert(<?=$_SESSION['dashboard']?>, 'runner', <?= $runner->ID ?>);" href="#">X</a>
+									</td>
+								<?php
+							}
+						?>
+					</tr>
+				<?php
+			}
+		?>					
+	</tbody>
+</table>
