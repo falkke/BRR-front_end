@@ -439,8 +439,7 @@
 						require "summary.php";
 					
 						if(is_logged()) {
-							require "track.php";
-							//require "map/map.php";	
+							require "track.php";	
 						}
 			}
 		?>

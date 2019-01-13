@@ -127,6 +127,14 @@
 					<a class="link-title" href="index.php?page=race&race=<?=$race->ID?>&gender=<?=$class->Gender?>&distance=<?=$class->Distance?>"><h2 class="page-title followed-title"><?= $race->Name ?></h2></a>
 					<h3 class="page-subtitle"><?= "Results " . $class->Gender . " - " . $class->Distance ?> miles</h3>
 					
+					<?php 
+						if(is_current_race($race->ID)) {
+							?>
+								<a title="Map" class="bg-primary text-white table-button" href="index.php?page=map&race=<?=$race->ID?>&runner=<?=$runner_id?>">&#127966</a>
+							<?php
+						}
+					?>
+					<h2 class="page-title followed-title">Timestamps</h2>
 					<?php
 						if(isset($delete_timestamp_error)) {
 							?>
