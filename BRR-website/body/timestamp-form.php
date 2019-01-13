@@ -81,7 +81,7 @@
 				}
 				
 				else {
-					delete_timestamp($runner_id, $race->ID, $new_datetime);
+					delete_timestamp($runner_id, $race_runner->RaceInstance, $new_datetime);
 					$error = "This timestamp can not be added to the system because the distance will exceed the distance of the race.";
 				}
 			}
