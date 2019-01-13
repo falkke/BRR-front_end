@@ -44,6 +44,8 @@
 		}
 		
 		else {
+			$gender=$_POST['gender'];
+			
 			add_runner($first_name, $last_name, $birth_date, $gender);
 			
 			if($_SESSION['dashboard'] == 1) {
