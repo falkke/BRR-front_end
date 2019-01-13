@@ -1266,7 +1266,7 @@
             'category_id' => $category_id
         );
 		
-        $sql = "SELECT * FROM race_runner WHERE Class = :category_id";
+        $sql = "SELECT * FROM race_instance WHERE Class = :category_id";
         $req = $db->prepare($sql);
         $req->execute($r);
 		
@@ -1761,5 +1761,28 @@
 		
         return $result;
 	}
+	
+	function is_category_empty_for_a_race($category_id, $race_id) {
+        global $db;
+		
+        $r = array(
+            'category_id' => $category_id,
+			'race_id' => $race_id
+        );
+		
+        $sql = "SELECT * FROM race_instance WHERE Class = :category_id AND Race = :race_id";
+        $req = $db->prepare($sql);
+        $req->execute($r);
+		
+		$empty_race_runner = $req->rowCount($sql);
+
+		if($empty_race_runner == 0) {
+			return 1;
+		}
+		
+		else {
+			return 0;
+		}
+    }
 ?>
 
