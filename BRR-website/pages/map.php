@@ -258,8 +258,8 @@
 
 			function initMap() {
 				map = new google.maps.Map(document.getElementById('map'), {
-					zoom: 13,
-					center: {lat: 59.6173901, lng: 16.5269991},
+					zoom: 12.5,
+					center: {lat: 59.6390965, lng: 16.5230476},
 					mapTypeId: 'satellite'
 				});
 
@@ -311,7 +311,7 @@
 						lat:RaceCoordinates[index1].lat, 
 						lng:RaceCoordinates[index1].lng
 					},
-					radius: 110
+					radius: 40
 				});
 				
 				Ref();
@@ -327,13 +327,7 @@
 						race: <?=$race_id?>
 					},
 					success: function (response) {
-						if(response < 475) {
-							currentPos = response;
-						}
-						
-						else {
-							currentPos = 475;
-						}
+						currentPos = response % 475;
 
 						cityCircle.setMap(null);
 
@@ -348,7 +342,7 @@
 								lat: RaceCoordinates[parseFloat(currentPos)].lat,
 								lng: RaceCoordinates[parseFloat(currentPos)].lng
 							},
-							radius: 110
+							radius: 40
 						});
 					}
 				});

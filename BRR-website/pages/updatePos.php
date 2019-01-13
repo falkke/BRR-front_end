@@ -80,9 +80,14 @@
 						if($req->rowCount($sql) > 0) {
 							$row = $req->fetchObject();
 							$stationTime2=$row->Timestamp;
-							
-							$velocity = 37.26708074534161 / sub_time($stationTime2, $stationTime1);
+								
+							//distance/temps en heure
+							//$velocity = 37.26708074534161 / sub_time($stationTime2, $stationTime1);
+							$velocity = 161 / sub_time($stationTime2, $stationTime1);
 							$distance = 161 + round($velocity * sub_time($currentTime, $stationTime2));
+						
+							//$velocity = 37.26708074534161 / sub_time($stationTime2, $stationTime1);
+							//$distance = 161 + round($velocity * sub_time($currentTime, $stationTime2));
 						
 							echo $distance;
 						}
@@ -129,7 +134,7 @@
 						$row = $req->fetchObject();
 						$stationTime2=$row->Timestamp;
 						
-						$velocity = 60.16597510373444 / sub_time($stationTime2, $stationTime1);
+						$velocity = 402 / sub_time($stationTime2, $stationTime1);
 						$distance = 402 + round($velocity * sub_time($currentTime, $stationTime2));
 					
 						echo $distance;
