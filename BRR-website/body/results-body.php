@@ -105,6 +105,25 @@
 								<?php
 							}
 						}
+						foreach(get_race_runners_that_stoped($race->ID, $class->Distance) as $race_runner) {	
+							$class_runner = get_race_runner_class($race_runner->Runner, $race_runner->Race) ;		
+						
+							if($class->Gender == $class_runner->Gender) {
+								$runner = get_runner($race_runner->Runner);
+								$timestamp = get_last_timestamp($race_runner->Runner, get_race_instance_by_id_and_class($race_runner->Race, $race_runner->Class)->ID);
+								$team = get_race_runner_team($race_runner->Runner, $race_runner->Race);
+								$elapsed = get_total_elapsed_time($race_runner->Runner, get_race_instance_by_id_and_class($race_runner->Race, $race_runner->Class)->ID);
+								?>	
+									<tr class='clickable-row' data-href="index.php?page=runner&runner=<?=$race_runner->Runner?>&race=<?=$race_runner->Race?>">
+										<td> - </td>
+										<td><?=$runner->FirstName." ".$runner->LastName?></td>
+										<td><?=$team->Name?></td>
+										<td><?=$elapsed?></td>
+										<td>Stop at <?=$class->Distance?> Miles in the <?=$class_runner->Distance?> Miles Race.</td>
+									</tr>						
+								<?php
+							}
+						}
 					?>
 				</tbody>
 			</table>

@@ -210,6 +210,49 @@
 		return $results;
 	}
 	
+	
+	function get_race_runners_that_stoped($race_id, $stop_distance) {
+		global $db;
+		
+        $e = array(
+            'race_id' => $race_id,
+			'stop_distance' => $stop_distance
+        );
+		
+		$sql = "SELECT ri.Race, ri.Class, ri.StartTime, rr.Runner, rr.Bib, rr.Status, rr.Club, rr.Place, rr.TotalTime
+				FROM race_runner AS rr, club AS c, runner AS r, race_instance AS ri, timestamp AS t, station AS s
+				WHERE ri.Race = :race_id AND rr.RaceInstance = ri.ID AND c.ID = rr.Club AND r.ID = rr.Runner AND ri.ID = rr.RaceInstance AND rr.Status = 'DNF'
+				AND t.RaceInstance = ri.ID AND t.Runner = rr.Runner AND s.ID = t.Station AND (((t.Lap - 1) * 10) + s.LengthFromStart) = :stop_distance AND t.Timestamp = (
+					SELECT MAX(t2.Timestamp) 
+					FROM timestamp t2, race_runner rr2
+					WHERE t2.Runner = r.ID AND rr2.RaceInstance = ri.ID AND t2.RaceInstance = rr2.RaceInstance AND rr2.Runner = r.ID AND t2.Runner = rr2.Runner
+					AND t2.Station <> 'b827eb2d0304'
+				)
+				UNION
+				SELECT ri.Race, ri.Class, ri.StartTime, rr.Runner, rr.Bib, rr.Status, '' AS Club, rr.Place, rr.TotalTime
+				FROM race_runner AS rr, runner AS r, race_instance AS ri, timestamp AS t, station AS s
+				WHERE ri.Race = :race_id AND rr.RaceInstance = ri.ID AND r.ID = rr.Runner AND ri.ID = rr.RaceInstance AND rr.Status = 'DNF' AND rr.Club IS NULL
+				AND t.RaceInstance = ri.ID AND t.Runner = rr.Runner AND s.ID = t.Station AND (((t.Lap - 1) * 10) + s.LengthFromStart) = :stop_distance AND t.Timestamp = (
+					SELECT MAX(t2.Timestamp) 
+					FROM timestamp t2, race_runner rr2
+					WHERE t2.Runner = r.ID AND rr2.RaceInstance = ri.ID AND t2.RaceInstance = rr2.RaceInstance AND rr2.Runner = r.ID AND t2.Runner = rr2.Runner
+					AND t2.Station <> 'b827eb2d0304'
+				)
+				ORDER BY Place ASC";
+							
+        $req = $db->prepare($sql);
+        $req->execute($e);
+		
+		$results = array();
+		
+        while($rows = $req->fetchObject()) 
+		{
+            $results[] = $rows;
+        }
+		
+		return $results;
+	}
+	
 	function add_race_runner($runner_id, $bib, $team_id, $race_instance_id) {
         global $db;
 		

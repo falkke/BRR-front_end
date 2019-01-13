@@ -80,6 +80,35 @@
 		
         $exist = $req->rowCount($sql);
 		
+		$e = array(
+            'class_id' => $class_id
+        );
+		
+        $sql = "SELECT * FROM class WHERE ID = :class_id";
+        $req = $db->prepare($sql);
+        $req->execute($e);
+		
+		$stop_distance = $req->fetch()['Distance'];
+		
+        $e = array(
+            'race_id' => $race_id,
+			'stop_distance' => $stop_distance
+        );
+		
+		$sql = "SELECT rr.Runner
+				FROM race_runner AS rr,race_instance AS ri, timestamp AS t, station AS s
+				WHERE ri.Race = :race_id AND rr.RaceInstance = ri.ID AND ri.ID = rr.RaceInstance AND rr.Status = 'DNF'
+				AND t.RaceInstance = ri.ID AND t.Runner = rr.Runner AND s.ID = t.Station AND (((t.Lap - 1) * 10) + s.LengthFromStart) = :stop_distance AND t.Timestamp = (
+					SELECT MAX(t2.Timestamp) 
+					FROM timestamp t2
+					WHERE t2.Runner = rr.Runner AND t2.RaceInstance = ri.ID AND t2.Station <> 'b827eb2d0304'
+				)";
+				
+        $req = $db->prepare($sql);
+        $req->execute($e);
+		
+        $exist = $exist + $req->rowCount($sql);
+		
         return($exist);	
 	}
 	
