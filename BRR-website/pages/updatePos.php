@@ -23,18 +23,23 @@
 		'race_id' => $race_id
 	);
 	
-	$sql = "SELECT Station, Timestamp FROM timestamp WHERE Timestamp = (
-			SELECT MAX(Timestamp) FROM timestamp WHERE Runner = :runner_id AND RaceInstance = (
-				SELECT ID FROM race_instance WHERE Race = :race_id
+	$sql = "SELECT Station, Timestamp 
+			FROM timestamp 
+			WHERE Timestamp = (
+				SELECT MAX(Timestamp) 
+				FROM timestamp 
+				WHERE Runner = :runner_id AND RaceInstance IN (
+					SELECT ID 
+					FROM race_instance 
+					WHERE Race = :race_id
+				)
 			)
-		)
-	";
+		";
 	
 	$req = $db->prepare($sql);
 	$req->execute($var);
 	
-	if($req->rowCount($sql) > 0) {
-		// output data of each row	
+	if($req->rowCount($sql) > 0) {	
 		$row = $req->fetchObject();
 		$Station=$row->Station;
 		$stationTime=$row->Timestamp;
@@ -43,8 +48,51 @@
 
 		switch($Station){
 			case 'b827eb53318a':
-				$distance = round($velocity * sub_time($currentTime, $stationTime));
-				echo $distance;
+				$var1 = array(
+					'runner_id' => $runner_id,
+					'race_id' => $race_id,
+					'station' => "b827eba42979"
+				);
+		
+				$sql = "SELECT Timestamp, Station FROM timestamp
+						WHERE Timestamp = (
+							SELECT MAX(Timestamp) FROM timestamp WHERE Runner = :runner_id AND Station = :station AND RaceInstance = (
+								SELECT ID FROM race_instance WHERE Race = :race_id
+							)
+						)";
+						
+				$req = $db->prepare($sql);
+				$req->execute($var1);
+						
+				if($req->rowCount($sql) > 0) {
+					$row = $req->fetchObject();
+					$stationTime1=$row->Timestamp;
+				
+					$var2 = array(
+						'runner_id' => $runner_id,
+						'race_id' => $race_id,
+						'station' => "b827ebdcbd98"
+					);
+					
+					$req = $db->prepare($sql);
+					$req->execute($var2);
+					
+					if($req->rowCount($sql) > 0) {
+						$row = $req->fetchObject();
+						$stationTime2=$row->Timestamp;
+							
+						$velocity = 161 / sub_time($stationTime2, $stationTime1);
+						$distance = round($velocity * sub_time($currentTime, $stationTime));
+					
+						echo $distance;
+					}
+				}
+				
+				else {
+					$distance = round($velocity * sub_time($currentTime, $stationTime));
+					echo $distance;
+				}
+					
 				break;
 				
 			case 'b827ebeb6d39':
@@ -81,13 +129,8 @@
 							$row = $req->fetchObject();
 							$stationTime2=$row->Timestamp;
 								
-							//distance/temps en heure
-							//$velocity = 37.26708074534161 / sub_time($stationTime2, $stationTime1);
 							$velocity = 161 / sub_time($stationTime2, $stationTime1);
 							$distance = 161 + round($velocity * sub_time($currentTime, $stationTime2));
-						
-							//$velocity = 37.26708074534161 / sub_time($stationTime2, $stationTime1);
-							//$distance = 161 + round($velocity * sub_time($currentTime, $stationTime2));
 						
 							echo $distance;
 						}

@@ -281,12 +281,12 @@
 				marker = new google.maps.Marker({
 					position: {lat: 59.6217801, lng: 16.5234402},
 					map: map,
-					title: "Station No.2"
+					title: "Station No.3"
 				});
 				marker = new google.maps.Marker({
 					position: {lat: 59.6560947, lng: 16.4921747},
 					map: map,
-					title: "Station No.3"
+					title: "Station No.2"
 				});
 				marker = new google.maps.Marker({
 					position: {lat: 59.6389951, lng: 16.5230550},
@@ -328,6 +328,8 @@
 					},
 					success: function (response) {
 						currentPos = response % 475;
+						
+						console.log(currentPos);
 
 						cityCircle.setMap(null);
 
