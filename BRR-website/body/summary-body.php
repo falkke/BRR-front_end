@@ -21,7 +21,7 @@
 				
 <?php				
 	foreach(get_classes() as $class) {
-		if(exist_participant($class->ID, $race->ID)) {
+		if(exist_participant($class->ID, $race->ID, "summary")) {
 ?>
 			<a class="link-title" href="index.php?page=race&race=<?=$race->ID?>&gender=<?=$class->Gender?>&distance=<?=$class->Distance?>"><h3 class="text-left"><?=$class->Gender?> <?=$class->Distance?> Miles</h3></a>
 			<table class="table table-bordered table-striped table-condensed">           
