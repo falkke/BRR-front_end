@@ -74,7 +74,7 @@
 		
 		delete_race_instance($race_instance_id);
 		
-		header('Location:index.php?page=manage&race='.$race->ID);
+		header('Location:index.php?page=manage&race='.$race->ID.'&class-deleted=1');
 	}
 	
 	if(	(isset($_GET['race-runner']) && !empty($_GET['race-runner']))
@@ -85,7 +85,7 @@
 			delete_race_runner($race->ID, $runner_id);
 		}
 		
-		header('Location:index.php?page=manage&race='.$race->ID);
+		header('Location:index.php?page=manage&race='.$race->ID.'&runner-deleted=1');
 	}
 
 	if(	(isset($_GET['runner']) && !empty($_GET['runner']))
@@ -97,7 +97,7 @@
 
 		delete_runner_si_unit($runner_id, $si_unit_id, $race_id);
 		edit_si_unit($si_unit_id, "Returned");
-		header('Location:index.php?page=manage&race='.$race->ID);
+		header('Location:index.php?page=manage&race='.$race->ID.'&unit-deleted=1');
 	}
 
 	if(isset($_POST['add_runner'])) {
@@ -112,11 +112,18 @@
 		if($race_instance != NULL && $runner->Gender == $category_distance[0]){
 			if($team_id[0] != "") {
 				add_race_runner($runner_id[0], $bib, $team_id[0], $race_instance->ID);
+				header('Location:index.php?page=manage&race='.$race->ID.'&runner-added=1');
 			}
-			
 			else {
 				add_race_runner_no_team($runner_id[0], $bib, $race_instance->ID);
+				header('Location:index.php?page=manage&race='.$race->ID.'&runner-added=1');
 			}
+		}
+		else {
+			$runner_error = NULL;
+			$unit_error = NULL;
+			$class_error = NULL;
+			$runner_error = "This Runner does not match the race Category.";
 		}
 	}	
 	
@@ -126,6 +133,13 @@
 		
 		if(does_si_unit_exist($si_unit_id)) {
 			add_race_si_unit_runner($race->ID, $runner_id[0], $si_unit_id);
+			header('Location:index.php?page=manage&race='.$race->ID.'&unit-added=1');
+		}
+		else {
+			$runner_error = NULL;
+			$unit_error = NULL;
+			$class_error = NULL;
+			$unit_error = "This SI Unit is not available to be used, check SI unit tab to know who used it in last.";
 		}
 	}
 	
@@ -136,6 +150,13 @@
 		
 		if(!does_race_instance_exist($race->ID, $category->Gender, $category->Distance)) {
 			add_race_instance($race->ID, $category_id[0], $start_time);
+			header('Location:index.php?page=manage&race='.$race->ID.'&class-added=1');
+		}
+		else {
+			$runner_error = NULL;
+			$unit_error = NULL;
+			$class_error = NULL;
+			$class_error = "This Category is already defined for this race.";
 		}
 	}
 	
@@ -216,19 +237,66 @@
 					<p class="alert alert-danger" role="alert"><?=$error?></p>
 				<?php
 			}
-
+			
 			if(isset($import_error_message) && ($import_error_message != "")) {
 				?>
 					<p class="alert alert-danger" role="alert"><?=$import_error_message?></p>
 				<?php
 			}
-			
 			else if(isset($import_success_message) && ($import_success_message != "")) {				
 				?>
 					<p class="alert alert-success" role="alert"><?=$import_success_message?></p>
 				<?php
 			}
-		?>
+			
+			if(isset($runner_error)) {
+				?>
+					<p class="alert alert-danger" role="alert"><?=$runner_error?></p>
+				<?php
+			}
+			else if(isset($_GET['runner-deleted']) && !empty($_GET['runner-deleted']) && ($_GET['runner-deleted'] == 1)) {
+				?>
+					<p class="alert alert-success" role="alert">The Runner has been succefully removed from the race.</p>
+				<?php
+			}
+			else if(isset($_GET['runner-added']) && !empty($_GET['runner-added']) && ($_GET['runner-added'] == 1)) {
+				?>
+					<p class="alert alert-success" role="alert">The Runner has been succefully added to the race.</p>
+				<?php
+			}
+			
+			if(isset($class_error)) {
+				?>
+					<p class="alert alert-danger" role="alert"><?=$class_error?></p>
+				<?php
+			}
+			else if(isset($_GET['class-deleted']) && !empty($_GET['class-deleted']) && ($_GET['class-deleted'] == 1)) {
+				?>
+					<p class="alert alert-success" role="alert">The Category has been succefully removed from the race.</p>
+				<?php
+			}
+			else if(isset($_GET['class-added']) && !empty($_GET['class-added']) && ($_GET['class-added'] == 1)) {
+				?>
+					<p class="alert alert-success" role="alert">The Category has been succefully added to the race.</p>
+				<?php
+			}
+			
+			if(isset($unit_error)) {
+				?>
+					<p class="alert alert-danger" role="alert"><?=$unit_error?></p>
+				<?php
+			}
+			else if(isset($_GET['unit-deleted']) && !empty($_GET['unit-deleted']) && ($_GET['unit-deleted'] == 1)) {
+				?>
+					<p class="alert alert-success" role="alert">The link between a SI Unit and a Runner has been succefully revoked.</p>
+				<?php
+			}
+			else if(isset($_GET['unit-added']) && !empty($_GET['unit-added']) && ($_GET['unit-added'] == 1)) {
+				?>
+					<p class="alert alert-success" role="alert">The SI Unit has been succefully linked to a Runner.</p>
+				<?php
+			}
+			?>
 		
 		<form method="post" class="form-horizontal form-add-edit">
 			<div class="form-group">
