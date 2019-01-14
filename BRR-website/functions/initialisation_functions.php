@@ -12,10 +12,10 @@
 	// Try to connect to the database.
 	try {
 		$db = new PDO(
-			"mysql:host=".$dbhost.";dbname=".$dbname.";charset=utf8mb4", 
+			"mysql:host=".$dbhost.";dbname=".$dbname, 
 			$dbuser, 
 			$dbpassword, 
-			array(PDO::ATTR_EMULATE_PREPARES => false)
+			array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8")
 		);
 	}
 	
