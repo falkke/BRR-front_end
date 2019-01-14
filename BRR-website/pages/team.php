@@ -20,7 +20,7 @@
 
 <main role="main" class="container">
 	<div class="starter-template">
-		<h2 class="page-title"></h2>
+		<h2 class="page-title"><?=$team->Name?></h2>
 		<form method="post" class="form-inline my-2">
 			<div class="input-group">
 				<input class="form-control" type="text" style="text-align:right" placeholder="Search" name="search" id="search" aria-label="Search" <?php

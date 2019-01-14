@@ -197,10 +197,6 @@
 				break;
 		}
 	}
-
-	else {
-		echo "ERROR";
-	}
 	
 	function sub_time($currentTime, $stationTime) {
 		$to_time = strtotime($currentTime);

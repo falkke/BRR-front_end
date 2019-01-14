@@ -256,6 +256,14 @@
 				else if($_GET['list'] == "si-units")
 					require 'body/si-unit-list.php';
 			}
+			
+			else {
+				?>
+					<h2 class="page-title">Dashboard</h2>
+					
+					<p class="lead">Select a option in the side menu.</p>
+				<?php
+			}
 		?>
 	</div>
 </main>
