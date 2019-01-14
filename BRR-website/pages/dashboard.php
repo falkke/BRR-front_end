@@ -171,12 +171,13 @@
 						<li><a href="index.php?page=dashboard&list=stations">Stations</a></li>
 					</ul>
 					
-										<li data-toggle="collapse" data-target="#current_races" class="collapsed">
+					<li data-toggle="collapse" data-target="#current_races" class="collapsed">
 						<a href="#">Current Races</a>
 					</li>
+					
 					<ul class="sub-menu collapse 
 						<?php 
-							if(isset($_GET['curent-race'])) {
+							if(isset($_GET['current-race'])) {
 								?>
 									show
 								<?php 
@@ -186,7 +187,7 @@
 						<?php
 							foreach(get_current_races() as $current_race) {
 								?>
-									<li><a href="index.php?page=dashboard&current-race&race=<?=$current_race->ID?>"><?=$current_race->Name ?></a></li>
+									<li><a href="index.php?page=manage&race=<?=$current_race->ID?>"><?=$current_race->Name ?></a></li>
 								<?php
 							}
 						?>
@@ -207,7 +208,7 @@
 						<?php
 							foreach(get_planned_races() as $planned_race) {
 								?>		
-									<li><a href="index.php?page=dashboard&planned-race&race=<?=$planned_race->ID?>"><?=$planned_race->Name ?></a></li>
+									<li><a href="index.php?page=manage&race=<?=$planned_race->ID?>"><?=$planned_race->Name ?></a></li>
 								<?php
 							}
 						?>
@@ -216,6 +217,7 @@
 					<li data-toggle="collapse" data-target="#past_races" class="collapsed">
 						<a href="#">Past Races</a>
 					</li>
+					
 					<ul class="sub-menu collapse 
 						<?php 
 							if(isset($_GET['past-race'])) {
@@ -228,7 +230,7 @@
 						<?php
 							foreach(get_past_races() as $past_race) {
 								?>		
-									<li><a href="index.php?page=dashboard&past-race&race=<?=$past_race->ID?>"><?=$past_race->Name ?></a></li>
+									<li><a href="index.php?page=manage&race=<?=$past_race->ID?>"><?=$past_race->Name ?></a></li>
 								<?php
 							}
 						?>
@@ -253,9 +255,6 @@
 					require 'body/category-list.php';
 				else if($_GET['list'] == "si-units")
 					require 'body/si-unit-list.php';
-			}
-			else if(isset($_GET['planned-race']) || isset($_GET['past-race']) || isset($_GET['current-race'])) {
-				require 'body/race-form.php';
 			}
 		?>
 	</div>

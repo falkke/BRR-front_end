@@ -37,7 +37,7 @@
 	function get_past_races() {
         global $db;
 		
-        $req = $db->query("SELECT * FROM race WHERE EndTime < CURTIME() ORDER BY EndTime ASC");
+        $req = $db->query("SELECT * FROM race WHERE EndTime < NOW() ORDER BY EndTime ASC");
 		
         $results = array();
 
@@ -59,7 +59,7 @@
 			UNION (
 				SELECT r.ID AS ID, r.Name AS Name, r.Date AS Date, r.EndTime AS EndTime
 				FROM race r, race_instance ri 
-				WHERE r.ID = ri.Race AND r.Date = CURDATE() AND ri.StartTime > CURTIME() AND ri.StartTime IN (
+				WHERE r.ID = ri.Race AND r.Date = CURDATE() AND ri.StartTime > CURTIME() AND ri.StartTime = (
 					SELECT Min(StartTime) 
 					FROM race_instance 
 					WHERE Race = r.ID
@@ -75,15 +75,15 @@
 
         return $results;
     }
-	
+
 	// Function that gets all current races.
 	function get_current_races() {
-        global $db;
+		global $db;
 		
-        $req = $db->query("
+		$req = $db->query("
 			SELECT DISTINCT r.ID AS ID, r.Name AS Name, r.Date AS Date, r.EndTime AS EndTime
 			FROM race r, race_instance ri 
-			WHERE r.ID = ri.Race AND r.EndTime > CURDATE() AND r.Date <= CURDATE() AND ri.StartTime < CURTIME() AND ri.StartTime IN (
+			WHERE r.ID = ri.Race AND r.EndTime >= NOW() AND CONCAT(r.Date, ' ', ri.StartTime) <= NOW() AND ri.StartTime = (
 				SELECT Min(StartTime) 
 				FROM race_instance 
 				WHERE Race = r.ID
@@ -91,7 +91,7 @@
 			UNION
 			SELECT DISTINCT r.ID AS ID, r.Name AS Name, r.Date AS Date, r.EndTime AS EndTime
 			FROM race r
-			WHERE r.EndTime > CURDATE() AND r.Date <= CURDATE() AND r.ID NOT IN (
+			WHERE r.EndTime >= NOW() AND r.Date <= CURDATE() AND r.ID NOT IN (
 				SELECT Race
 				FROM race_instance 
 				WHERE Race = r.ID
@@ -117,7 +117,7 @@
         $sql = "
 			SELECT r.*
 			FROM race r, race_instance ri 
-			WHERE r.ID = :race_id AND r.EndTime > CURDATE() AND r.Date <= CURDATE() AND ri.StartTime < CURTIME() AND ri.StartTime IN (
+			WHERE r.ID = :race_id AND r.EndTime >= NOW() AND CONCAT(r.Date, ' ', ri.StartTime) <= NOW() AND ri.StartTime IN (
 				SELECT Min(StartTime) 
 				FROM race_instance 
 				WHERE Race = r.ID
@@ -125,7 +125,7 @@
 			UNION		
 			SELECT *
 			FROM race r
-			WHERE r.EndTime > CURDATE() AND r.Date <= CURDATE() AND r.ID NOT IN (
+			WHERE r.EndTime >= CURDATE() AND r.Date <= CURDATE() AND r.ID NOT IN (
 				SELECT Race
 				FROM race_instance 
 				WHERE Race = r.ID
