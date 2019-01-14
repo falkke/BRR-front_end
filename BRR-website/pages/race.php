@@ -48,6 +48,20 @@
 	if(isset($_POST['submit'])) {
 		$search = htmlspecialchars(trim($_POST['search']));
 	}
+	
+	
+	if(	(isset($_GET['runner']) && !empty($_GET['runner']))
+	&&	(isset($_GET['race']) && !empty($_GET['race']))
+	&&	(isset($_GET['remove']) && !empty($_GET['remove']) && $_GET['remove'] == 1)){
+		$race_id = $_GET['race'];
+		$runner_id = $_GET['runner'];
+
+		if(!has_si_unit($race_id, $runner_id)) {
+			delete_race_runner($race_id, $runner_id);
+		}
+		
+		header('Location:index.php?page=race&race='.$race_id.'&runner-deleted=1');
+	}
 ?>
 
 <main role="main" class="container no-gutters">
@@ -131,7 +145,7 @@
 											if(is_logged() == 1) {
 												?>
 													<th>
-														<a class="bg-success text-white table-button" href="index.php?page=manage-runner-race&race=<?=$id?>">+</a>
+														<a class="bg-success text-white table-button" href="index.php?page=manage&race=<?=$id?>">+</a>
 													</th>
 												<?php
 											}
@@ -187,7 +201,7 @@
 														?>
 															<td class="no-change">
 																<a class="bg-primary text-white table-button" href="index.php?page=manage&runner=<?=$race_runner->Runner?>">...</a>
-																<a class="bg-danger text-white table-button" href="index.php?page=home&runner=<?=$race_runner->Runner?>&race=<?=$race_runner->Race?>&remove=1">X</a>
+																<a class="bg-danger text-white table-button" href="index.php?page=race&race=<?=$race->ID?>&runner=<?=$race_runner->Runner?>&remove=1">X</a>
 															</td>
 														<?php
 															}
@@ -220,7 +234,7 @@
 											if(is_logged() == 1) {
 												?>
 													<th>
-														<a class="bg-success text-white table-button" href="index.php?page=manage-runner-race&race=<?=$id?>">+</a>
+														<a class="bg-success text-white table-button" href="index.php?page=manage&race=<?=$id?>">+</a>
 													</th>
 												<?php
 											}
@@ -275,8 +289,8 @@
 															if(is_logged() == 1) {
 																?>
 																	<td class="no-change">
-																		<a class="bg-primary text-white table-button" href="index.php?page=manage-runner-race">...</a>
-																		<a class="bg-danger text-white table-button" href="index.php?page=home&runner=<?=$race_runner->Runner?>&race=<?=$race_runner->Race?>&remove=1">X</a>
+																		<a class="bg-primary text-white table-button" href="index.php?page=manage&runner=<?=$race_runner->Runner?>">...</a>
+																		<a class="bg-danger text-white table-button" href="index.php?page=race&race=<?=$race->ID?>&runner=<?=$race_runner->Runner?>&remove=1">X</a>
 																	</td>
 																<?php
 															}
@@ -309,7 +323,7 @@
 											if(is_logged() == 1) {
 												?>
 													<th>
-														<a class="bg-success text-white table-button" href="index.php?page=manage-runner-race&race=<?=$id?>">+</a>
+														<a class="bg-success text-white table-button" href="index.php?page=manage&race=<?=$id?>">+</a>
 													</th>
 												<?php
 											}
@@ -351,8 +365,8 @@
 															if(is_logged() == 1) {
 																?>
 																	<td class="no-change">
-																		<a class="bg-primary text-white table-button" href="index.php?page=manage-runner-race">...</a>
-																		<a class="bg-danger text-white table-button" href="index.php?page=home&runner=<?=$race_runner->Runner?>&race=<?=$race_runner->Race?>&remove=1">X</a>
+																		<a class="bg-primary text-white table-button" href="index.php?page=manage&runner=<?=$race_runner->Runner?>">...</a>
+																		<a class="bg-danger text-white table-button" href="index.php?page=race&race=<?=$race->ID?>&runner=<?=$race_runner->Runner?>&remove=1">X</a>
 																	</td>
 																<?php
 															}
@@ -383,7 +397,7 @@
 											{
 										?>
 											<th>
-												<a class="bg-success text-white table-button" href="index.php?page=manage-runner-race&race=<?=$id?>">+</a>
+												<a class="bg-success text-white table-button" href="index.php?page=manage&race=<?=$id?>">+</a>
 											</th>
 										<?php
 											}
@@ -411,8 +425,8 @@
 															if(is_logged() == 1) {
 																?>
 																	<td class="no-change">
-																		<a class="bg-primary text-white table-button" href="index.php?page=manage-runner-race">...</a>
-																		<a class="bg-danger text-white table-button" href="index.php?page=home&runner=<?=$race_runner->Runner?>&race=<?=$race_runner->Race?>&remove=1">X</a>
+																		<a class="bg-primary text-white table-button" href="index.php?page=manage&runner=<?=$race_runner->Runner?>">...</a>
+																		<a class="bg-danger text-white table-button" href="index.php?page=race&race=<?=$race->ID?>&runner=<?=$race_runner->Runner?>&remove=1">X</a>
 																	</td>
 																<?php
 															}
