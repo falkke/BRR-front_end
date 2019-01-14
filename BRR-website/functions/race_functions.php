@@ -300,15 +300,23 @@
 	function search_race($keyword, $sort) {
 		global $db;
 
-        $req = $db->query("SELECT * FROM race WHERE Name LIKE '%{$keyword}%' {$sort}");
+        $e = array(
+			'keyword' => "%{$keyword}%"
+        );
+		
+        $sql = "SELECT * FROM race WHERE Name LIKE :keyword {$sort}";
 
+        $req = $db->prepare($sql);
+        $req->execute($e);
+		
 		$results = array();
 		
-        while($rows = $req->fetchObject()) {
+        while($rows = $req->fetchObject()) 
+		{
             $results[] = $rows;
         }
-
-        return $results;
+		
+		return $results;
 	}
 	
 	// Function that returns 1 if a race is planned and 0 if not.
