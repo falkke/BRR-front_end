@@ -49,36 +49,34 @@
 			$e = array(
 				'race_id' => $instance->Race,
 				'status' => $status,
-                'category' => $instance->Class,
-                'keyword' => "%{$keyword}%"
+				'category' => $instance->Class
 			);
 			$sql = "SELECT ri.Race, ri.Class, ri.StartTime, rr.Runner, rr.Bib, rr.Status, rr.Club, rr.Place, rr.TotalTime
 					FROM race_runner AS rr, club AS c, runner AS r, race_instance AS ri
 					WHERE ri.Race = :race_id AND rr.RaceInstance = ri.ID AND c.ID = rr.Club AND r.ID = rr.Runner AND ri.Class = :category AND rr.Status = :status
-					AND CONCAT(r.FirstName, ' ', r.LastName, ' ', c.Name, ' ', rr.Bib) LIKE :keyword
+					AND CONCAT(r.FirstName, ' ', r.LastName, ' ', c.Name, ' ', rr.Bib) LIKE '%{$keyword}%'
 					UNION
 					SELECT ri.Race, ri.Class, ri.StartTime, rr.Runner, rr.Bib, rr.Status, '' AS Club, rr.Place, rr.TotalTime
 					FROM race_runner AS rr, runner AS r, race_instance AS ri
 					WHERE ri.Race = :race_id AND rr.RaceInstance = ri.ID AND r.ID = rr.Runner AND ri.Class = :category AND rr.Status = :status AND rr.Club is null
-					AND CONCAT(r.FirstName, ' ', r.LastName, ' ', rr.Bib) LIKE :keyword";
+					AND CONCAT(r.FirstName, ' ', r.LastName, ' ', rr.Bib) LIKE '%{$keyword}%'";
 		}
 		else
 		{
 			$e = array(
 				'race_id' => $instance->Race,
-				'category' => $instance->Class,
-                'keyword' => "%{$keyword}%"
+				'category' => $instance->Class
 			);
 			
 			$sql = "SELECT ri.Race, ri.Class, ri.StartTime, rr.Runner, rr.Bib, rr.Status, rr.Club, rr.Place, rr.TotalTime
 					FROM race_runner AS rr, club AS c, runner AS r, race_instance AS ri
 					WHERE ri.Race = :race_id AND rr.RaceInstance = ri.ID AND c.ID = rr.Club AND r.ID = rr.Runner AND ri.Class = :category AND rr.Status is null
-					AND CONCAT(r.FirstName, ' ', r.LastName, ' ', c.Name, ' ', rr.Bib) LIKE :keyword
+					AND CONCAT(r.FirstName, ' ', r.LastName, ' ', c.Name, ' ', rr.Bib) LIKE '%{$keyword}%'
 					UNION
 					SELECT ri.Race, ri.Class, ri.StartTime, rr.Runner, rr.Bib, rr.Status, '' AS Club, rr.Place, rr.TotalTime
 					FROM race_runner AS rr, club AS c, runner AS r, race_instance AS ri
 					WHERE ri.Race = :race_id AND rr.RaceInstance = ri.ID AND c.ID = rr.Club AND r.ID = rr.Runner AND ri.Class = :category AND rr.Status is null AND rr.Club is null
-					AND CONCAT(r.FirstName, ' ', r.LastName, ' ', rr.Bib) LIKE :keyword";
+					AND CONCAT(r.FirstName, ' ', r.LastName, ' ', rr.Bib) LIKE '%{$keyword}%'";
 		}
 		
         $req = $db->prepare($sql);
@@ -93,16 +91,27 @@
 		global $db;
 		
         $e = array(
-            'race_id' => $race_id,
-			'keyword' => "%{$keyword}%"
+            'race_id' => $race_id
         );
 			
-		$sql = "
-			SELECT rr.* 
-			FROM race_runner AS rr, club AS c, runner AS r, race_instance AS ri 
-			WHERE ri.Race = :race_id AND rr.RaceInstance = ri.ID AND c.ID = rr.Club AND r.ID = rr.Runner AND CONCAT(r.FirstName, ' ', r.LastName, ' ', c.Name, ' ', rr.Bib) LIKE :keyword 
-			ORDER BY rr.Place ASC
-        ";
+		if($keyword != "") {
+			$sql = "
+				SELECT rr.* 
+				FROM race_runner AS rr, club AS c, runner AS r, race_instance AS ri 
+				WHERE ri.Race = :race_id AND rr.RaceInstance = ri.ID AND c.ID = rr.Club AND r.ID = rr.Runner AND CONCAT(r.FirstName, ' ', r.LastName, ' ', c.Name, ' ', rr.Bib) LIKE '%{$keyword}%' 
+				ORDER BY rr.Place ASC
+			";
+		}
+		
+		else {
+			
+			$sql = "
+				SELECT rr.* 
+				FROM race_runner AS rr, race_instance AS ri 
+				WHERE ri.Race = :race_id AND rr.RaceInstance = ri.ID
+				ORDER BY rr.Place ASC
+			";
+		}
 							
         $req = $db->prepare($sql);
         $req->execute($e);
@@ -122,8 +131,7 @@
 		
         $e = array(
             'race_id' => $race_id,
-            'status' => $status,
-            'keyword' => "%{$keyword}%"
+            'status' => $status
         );
 		
 		if($status == "DNF")
@@ -131,7 +139,7 @@
 			$sql = "SELECT ri.Race, ri.Class, ri.StartTime, rr.Runner, rr.Bib, rr.Status, rr.Club, rr.Place, rr.TotalTime, (((t.Lap - 1) * 10) + s.LengthFromStart) AS Distance, t.Timestamp
 					FROM race_runner AS rr, club AS c, runner AS r, race_instance AS ri, timestamp AS t, station AS s
 					WHERE ri.Race = :race_id AND rr.RaceInstance = ri.ID AND c.ID = rr.Club AND r.ID = rr.Runner AND ri.ID = rr.RaceInstance AND rr.Status = :status
-					AND CONCAT(r.FirstName, ' ', r.LastName, ' ', c.Name, ' ', rr.Bib) LIKE :keyword
+					AND CONCAT(r.FirstName, ' ', r.LastName, ' ', c.Name, ' ', rr.Bib) LIKE '%{$keyword}%'
 					AND t.Runner = rr.Runner AND t.RaceInstance = ri.ID AND  t.Timestamp = 
 					(SELECT MAX(t.timestamp) FROM timestamp AS t, station AS s WHERE t.Runner = rr.Runner AND t.RaceInstance = ri.ID AND s.Code <> 99 AND t.Station = s.ID)
 					AND  t.Station = s.ID
@@ -139,7 +147,7 @@
 					SELECT ri.Race, ri.Class, ri.StartTime, rr.Runner, rr.Bib, rr.Status, '' AS Club, rr.Place, rr.TotalTime, (((t.Lap - 1) * 10) + s.LengthFromStart) AS Distance, t.Timestamp
 					FROM race_runner AS rr, runner AS r, race_instance AS ri, timestamp AS t, station AS s
 					WHERE ri.Race = :race_id AND rr.RaceInstance = ri.ID AND r.ID = rr.Runner AND ri.ID = rr.RaceInstance AND rr.Status = :status AND rr.Club IS NULL
-					AND CONCAT(r.FirstName, ' ', r.LastName, ' ', rr.Bib) LIKE :keyword
+					AND CONCAT(r.FirstName, ' ', r.LastName, ' ', rr.Bib) LIKE '%{$keyword}%'
 					AND t.Runner = rr.Runner AND t.RaceInstance = ri.ID AND  t.Timestamp = 
 					(SELECT MAX(t.timestamp) FROM timestamp AS t, station AS s WHERE t.Runner = rr.Runner AND t.RaceInstance = ri.ID AND s.Code <> 99 AND t.Station = s.ID)
 					AND  t.Station = s.ID
@@ -150,7 +158,7 @@
 			$sql = "SELECT ri.Race, ri.Class, ri.StartTime, rr.Runner, rr.Bib, rr.Status, rr.Club, rr.Place, rr.TotalTime, (((t.Lap - 1) * 10) + s.LengthFromStart) AS Distance, t.Timestamp
 					FROM race_runner AS rr, club AS c, runner AS r, race_instance AS ri, timestamp AS t, station AS s
 					WHERE ri.Race = :race_id AND rr.RaceInstance = ri.ID AND c.ID = rr.Club AND r.ID = rr.Runner AND ri.ID = rr.RaceInstance AND rr.Status = :status
-					AND CONCAT(r.FirstName, ' ', r.LastName, ' ', c.Name, ' ', rr.Bib) LIKE :keyword
+					AND CONCAT(r.FirstName, ' ', r.LastName, ' ', c.Name, ' ', rr.Bib) LIKE '%{$keyword}%'
 					AND t.Runner = rr.Runner AND t.RaceInstance = ri.ID AND  t.Timestamp = 
 					(SELECT MAX(t.timestamp) FROM timestamp AS t WHERE t.Runner = rr.Runner AND t.RaceInstance = ri.ID)
 					AND  t.Station = s.ID
@@ -158,12 +166,12 @@
 					SELECT ri.Race, ri.Class, ri.StartTime, rr.Runner, rr.Bib, '-' AS Status, rr.Club, '-' AS Place, rr.TotalTime, '-' AS Distance, '-' AS Timestamp
 					FROM race_runner AS rr, club AS c, runner AS r, race_instance AS ri
 					WHERE ri.Race = :race_id AND rr.RaceInstance = ri.ID AND c.ID = rr.Club AND r.ID = rr.Runner AND ri.ID = rr.RaceInstance AND rr.Status is null
-					AND CONCAT(r.FirstName, ' ', r.LastName, ' ', c.Name, ' ', rr.Bib) LIKE :keyword
+					AND CONCAT(r.FirstName, ' ', r.LastName, ' ', c.Name, ' ', rr.Bib) LIKE '%{$keyword}%'
 					UNION
 					SELECT ri.Race, ri.Class, ri.StartTime, rr.Runner, rr.Bib, rr.Status, '' AS Club, rr.Place, rr.TotalTime, (((t.Lap - 1) * 10) + s.LengthFromStart) AS Distance, t.Timestamp
 					FROM race_runner AS rr, runner AS r, race_instance AS ri, timestamp AS t, station AS s
 					WHERE ri.Race = :race_id AND rr.RaceInstance = ri.ID AND r.ID = rr.Runner AND ri.ID = rr.RaceInstance AND rr.Status = :status AND rr.Club IS NULL
-					AND CONCAT(r.FirstName, ' ', r.LastName, ' ', rr.Bib) LIKE :keyword
+					AND CONCAT(r.FirstName, ' ', r.LastName, ' ', rr.Bib) LIKE '%{$keyword}%'
 					AND t.Runner = rr.Runner AND t.RaceInstance = ri.ID AND  t.Timestamp = 
 					(SELECT MAX(t.timestamp) FROM timestamp AS t WHERE t.Runner = rr.Runner AND t.RaceInstance = ri.ID)
 					AND  t.Station = s.ID
@@ -171,7 +179,7 @@
 					SELECT ri.Race, ri.Class, ri.StartTime, rr.Runner, rr.Bib, '-' AS Status, '' AS Club, '-' AS Place, rr.TotalTime, '-' AS Distance, '-' AS Timestamp
 					FROM race_runner AS rr, runner AS r, race_instance AS ri
 					WHERE ri.Race = :race_id AND rr.RaceInstance = ri.ID AND r.ID = rr.Runner AND ri.ID = rr.RaceInstance AND rr.Status is null AND rr.Club IS NULL
-					AND CONCAT(r.FirstName, ' ', r.LastName, ' ', rr.Bib) LIKE :keyword
+					AND CONCAT(r.FirstName, ' ', r.LastName, ' ', rr.Bib) LIKE '%{$keyword}%'
 					ORDER BY Place ASC";
 		}
 		
@@ -180,12 +188,12 @@
 			$sql = "SELECT ri.Race, ri.Class, ri.StartTime, rr.Runner, rr.Bib, rr.Status, rr.Club, rr.Place, rr.TotalTime
 					FROM race_runner AS rr, club AS c, runner AS r, race_instance AS ri
 					WHERE ri.Race = :race_id AND rr.RaceInstance = ri.ID AND c.ID = rr.Club AND r.ID = rr.Runner AND ri.ID = rr.RaceInstance AND rr.Status = :status
-					AND CONCAT(r.FirstName, ' ', r.LastName, ' ', c.Name, ' ', rr.Bib) LIKE :keyword
+					AND CONCAT(r.FirstName, ' ', r.LastName, ' ', c.Name, ' ', rr.Bib) LIKE '%{$keyword}%'
 					UNION
 					SELECT ri.Race, ri.Class, ri.StartTime, rr.Runner, rr.Bib, rr.Status, '' AS Club, rr.Place, rr.TotalTime
 					FROM race_runner AS rr, runner AS r, race_instance AS ri
 					WHERE ri.Race = :race_id AND rr.RaceInstance = ri.ID AND r.ID = rr.Runner AND ri.ID = rr.RaceInstance AND rr.Status = :status AND rr.Club IS NULL
-					AND CONCAT(r.FirstName, ' ', r.LastName, ' ', rr.Bib) LIKE :keyword
+					AND CONCAT(r.FirstName, ' ', r.LastName, ' ', rr.Bib) LIKE '%{$keyword}%'
 					ORDER BY Place ASC";
 		}
 							
@@ -857,23 +865,16 @@
 	{
 		global $db;
 
-        $e = array(
-			'keyword' => "%{$keyword}%"
-        );
-		
-        $sql = "SELECT * FROM club WHERE Name LIKE :keyword {$sort}";
+        $req = $db->query("SELECT * FROM club WHERE Name LIKE '%{$keyword}%' {$sort}");
 
-        $req = $db->prepare($sql);
-        $req->execute($e);
-		
 		$results = array();
 		
         while($rows = $req->fetchObject()) 
 		{
             $results[] = $rows;
         }
-		
-		return $results;
+
+        return $results;
 	}
 	
 	function search_team_member($keyword, $race_id, $team_id) 
@@ -882,13 +883,12 @@
 		
         $e = array(
             'race_id' => $race_id,
-            'team_id' => $team_id,
-            'keyword' => "%{$keyword}%"
+            'team_id' => $team_id
         );
 
 		$sql = "SELECT * 
 				FROM runner 
-				WHERE CONCAT(FirstName, ' ', LastName) LIKE :keyword AND ID IN 
+				WHERE CONCAT(FirstName, ' ', LastName) LIKE '%{$keyword}%' AND ID IN 
 						(SELECT rr.Runner 
 						FROM race_runner AS rr, race_instance AS ri
 						WHERE ri.Race = :race_id AND rr.RaceInstance = ri.ID AND rr.Club = :team_id)";
@@ -1032,23 +1032,16 @@
 	{
 		global $db;
 
-        $e = array(
-			'keyword' => "%{$keyword}%"
-        );
-		
-        $sql = "SELECT * FROM station WHERE Name LIKE :keyword {$sort}";
+        $req = $db->query("SELECT * FROM station WHERE Name LIKE '%{$keyword}%' {$sort}");
 
-        $req = $db->prepare($sql);
-        $req->execute($e);
-		
 		$results = array();
 		
         while($rows = $req->fetchObject()) 
 		{
             $results[] = $rows;
         }
-		
-		return $results;
+
+        return $results;
 	}
 	
 	function get_stations() {
@@ -1169,23 +1162,16 @@
 	{
 		global $db;
 
-        $e = array(
-			'keyword' => "%{$keyword}%"
-        );
-		
-        $sql = "SELECT * FROM class WHERE Gender LIKE :keyword {$sort}";
+        $req = $db->query("SELECT * FROM class WHERE Gender LIKE '%{$keyword}%' {$sort}");
 
-        $req = $db->prepare($sql);
-        $req->execute($e);
-		
 		$results = array();
 		
         while($rows = $req->fetchObject()) 
 		{
             $results[] = $rows;
         }
-		
-		return $results;
+
+        return $results;
 	}
 	
 	function get_categories_distances() {
@@ -1316,31 +1302,24 @@
 	function search_si_unit($keyword, $sort) {
 		global $db;
 
-        $e = array(
-			'keyword' => "%{$keyword}%"
-        );
-		
-        $sql = "SELECT su.ID, su.Status, '-' AS Holder
-				FROM si_unit AS su
-				WHERE su.Status = 'Returned' AND CONCAT(su.Status, ' ', su.ID) LIKE :keyword
-				UNION
-				SELECT su.ID, su.Status, CONCAT(r.FirstName, ' ', r.LastName) AS Holder 
-				FROM si_unit AS su, runner_units AS ru, runner AS r 
-				WHERE ru.SI_unit = su.ID AND r.ID = ru.Runner AND CONCAT(r.FirstName, ' ', r.LastName, ' ', su.Status, ' ', su.ID) LIKE :keyword
-				{$sort}";
+        $req = $db->query("	SELECT su.ID, su.Status, '-' AS Holder
+							FROM si_unit AS su
+							WHERE su.Status = 'Returned' AND CONCAT(su.Status, ' ', su.ID) LIKE '%{$keyword}%'
+							UNION
+							SELECT su.ID, su.Status, CONCAT(r.FirstName, ' ', r.LastName) AS Holder 
+							FROM si_unit AS su, runner_units AS ru, runner AS r 
+							WHERE ru.SI_unit = su.ID AND r.ID = ru.Runner AND CONCAT(r.FirstName, ' ', r.LastName, ' ', su.Status, ' ', su.ID) LIKE '%{$keyword}%'
+							{$sort}");
 
-        $req = $db->prepare($sql);
-        $req->execute($e);
-		
 		$results = array();
 		
         while($rows = $req->fetchObject()) 
 		{
             $results[] = $rows;
         }
-		
-		return $results;
-	}
+
+        return $results;
+	}	
 	
 	function get_si_unit($si_unit_id) {
         global $db;

@@ -129,25 +129,15 @@
 	{
 		global $db;
 
-        $e = array(
-			'keyword' => "%{$keyword}%"
-        );
-		
-        $sql = "SELECT * 
-				FROM runner 
-				WHERE CONCAT(FirstName, ' ', LastName) LIKE :keyword 
-				{$sort}";
+        $req = $db->query("SELECT * FROM runner WHERE CONCAT(FirstName, ' ', LastName) LIKE '%{$keyword}%' {$sort}");
 
-        $req = $db->prepare($sql);
-        $req->execute($e);
-		
 		$results = array();
 		
         while($rows = $req->fetchObject()) 
 		{
             $results[] = $rows;
         }
-		
-		return $results;
+
+        return $results;
 	}
 ?>
