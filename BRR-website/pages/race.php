@@ -141,15 +141,6 @@
 										<th>Elaspsed Time</th>
 										<th>Date & Time</th>
 										<th>Status</th>
-										<?php
-											if(is_logged() == 1) {
-												?>
-													<th>
-														<a class="bg-success text-white table-button" href="index.php?page=manage&race=<?=$id?>">+</a>
-													</th>
-												<?php
-											}
-										?>
 									</tr>
 								</thead>
 								
@@ -194,18 +185,7 @@
 																}
 															?>
 														</td>
-														<td><?=$race_runner->Status?></td>				
-														<?php
-															if(is_logged() == 1)
-															{
-														?>
-															<td class="no-change">
-																<a class="bg-primary text-white table-button" href="index.php?page=manage&runner=<?=$race_runner->Runner?>">...</a>
-																<a class="bg-danger text-white table-button" href="index.php?page=race&race=<?=$race->ID?>&runner=<?=$race_runner->Runner?>&remove=1">X</a>
-															</td>
-														<?php
-															}
-														?>
+														<td><?=$race_runner->Status?></td>
 													</tr>						
 												<?php
 											}
@@ -230,15 +210,6 @@
 										<th>Behind</th>
 										<th>Date & Time</th>
 										<th>Status</th>
-										<?php
-											if(is_logged() == 1) {
-												?>
-													<th>
-														<a class="bg-success text-white table-button" href="index.php?page=manage&race=<?=$id?>">+</a>
-													</th>
-												<?php
-											}
-										?>
 									</tr>
 								</thead>
 								
@@ -284,17 +255,7 @@
 																}
 															?>
 														</td>
-														<td><?=$race_runner->Status?></td>				
-														<?php
-															if(is_logged() == 1) {
-																?>
-																	<td class="no-change">
-																		<a class="bg-primary text-white table-button" href="index.php?page=manage&runner=<?=$race_runner->Runner?>">...</a>
-																		<a class="bg-danger text-white table-button" href="index.php?page=race&race=<?=$race->ID?>&runner=<?=$race_runner->Runner?>&remove=1">X</a>
-																	</td>
-																<?php
-															}
-														?>
+														<td><?=$race_runner->Status?></td>
 													</tr>						
 												<?php
 											}
@@ -319,15 +280,6 @@
 										<th>Elaspsed Time</th>
 										<th>Date & Time</th>
 										<th>Status</th>
-										<?php
-											if(is_logged() == 1) {
-												?>
-													<th>
-														<a class="bg-success text-white table-button" href="index.php?page=manage&race=<?=$id?>">+</a>
-													</th>
-												<?php
-											}
-										?>
 									</tr>
 								</thead>
 								
@@ -360,17 +312,7 @@
 																}
 															?>
 														</td>
-														<td><?=$race_runner->Status?></td>				
-														<?php
-															if(is_logged() == 1) {
-																?>
-																	<td class="no-change">
-																		<a class="bg-primary text-white table-button" href="index.php?page=manage&runner=<?=$race_runner->Runner?>">...</a>
-																		<a class="bg-danger text-white table-button" href="index.php?page=race&race=<?=$race->ID?>&runner=<?=$race_runner->Runner?>&remove=1">X</a>
-																	</td>
-																<?php
-															}
-														?>
+														<td><?=$race_runner->Status?></td>
 													</tr>						
 												<?php
 											}
@@ -392,16 +334,6 @@
 										<th>Name</th>
 										<th>Team</th>
 										<th>Status</th>
-										<?php
-											if(is_logged() == 1)
-											{
-										?>
-											<th>
-												<a class="bg-success text-white table-button" href="index.php?page=manage&race=<?=$id?>">+</a>
-											</th>
-										<?php
-											}
-										?>
 									</tr>
 								</thead>
 								
@@ -420,17 +352,7 @@
 														<td><?=$race_runner->Bib?></td>
 														<td><?=$runner->FirstName." ".$runner->LastName?></td>
 														<td><?=$team->Name?></td>
-														<td><?=$race_runner->Status?></td>				
-														<?php
-															if(is_logged() == 1) {
-																?>
-																	<td class="no-change">
-																		<a class="bg-primary text-white table-button" href="index.php?page=manage&runner=<?=$race_runner->Runner?>">...</a>
-																		<a class="bg-danger text-white table-button" href="index.php?page=race&race=<?=$race->ID?>&runner=<?=$race_runner->Runner?>&remove=1">X</a>
-																	</td>
-																<?php
-															}
-														?>
+														<td><?=$race_runner->Status?></td>
 													</tr>						
 												<?php
 											}
