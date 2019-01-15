@@ -54,7 +54,7 @@
 					<th>Bib</th>
 					<th>Name</th>
 					<th>Team</th>
-					<th>Elaspsed Time</th>
+					<th>Elapsed Time</th>
 					<th>Date & Time</th>
 				</tr>
 			</thead>
@@ -117,7 +117,7 @@
 					<th>Bib</th>
 					<th>Name</th>
 					<th>Team</th>
-					<th>Elaspsed Time</th>
+					<th>Elapsed Time</th>
 					<th>Date & Time</th>
 				</tr>
 			</thead>

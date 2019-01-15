@@ -21,7 +21,7 @@
 						<th>Place</th>
 						<th>Name</th>
 						<th>Team</th>
-						<th>Elaspsed Time</th>
+						<th>Elapsed Time</th>
 						<th></th>
 					</tr>
 				</thead>
@@ -88,7 +88,7 @@
 										<td> - </td>
 										<td><?=$runner->FirstName." ".$runner->LastName?></td>
 										<td><?=$team->Name?></td>
-										<td>Do Not Finish</td>
+										<td>Did Not Finish</td>
 										<td><?=$race_runner->Distance." Miles"?></td>
 									</tr>						
 								<?php
@@ -106,7 +106,7 @@
 										<td> - </td>
 										<td><?=$runner->FirstName." ".$runner->LastName?></td>
 										<td><?=$team->Name?></td>
-										<td>Do Not Start</td>
+										<td>Did Not Start</td>
 										<td> - </td>
 									</tr>						
 								<?php

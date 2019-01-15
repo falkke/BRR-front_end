@@ -138,7 +138,7 @@
 										<th>Bib</th>
 										<th>Name</th>
 										<th>Team</th>
-										<th>Elaspsed Time</th>
+										<th>Elapsed Time</th>
 										<th>Date & Time</th>
 										<th>Status</th>
 									</tr>
@@ -206,7 +206,7 @@
 										<th>Bib</th>
 										<th>Name</th>
 										<th>Team</th>
-										<th>Elaspsed Time</th>
+										<th>Elapsed Time</th>
 										<th>Behind</th>
 										<th>Date & Time</th>
 										<th>Status</th>
@@ -268,7 +268,7 @@
 					
 					if(exist_race_runners($instance, $search, "DNF")) {
 						?>
-							<h3 class="text-left"> Do Not Finish </h3>
+							<h3 class="text-left"> Did Not Finish </h3>
 							<table class="table table-bordered table-striped table-condensed">           
 								<thead>
 									<tr>
@@ -277,7 +277,7 @@
 										<th>Bib</th>
 										<th>Name</th>
 										<th>Team</th>
-										<th>Elaspsed Time</th>
+										<th>Elapsed Time</th>
 										<th>Date & Time</th>
 										<th>Status</th>
 									</tr>
@@ -325,7 +325,7 @@
 					
 					if(exist_race_runners($instance, $search, "DNS")) {
 						?> 
-							<h3 class="text-left"> Do Not Start </h3>
+							<h3 class="text-left"> Did Not Start </h3>
 							<table class="table table-bordered table-striped table-condensed">           
 								<thead>
 									<tr>
