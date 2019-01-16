@@ -339,8 +339,7 @@ html, body {
 	}
 	
 	.nav-side-menu .brand {
-		width : 100%;
-		position: 			relative;
+		position: 			relative!important;
 		text-align: 		left !important;
 		padding: 			0 20px;
 		line-height: 		50px !important;
@@ -369,13 +368,13 @@ html, body {
 	}
 }
 
-@media screen and (max-width:400px) {
+@media screen and (max-width:450px) {
 	.starter-template {
 		padding: 3rem 0.5rem;
 	}
 
-	.section-template {	
-		padding: 3rem 0.5rem;
+	.section-template {
+		padding: 0rem 0rem;
 	}
 	
 	th, td {
