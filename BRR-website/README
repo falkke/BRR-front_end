@@ -1,0 +1,7 @@
+To test the website the installation of WampServer is necessary : http://www.wampserver.com/
+
+You can access the admin page at this URL : .../index.php?page=login
+username : admin
+password : pass123
+
+the website will need to use a database, to do so a sql script is available in the repository
