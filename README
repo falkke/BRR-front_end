@@ -6,3 +6,6 @@ You can access the admin page at this URL : .../index.php?page=login
 the insert of an administrator into the database is necessary to login
 username : admin
 password : pass123
+
+
+Copyright (c) 2019 Bastien Delbouys, Cécile Cayèré, Mohammed Abuayyash, Zacharias Claesson, Sebastian Oveland, Rikard Gestlöf, Johannes Sörman
