@@ -1,11 +1,8 @@
-To test the website the installation of WampServer is necessary : http://www.wampserver.com/
+This project was done as part of the course "Software Engineering II : Project Team Work" at MDH, Västeras, Sweden.
 
-the website will need to use a database, to do so a sql script is available in the repository
-
-You can access the admin page at this URL : .../index.php?page=login
-the insert of an administrator into the database is necessary to login
-username : admin
-password : pass123
+It consist of a web application that will be used for the Black River Run, a race that occur in Västeras every year.
+The documentation and the presentations done around this project can be found on this GitHub, respectively in the folder Documentation and Presentation.
+Furthermore, the source code of the web application and some script related to the database and external functionnalities of the project can be found in the folder Project.
 
 
 Copyright (c) 2019 Bastien Delbouys, Cécile Cayèré, Mohammed Abuayyash, Zacharias Claesson, Sebastian Oveland, Rikard Gestlöf, Johannes Sörman
